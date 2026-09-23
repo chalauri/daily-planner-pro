@@ -48,6 +48,8 @@ export type Database = {
           description: string | null
           id: string
           plan_date: string
+          recurrence: Database["public"]["Enums"]["plan_recurrence"]
+          series_id: string | null
           status: Database["public"]["Enums"]["plan_status"]
           title: string
           updated_at: string
@@ -59,6 +61,8 @@ export type Database = {
           description?: string | null
           id?: string
           plan_date: string
+          recurrence?: Database["public"]["Enums"]["plan_recurrence"]
+          series_id?: string | null
           status?: Database["public"]["Enums"]["plan_status"]
           title: string
           updated_at?: string
@@ -70,6 +74,8 @@ export type Database = {
           description?: string | null
           id?: string
           plan_date?: string
+          recurrence?: Database["public"]["Enums"]["plan_recurrence"]
+          series_id?: string | null
           status?: Database["public"]["Enums"]["plan_status"]
           title?: string
           updated_at?: string
@@ -85,6 +91,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      plan_recurrence: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY"
       plan_status: "OPEN" | "DONE" | "NOT_DONE"
     }
     CompositeTypes: {
@@ -213,6 +220,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      plan_recurrence: ["NONE", "DAILY", "WEEKLY", "MONTHLY"],
       plan_status: ["OPEN", "DONE", "NOT_DONE"],
     },
   },
