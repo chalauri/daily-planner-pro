@@ -26,7 +26,6 @@ import { StatusPill } from "@/components/StatusPill";
 import { PlanDialog } from "@/components/PlanDialog";
 import { PlanStatsBar } from "@/components/PlanStats";
 import { computeStats, todayISO, type Plan, type PlanStatus } from "@/lib/plan-types";
-import { CalendarConnection } from "@/components/CalendarConnection";
 
 export const Route = createFileRoute("/_authenticated/planner")({
   head: () => ({
@@ -120,7 +119,6 @@ function PlannerPage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <span className="font-display text-xl font-semibold">Dayplan</span>
           <div className="flex items-center gap-2">
-            <CalendarConnection />
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="h-4 w-4" />
               Sign out
