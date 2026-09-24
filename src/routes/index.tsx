@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarCheck, ListChecks, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LanguageToggle, useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,8 +15,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Dayplan — plan your day, finish your day" },
       {
         property: "og:description",
-        content:
-          "A simple daily planner with live statistics, evening reminders and Google Calendar.",
+        content: "A simple daily planner with live statistics and an evening reminder email.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -24,54 +24,43 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const features = [
-  {
-    icon: ListChecks,
-    title: "Today, front and center",
-    text: "You land on today's plans. One click marks a plan done or not done.",
-  },
-  {
-    icon: BarChart3,
-    title: "Statistics that follow your filters",
-    text: "Filter by date, status or text — the numbers recalculate on exactly what you see.",
-  },
-  {
-    icon: CalendarCheck,
-    title: "Evening nudge",
-    text: "At 23:55 we email you the plans you left open, so nothing stays unresolved.",
-  },
-];
-
 function Landing() {
+  const { t } = useLang();
+  const features = [
+    { icon: ListChecks, title: t("landing.f1.title"), text: t("landing.f1.text") },
+    { icon: BarChart3, title: t("landing.f2.title"), text: t("landing.f2.text") },
+    { icon: CalendarCheck, title: t("landing.f3.title"), text: t("landing.f3.text") },
+  ];
+
   return (
     <main className="min-h-screen bg-background">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
         <span className="font-display text-xl font-semibold">Dayplan</span>
-        <Button asChild variant="ghost">
-          <Link to="/auth">Sign in</Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <Button asChild variant="ghost">
+            <Link to="/auth">{t("sign.in")}</Link>
+          </Button>
+        </div>
       </header>
 
       <section className="mx-auto max-w-3xl px-6 pt-16 pb-12 text-center">
         <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
-          Daily planner
+          {t("landing.badge")}
         </p>
         <h1 className="mt-4 text-5xl leading-[1.05] sm:text-6xl">
-          Plan your day.
+          {t("landing.title1")}
           <br />
-          Finish your day.
+          {t("landing.title2")}
         </h1>
-        <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground">
-          A quiet place for the handful of things that actually matter today — with honest numbers
-          on how it went.
-        </p>
+        <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground">{t("landing.sub")}</p>
         <div className="mt-8 flex justify-center gap-3">
           <Button asChild size="lg">
-            <Link to="/auth">Create your account</Link>
+            <Link to="/auth">{t("landing.cta")}</Link>
           </Button>
           <Button asChild size="lg" variant="outline">
             <Link to="/auth" search={{ mode: "signin" }}>
-              I already have one
+              {t("landing.cta2")}
             </Link>
           </Button>
         </div>
