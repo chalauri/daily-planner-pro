@@ -22,10 +22,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { StatusPill } from "@/components/StatusPill";
 import { PlanDialog } from "@/components/PlanDialog";
 import { PlanStatsBar } from "@/components/PlanStats";
 import { computeStats, todayISO, type Plan, type PlanStatus } from "@/lib/plan-types";
+import { LanguageToggle, useLang, weekdayIndex } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/planner")({
   head: () => ({
@@ -46,10 +57,13 @@ type StatusFilter = PlanStatus | "ALL";
 function PlannerPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useLang();
   const [from, setFrom] = useState(todayISO());
   const [to, setTo] = useState(todayISO());
   const [status, setStatus] = useState<StatusFilter>("ALL");
   const [text, setText] = useState("");
+  const [planToDelete, setPlanToDelete] = useState<Plan | null>(null);
+  const [confirmStatus, setConfirmStatus] = useState<{ plan: Plan; next: PlanStatus } | null>(null);
 
   const filters = { from, to, status, text: text.trim() };
 
@@ -89,13 +103,27 @@ function PlannerPage() {
     refresh();
   }
 
+  function requestStatus(plan: Plan, next: PlanStatus) {
+    if (plan.plan_date > todayISO()) {
+      setConfirmStatus({ plan, next });
+      return;
+    }
+    void setPlanStatus(plan, next);
+  }
+
+  async function confirmStatusChange() {
+    if (!confirmStatus) return;
+    await setPlanStatus(confirmStatus.plan, confirmStatus.next);
+    setConfirmStatus(null);
+  }
+
   async function removePlan(plan: Plan) {
     const { error } = await supabase.from("plans").delete().eq("id", plan.id);
     if (error) {
       toast.error(error.message);
       return;
     }
-    toast.success("Plan deleted");
+    toast.success(t("pl.deleted"));
     refresh();
   }
 
@@ -119,9 +147,10 @@ function PlannerPage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <span className="font-display text-xl font-semibold">Dayplan</span>
           <div className="flex items-center gap-2">
+            <LanguageToggle />
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="h-4 w-4" />
-              Sign out
+              {t("sign.out")}
             </Button>
           </div>
         </div>
@@ -130,9 +159,11 @@ function PlannerPage() {
       <div className="mx-auto max-w-6xl space-y-6 px-6 py-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="text-3xl">Your plans</h1>
+            <h1 className="text-3xl">{t("pl.title")}</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              {from === to ? `Showing ${from}` : `Showing ${from || "…"} → ${to || "…"}`}
+              {from === to
+                ? t("pl.showingOne", { date: from })
+                : t("pl.showingRange", { from: from || "…", to: to || "…" })}
             </p>
           </div>
           <PlanDialog defaultDate={from || todayISO()} onCreated={refresh} />
@@ -140,35 +171,35 @@ function PlannerPage() {
 
         <section className="surface-card grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-5">
           <div className="space-y-1.5">
-            <Label htmlFor="from">From</Label>
+            <Label htmlFor="from">{t("pl.from")}</Label>
             <Input id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="to">To</Label>
+            <Label htmlFor="to">{t("pl.to")}</Label>
             <Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="status">Status</Label>
+            <Label htmlFor="status">{t("pl.status")}</Label>
             <Select value={status} onValueChange={(v) => setStatus(v as StatusFilter)}>
               <SelectTrigger id="status">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All statuses</SelectItem>
-                <SelectItem value="OPEN">Open</SelectItem>
-                <SelectItem value="DONE">Done</SelectItem>
-                <SelectItem value="NOT_DONE">Not done</SelectItem>
+                <SelectItem value="ALL">{t("pl.allStatuses")}</SelectItem>
+                <SelectItem value="OPEN">{t("status.OPEN")}</SelectItem>
+                <SelectItem value="DONE">{t("status.DONE")}</SelectItem>
+                <SelectItem value="NOT_DONE">{t("status.NOT_DONE")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="text">Search</Label>
+            <Label htmlFor="text">{t("pl.search")}</Label>
             <div className="relative">
               <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="text"
                 className="pl-9"
-                placeholder="Title or description"
+                placeholder={t("pl.searchPh")}
                 value={text}
                 onChange={(e) => setText(e.target.value)}
               />
@@ -177,7 +208,7 @@ function PlannerPage() {
           <div className="flex items-end">
             <Button variant="outline" className="w-full" onClick={resetToToday}>
               <RotateCcw className="h-4 w-4" />
-              Today
+              {t("pl.today")}
             </Button>
           </div>
         </section>
@@ -188,24 +219,25 @@ function PlannerPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[42%]">Plan</TableHead>
-                <TableHead className="w-[110px]">Date</TableHead>
-                <TableHead className="w-[120px]">Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-[38%]">{t("pl.col.plan")}</TableHead>
+                <TableHead className="w-[100px]">{t("pl.col.date")}</TableHead>
+                <TableHead className="w-[110px]">{t("pl.col.day")}</TableHead>
+                <TableHead className="w-[120px]">{t("pl.col.status")}</TableHead>
+                <TableHead className="text-right">{t("pl.col.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading && (
                 <TableRow>
-                  <TableCell colSpan={4} className="py-10 text-center text-muted-foreground">
-                    Loading…
+                  <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
+                    {t("pl.loading")}
                   </TableCell>
                 </TableRow>
               )}
               {!isLoading && plans.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={4} className="py-10 text-center text-muted-foreground">
-                    Nothing here yet. Add your first plan.
+                  <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
+                    {t("pl.empty")}
                   </TableCell>
                 </TableRow>
               )}
@@ -226,6 +258,9 @@ function PlannerPage() {
                     )}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">{plan.plan_date}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {t(`day.${weekdayIndex(plan.plan_date)}` as Parameters<typeof t>[0])}
+                  </TableCell>
                   <TableCell>
                     <StatusPill status={plan.status} />
                   </TableCell>
@@ -234,26 +269,26 @@ function PlannerPage() {
                       <Button
                         size="sm"
                         variant={plan.status === "DONE" ? "default" : "outline"}
-                        onClick={() => setPlanStatus(plan, "DONE")}
-                        aria-label={`Mark ${plan.title} as done`}
+                        onClick={() => requestStatus(plan, "DONE")}
+                        aria-label={t("pl.aria.done", { title: plan.title })}
                       >
                         <Check className="h-4 w-4" />
-                        Done
+                        {t("status.DONE")}
                       </Button>
                       <Button
                         size="sm"
                         variant={plan.status === "NOT_DONE" ? "destructive" : "outline"}
-                        onClick={() => setPlanStatus(plan, "NOT_DONE")}
-                        aria-label={`Mark ${plan.title} as not done`}
+                        onClick={() => requestStatus(plan, "NOT_DONE")}
+                        aria-label={t("pl.aria.notDone", { title: plan.title })}
                       >
                         <X className="h-4 w-4" />
-                        Not done
+                        {t("status.NOT_DONE")}
                       </Button>
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => removePlan(plan)}
-                        aria-label={`Delete ${plan.title}`}
+                        onClick={() => setPlanToDelete(plan)}
+                        aria-label={t("pl.aria.delete", { title: plan.title })}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -265,6 +300,47 @@ function PlannerPage() {
           </Table>
         </section>
       </div>
+
+      <AlertDialog open={!!planToDelete} onOpenChange={(open) => !open && setPlanToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("pl.deleteTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("pl.deleteBody")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (planToDelete) void removePlan(planToDelete);
+                setPlanToDelete(null);
+              }}
+            >
+              {t("delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={!!confirmStatus}
+        onOpenChange={(open) => !open && setConfirmStatus(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("pl.futureTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("pl.futureBody")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={() => void confirmStatusChange()}>
+              {t("confirm.yes")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }
