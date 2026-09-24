@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LanguageToggle, useLang } from "@/lib/i18n";
 
 type Mode = "signin" | "signup";
 
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const { mode: initialMode } = Route.useSearch();
   const navigate = useNavigate();
+  const { t } = useLang();
   const [mode, setMode] = useState<Mode>(initialMode ?? "signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -65,7 +67,7 @@ function AuthPage() {
         navigate({ to: "/planner", replace: true });
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Something went wrong");
+      toast.error(error instanceof Error ? error.message : t("auth.error"));
     } finally {
       setLoading(false);
     }
@@ -76,10 +78,9 @@ function AuthPage() {
       <main className="flex min-h-screen items-center justify-center bg-background px-6">
         <div className="surface-card max-w-md p-8 text-center">
           <MailCheck className="mx-auto h-8 w-8 text-primary" />
-          <h1 className="mt-4 text-2xl">Confirm your email</h1>
+          <h1 className="mt-4 text-2xl">{t("auth.confirm.title")}</h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            We sent a confirmation link to <span className="font-medium">{email}</span>. Click it to
-            activate your account, then come back and sign in.
+            {t("auth.confirm.body", { email })}
           </p>
           <Button
             className="mt-6"
@@ -89,7 +90,7 @@ function AuthPage() {
               setMode("signin");
             }}
           >
-            Back to sign in
+            {t("auth.confirm.back")}
           </Button>
         </div>
       </main>
@@ -99,19 +100,22 @@ function AuthPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-6 py-12">
       <div className="w-full max-w-sm">
-        <Link to="/" className="font-display text-xl font-semibold">
-          Dayplan
-        </Link>
-        <h1 className="mt-8 text-3xl">{mode === "signup" ? "Create account" : "Welcome back"}</h1>
+        <div className="flex items-center justify-between">
+          <Link to="/" className="font-display text-xl font-semibold">
+            Dayplan
+          </Link>
+          <LanguageToggle />
+        </div>
+        <h1 className="mt-8 text-3xl">
+          {mode === "signup" ? t("auth.signup.title") : t("auth.signin.title")}
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {mode === "signup"
-            ? "You'll confirm your email address before your first sign in."
-            : "Sign in to see today's plans."}
+          {mode === "signup" ? t("auth.signup.sub") : t("auth.signin.sub")}
         </p>
 
         <form onSubmit={onSubmit} className="surface-card mt-6 space-y-4 p-6">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth.email")}</Label>
             <Input
               id="email"
               type="email"
@@ -122,7 +126,7 @@ function AuthPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("auth.password")}</Label>
             <Input
               id="password"
               type="password"
@@ -134,18 +138,22 @@ function AuthPage() {
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}
+            {loading
+              ? t("auth.pleaseWait")
+              : mode === "signup"
+                ? t("auth.signup.title")
+                : t("sign.in")}
           </Button>
         </form>
 
         <p className="mt-4 text-center text-sm text-muted-foreground">
-          {mode === "signup" ? "Already have an account?" : "New here?"}{" "}
+          {mode === "signup" ? t("auth.alreadyAccount") : t("auth.newHere")}{" "}
           <button
             type="button"
             className="font-medium text-primary underline-offset-4 hover:underline"
             onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
           >
-            {mode === "signup" ? "Sign in" : "Create one"}
+            {mode === "signup" ? t("sign.in") : t("auth.createOne")}
           </button>
         </p>
       </div>
