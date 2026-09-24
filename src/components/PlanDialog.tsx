@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { todayISO } from "@/lib/plan-types";
 import { addDays, addMonths, addWeeks, format, parseISO } from "date-fns";
+import { useLang } from "@/lib/i18n";
 
 type Repeat = "NONE" | "DAILY" | "WEEKLY" | "MONTHLY";
 const MAX_OCCURRENCES = 366;
@@ -35,6 +36,7 @@ function buildDates(start: string, repeat: Repeat, until: string): string[] {
 }
 
 export function PlanDialog({ defaultDate, onCreated }: { defaultDate: string; onCreated: () => void }) {
+  const { t } = useLang();
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -50,13 +52,13 @@ export function PlanDialog({ defaultDate, onCreated }: { defaultDate: string; on
     const userId = userData.user?.id;
     if (!userId) {
       setSaving(false);
-      toast.error("Your session expired. Please sign in again.");
+      toast.error(t("d.errSession"));
       return;
     }
     const dates = buildDates(date, repeat, until);
     if (repeat !== "NONE" && dates.length < 2) {
       setSaving(false);
-      toast.error("Pick an end date after the start date.");
+      toast.error(t("d.errUntil"));
       return;
     }
     const seriesId = repeat === "NONE" ? null : crypto.randomUUID();
@@ -76,7 +78,7 @@ export function PlanDialog({ defaultDate, onCreated }: { defaultDate: string; on
       toast.error(error.message);
       return;
     }
-    toast.success(dates.length > 1 ? `${dates.length} plans added` : "Plan added");
+    toast.success(dates.length > 1 ? t("d.addedN", { n: dates.length }) : t("d.addedOne"));
     setRepeat("NONE");
     setTitle("");
     setDescription("");
@@ -95,29 +97,29 @@ export function PlanDialog({ defaultDate, onCreated }: { defaultDate: string; on
       <DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4" />
-          Add plan
+          {t("pl.add")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={submit}>
           <DialogHeader>
-            <DialogTitle>New plan</DialogTitle>
-            <DialogDescription>It starts as open until you mark it later.</DialogDescription>
+            <DialogTitle>{t("d.newTitle")}</DialogTitle>
+            <DialogDescription>{t("d.newDesc")}</DialogDescription>
           </DialogHeader>
           <div className="mt-4 space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="plan-title">Title</Label>
+              <Label htmlFor="plan-title">{t("d.title")}</Label>
               <Input
                 id="plan-title"
                 required
                 maxLength={200}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Call the accountant"
+                placeholder={t("d.titlePh")}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="plan-description">Description (optional)</Label>
+              <Label htmlFor="plan-description">{t("d.desc")}</Label>
               <Textarea
                 id="plan-description"
                 rows={3}
@@ -126,7 +128,7 @@ export function PlanDialog({ defaultDate, onCreated }: { defaultDate: string; on
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="plan-date">Date</Label>
+              <Label htmlFor="plan-date">{t("d.date")}</Label>
               <Input
                 id="plan-date"
                 type="date"
@@ -137,22 +139,22 @@ export function PlanDialog({ defaultDate, onCreated }: { defaultDate: string; on
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="plan-repeat">Repeat</Label>
+                <Label htmlFor="plan-repeat">{t("d.repeat")}</Label>
                 <select
                   id="plan-repeat"
                   value={repeat}
                   onChange={(e) => setRepeat(e.target.value as Repeat)}
                   className="flex h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
                 >
-                  <option value="NONE">Does not repeat</option>
-                  <option value="DAILY">Daily</option>
-                  <option value="WEEKLY">Weekly</option>
-                  <option value="MONTHLY">Monthly</option>
+                  <option value="NONE">{t("d.repeat.none")}</option>
+                  <option value="DAILY">{t("d.repeat.daily")}</option>
+                  <option value="WEEKLY">{t("d.repeat.weekly")}</option>
+                  <option value="MONTHLY">{t("d.repeat.monthly")}</option>
                 </select>
               </div>
               {repeat !== "NONE" && (
                 <div className="space-y-2">
-                  <Label htmlFor="plan-until">Until</Label>
+                  <Label htmlFor="plan-until">{t("d.until")}</Label>
                   <Input
                     id="plan-until"
                     type="date"
@@ -166,13 +168,13 @@ export function PlanDialog({ defaultDate, onCreated }: { defaultDate: string; on
             </div>
             {repeat !== "NONE" && (
               <p className="text-xs text-muted-foreground">
-                Creates {buildDates(date, repeat, until).length} plans (max {MAX_OCCURRENCES}).
+                {t("d.creates", { n: buildDates(date, repeat, until).length })}
               </p>
             )}
           </div>
           <DialogFooter className="mt-6">
             <Button type="submit" disabled={saving || !title.trim()}>
-              {saving ? "Saving…" : "Add plan"}
+              {saving ? t("d.saving") : t("d.add")}
             </Button>
           </DialogFooter>
         </form>

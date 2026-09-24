@@ -1,12 +1,14 @@
 import type { PlanStats as Stats } from "@/lib/plan-types";
+import { useLang } from "@/lib/i18n";
 
 export function PlanStatsBar({ stats }: { stats: Stats }) {
+  const { t } = useLang();
   const items = [
-    { label: "Plans", value: stats.total, tone: "text-foreground" },
-    { label: "Open", value: stats.open, tone: "text-warning" },
-    { label: "Done", value: stats.done, tone: "text-success" },
-    { label: "Not done", value: stats.notDone, tone: "text-destructive" },
-    { label: "Completed", value: `${stats.completionRate}%`, tone: "text-primary" },
+    { label: t("stats.plans"), value: stats.total, tone: "text-foreground" },
+    { label: t("stats.open"), value: stats.open, tone: "text-warning" },
+    { label: t("stats.done"), value: stats.done, tone: "text-success" },
+    { label: t("stats.notDone"), value: stats.notDone, tone: "text-destructive" },
+    { label: t("stats.completed"), value: `${stats.completionRate}%`, tone: "text-primary" },
   ];
 
   return (

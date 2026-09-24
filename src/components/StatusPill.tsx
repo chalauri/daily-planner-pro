@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
-import { STATUS_LABEL, type PlanStatus } from "@/lib/plan-types";
+import { useLang } from "@/lib/i18n";
+import type { PlanStatus } from "@/lib/plan-types";
 
 const styles: Record<PlanStatus, string> = {
   OPEN: "bg-warning-soft text-warning-foreground",
@@ -8,6 +9,7 @@ const styles: Record<PlanStatus, string> = {
 };
 
 export function StatusPill({ status }: { status: PlanStatus }) {
+  const { t } = useLang();
   return (
     <span
       className={cn(
@@ -16,7 +18,7 @@ export function StatusPill({ status }: { status: PlanStatus }) {
       )}
     >
       <span className="h-1.5 w-1.5 rounded-full bg-current" />
-      {STATUS_LABEL[status]}
+      {t(`status.${status}`)}
     </span>
   );
 }
