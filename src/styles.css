@@ -152,6 +152,14 @@
     border-color: var(--color-border);
   }
 
+  /* Completely hide the Lovable badge wherever it renders. */
+  #lovable-badge,
+  #lovable-badge * {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
