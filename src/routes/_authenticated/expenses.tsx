@@ -435,8 +435,7 @@ function ExpensesPage() {
                     <thead>
                     <tr className="border-b border-border text-left text-muted-foreground">
                       <th className="px-4 py-2 font-medium">{ft("f.category")}</th>
-                      <th className="px-4 py-2 font-medium">{ft("f.expected")}</th>
-                      <th className="px-4 py-2 font-medium">{ft("f.received")}</th>
+                      <th className="px-4 py-2 font-medium">{ft("f.income")}</th>
                       <th />
                     </tr>
                   </thead>
@@ -444,8 +443,7 @@ function ExpensesPage() {
                     {incomeRows.map(({ c, total, expected }) => (
                       <tr key={c.id} className="border-b border-border last:border-0">
                         <td className="px-4 py-3 font-medium">{c.name}</td>
-                        <td className="px-4 py-3">{fmt(expected)}</td>
-                        <td className="px-4 py-3 text-success">{fmt(total)}</td>
+                        <td className="px-4 py-3 text-success">{fmt(expected > 0 ? expected : total)}</td>
                         <td className="px-4 py-3">
                           <div className="flex justify-end gap-1">
                             <Button variant="outline" size="sm" onClick={() => setDetails(c.id)}>{ft("f.details")}</Button>
