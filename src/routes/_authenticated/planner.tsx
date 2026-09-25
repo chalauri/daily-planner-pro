@@ -184,7 +184,7 @@ function PlannerPage() {
     <TooltipProvider>
     <main className="min-h-screen bg-background">
       <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4">
           <div className="flex items-center gap-4">
             <span className="font-display text-xl font-semibold">Dayplan</span>
             <AppTabs />
