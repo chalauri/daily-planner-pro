@@ -156,6 +156,28 @@ const en = {
   "ed.date": "Date",
   "pl.onlyOpenEdit": "Only open plans can be edited",
   "pl.onlyOpenShare": "Only open plans can be shared",
+
+  "help.button": "How to use",
+  "help.title": "How to use the planner",
+  "help.intro": "A quick tour of the two sections: Plans and Expenses.",
+  "help.plans.title": "Plans",
+  "help.plans.s1":
+    "Click \"Add plan\" and enter a title and date. You can also make it repeat daily, weekly or monthly.",
+  "help.plans.s2":
+    "Mark a plan done or not done with the buttons in the table — or click the plan itself in Calendar view.",
+  "help.plans.s3":
+    "Done plans show in green, not done in red. Filter by date, status or text — the statistics always follow what you see.",
+  "help.plans.s4":
+    "Share a plan via the Share button: enter the other person's email and they accept it under Requests.",
+  "help.exp.title": "Expenses",
+  "help.exp.s1":
+    "Use \"Add income\" and \"Add expense\" to plan amounts per category for a month — it defaults to next month, but you can change it.",
+  "help.exp.s2":
+    "Open \"Details\" on an expense category to record what you actually spent, with notes and receipts.",
+  "help.exp.s3":
+    "The cards on top always show your income, actual expenses, savings (income minus planned) and the planned total.",
+  "help.exp.s4":
+    "The Reports section shows charts over time, planned vs actual per category, and CSV/PDF export.",
 };
 
 export type TKey = keyof typeof en;
@@ -315,6 +337,28 @@ const ka: Record<TKey, string> = {
   "ed.date": "თარიღი",
   "pl.onlyOpenEdit": "მხოლოდ ღია გეგმების რედაქტირებაა შესაძლებელი",
   "pl.onlyOpenShare": "მხოლოდ ღია გეგმების გაზიარებაა შესაძლებელი",
+
+  "help.button": "როგორ გამოვიყენო",
+  "help.title": "როგორ გამოვიყენოთ დამგეგმავი",
+  "help.intro": "მოკლე მიმოხილვა ორი განყოფილებისა: გეგმები და ხარჯები.",
+  "help.plans.title": "გეგმები",
+  "help.plans.s1":
+    "დააჭირეთ „გეგმის დამატება\" და შეიყვანეთ სათაური და თარიღი. სურვილისამებრ გაიმეორეთ ყოველდღიურად, ყოველკვირეულად ან ყოველთვიურად.",
+  "help.plans.s2":
+    "მონიშნეთ გეგმა შესრულებულად ან შეუსრულებლად ცხრილის ღილაკებით — ან დააჭირეთ თავად გეგმას კალენდარის ხედში.",
+  "help.plans.s3":
+    "შესრულებული გეგმები მწვანედაა, შეუსრულებელი — წითლად. გაფილტრეთ თარიღით, სტატუსით ან ტექსტით — სტატისტიკა ყოველთვის ემთხვევა იმას, რასაც ხედავთ.",
+  "help.plans.s4":
+    "გააზიარეთ გეგმა „გაზიარება\" ღილაკით: შეიყვანეთ მეორე ადამიანის ელფოსტა და ის დაადასტურებს „მოთხოვნები\" განყოფილებაში.",
+  "help.exp.title": "ხარჯები",
+  "help.exp.s1":
+    "გამოიყენეთ „შემოსავლის დამატება\" და „ხარჯის დამატება\" თვის კატეგორიების დასაგეგმად — ნაგულისხმევია შემდეგი თვე, მაგრამ შეგიძლიათ შეცვალოთ.",
+  "help.exp.s2":
+    "გახსენით „დეტალები\" ხარჯის კატეგორიაზე, რომ ჩაიწეროთ რეალურად დახარჯული თანხები შენიშვნებითა და ქვითრებით.",
+  "help.exp.s3":
+    "ზედა ბარათები ყოველთვის გვიჩვენებს შემოსავალს, რეალურ ხარჯებს, დაზოგვას (შემოსავალი მინუს დაგეგმილი) და დაგეგმილ ჯამს.",
+  "help.exp.s4":
+    "„ანგარიშები\" განყოფილება გვიჩვენებს გრაფიკებს დროში, დაგეგმილსა და რეალურს კატეგორიებით, აგრეთვე CSV/PDF ექსპორტს.",
 };
 
 const dictionaries: Record<Lang, Record<TKey, string>> = { en, ka };
