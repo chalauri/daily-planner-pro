@@ -286,7 +286,7 @@ function Landing() {
               asChild
               size="lg"
               variant="ghost"
-              className="text-primary-foreground hover:bg-primary-foreground/10"
+              className="border border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
             >
               <Link to="/auth" search={{ mode: "signin" }}>
                 {t("landing.cta2")}
