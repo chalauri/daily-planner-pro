@@ -113,7 +113,7 @@ function ExpensesPage() {
     const { error } = await supabase
       .from("budgets")
       .upsert({ user_id, category_id: categoryId, year: ym.year, month: ym.month, amount }, { onConflict: "category_id,year,month" });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(ft("f.saved"));
     refresh();
   }
@@ -121,14 +121,14 @@ function ExpensesPage() {
   async function copyPrev() {
     const prev = shiftYM(ym, -1);
     const { data, error } = await supabase.from("budgets").select("category_id, amount").eq("year", prev.year).eq("month", prev.month);
-    if (error) return toast.error(error.message);
-    if (!data.length) return toast.info(ft("f.nothingToCopy"));
+    if (error) { toast.error(error.message); return; }
+    if (!data.length) { toast.info(ft("f.nothingToCopy")); return; }
     const user_id = await currentUserId();
     const { error: e2 } = await supabase.from("budgets").upsert(
       data.map((b) => ({ user_id, category_id: b.category_id, amount: b.amount, year: ym.year, month: ym.month })),
       { onConflict: "category_id,year,month" },
     );
-    if (e2) return toast.error(e2.message);
+    if (e2) { toast.error(e2.message); return; }
     toast.success(ft("f.copied", { n: data.length }));
     refresh();
   }
@@ -136,7 +136,7 @@ function ExpensesPage() {
   async function setDefaultCurrency(c: string) {
     const user_id = await currentUserId();
     const { error } = await supabase.from("finance_settings").upsert({ user_id, currency: c });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     refresh();
   }
 
@@ -146,13 +146,13 @@ function ExpensesPage() {
       c === "default"
         ? await supabase.from("month_settings").delete().eq("year", ym.year).eq("month", ym.month)
         : await supabase.from("month_settings").upsert({ user_id, year: ym.year, month: ym.month, currency: c }, { onConflict: "user_id,year,month" });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     refresh();
   }
 
   async function openReceipt(path: string) {
     const { data, error } = await supabase.storage.from("receipts").createSignedUrl(path, 300);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     window.open(data.signedUrl, "_blank", "noopener");
   }
 
