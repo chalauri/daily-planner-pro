@@ -18,11 +18,13 @@ export function PlanCalendar({
   onMonthChange,
   plans,
   onDayClick,
+  onPlanClick,
 }: {
   month: Date;
   onMonthChange: (m: Date) => void;
   plans: Plan[];
   onDayClick: (date: string) => void;
+  onPlanClick: (plan: Plan) => void;
 }) {
   const { t, lang } = useLang();
   const start = startOfWeek(startOfMonth(month), { weekStartsOn: 1 });
@@ -80,7 +82,24 @@ export function PlanCalendar({
                 {d.getDate()}
               </span>
               {items.slice(0, 3).map((p) => (
-                <span key={p.id} className={cn("truncate rounded px-1.5 py-0.5 text-[11px] font-medium", chip[p.status])} title={p.title}>
+                <span
+                  key={p.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPlanClick(p);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      onPlanClick(p);
+                    }
+                  }}
+                  className={cn("cursor-pointer truncate rounded px-1.5 py-0.5 text-left text-[11px] font-medium hover:ring-2 hover:ring-ring", chip[p.status])}
+                  title={p.title}
+                >
                   {p.title}
                 </span>
               ))}
