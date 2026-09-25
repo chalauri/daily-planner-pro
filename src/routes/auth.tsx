@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LanguageToggle, useLang } from "@/lib/i18n";
+import { HelpDialog } from "@/components/HelpDialog";
 
 type Mode = "signin" | "signup";
 
@@ -107,7 +108,10 @@ function AuthPage() {
       <div className="w-full max-w-sm">
         <div className="flex items-center justify-between">
           <Link to="/" className="font-display text-xl font-semibold">{t("app.name")}</Link>
-          <LanguageToggle />
+          <div className="flex items-center gap-1">
+            <HelpDialog />
+            <LanguageToggle />
+          </div>
         </div>
         <h1 className="mt-8 text-3xl">
           {mode === "signup" ? t("auth.signup.title") : t("auth.signin.title")}

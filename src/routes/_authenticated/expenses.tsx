@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { AppTabs } from "@/components/AppTabs";
+import { HelpDialog } from "@/components/HelpDialog";
 import { LanguageToggle, useLang } from "@/lib/i18n";
 import { useFT } from "@/lib/finance-i18n";
 import { TransactionDialog } from "@/components/finance/TransactionDialog";
@@ -250,6 +251,7 @@ function ExpensesPage() {
             <AppTabs />
           </div>
           <div className="flex items-center gap-2">
+            <HelpDialog />
             <LanguageToggle />
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="h-4 w-4" />
