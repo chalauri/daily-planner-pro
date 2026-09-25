@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useLang } from "@/lib/i18n";
 import type { Plan } from "@/lib/plan-types";
 
@@ -85,16 +86,26 @@ export function ShareButton({ plan }: { plan: Plan }) {
     void qc.invalidateQueries({ queryKey: ["shares"] });
   }
 
+  const locked = plan.status !== "OPEN";
+
   return (
     <>
-      <Button
-        size="sm"
-        variant="ghost"
-        onClick={() => setOpen(true)}
-        aria-label={`${t("sh.share")} ${plan.title}`}
-      >
-        <Share2 className="h-4 w-4" />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex">
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={locked}
+              onClick={() => setOpen(true)}
+              aria-label={`${t("sh.share")} ${plan.title}`}
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+          </span>
+        </TooltipTrigger>
+        {locked && <TooltipContent>{t("pl.onlyOpenShare")}</TooltipContent>}
+      </Tooltip>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
@@ -140,19 +151,29 @@ export function ShareButton({ plan }: { plan: Plan }) {
   );
 }
 
-export function EditPlanButton({ plan, onSaved }: { plan: Plan; onSaved: () => void }) {
+export function EditPlanDialog({
+  plan,
+  open,
+  onOpenChange,
+  onSaved,
+}: {
+  plan: Plan;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSaved: () => void;
+}) {
   const { t } = useLang();
-  const [open, setOpen] = useState(false);
   const [title, setTitle] = useState(plan.title);
   const [desc, setDesc] = useState(plan.description ?? "");
   const [date, setDate] = useState(plan.plan_date);
 
-  function openIt() {
-    setTitle(plan.title);
-    setDesc(plan.description ?? "");
-    setDate(plan.plan_date);
-    setOpen(true);
-  }
+  useEffect(() => {
+    if (open) {
+      setTitle(plan.title);
+      setDesc(plan.description ?? "");
+      setDate(plan.plan_date);
+    }
+  }, [open, plan]);
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
@@ -163,16 +184,12 @@ export function EditPlanButton({ plan, onSaved }: { plan: Plan; onSaved: () => v
       .eq("id", plan.id);
     if (error) { toast.error(error.message); return; }
     toast.success(t("ed.saved"));
-    setOpen(false);
+    onOpenChange(false);
     onSaved();
   }
 
   return (
-    <>
-      <Button size="sm" variant="ghost" onClick={openIt} aria-label={`${t("sh.edit")} ${plan.title}`}>
-        <Pencil className="h-4 w-4" />
-      </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("ed.title")}</DialogTitle>
@@ -196,6 +213,33 @@ export function EditPlanButton({ plan, onSaved }: { plan: Plan; onSaved: () => v
           </form>
         </DialogContent>
       </Dialog>
+  );
+}
+
+export function EditPlanButton({ plan, onSaved }: { plan: Plan; onSaved: () => void }) {
+  const { t } = useLang();
+  const [open, setOpen] = useState(false);
+  const locked = plan.status !== "OPEN";
+
+  return (
+    <>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex">
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={locked}
+              onClick={() => setOpen(true)}
+              aria-label={`${t("sh.edit")} ${plan.title}`}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </span>
+        </TooltipTrigger>
+        {locked && <TooltipContent>{t("pl.onlyOpenEdit")}</TooltipContent>}
+      </Tooltip>
+      <EditPlanDialog plan={plan} open={open} onOpenChange={setOpen} onSaved={onSaved} />
     </>
   );
 }

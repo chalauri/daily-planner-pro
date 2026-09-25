@@ -46,7 +46,8 @@ import { format, startOfMonth, endOfMonth } from "date-fns";
 import { PlanStatsBar } from "@/components/PlanStats";
 import { computeStats, todayISO, type Plan, type PlanStatus } from "@/lib/plan-types";
 import { LanguageToggle, useLang, weekdayIndex } from "@/lib/i18n";
-import { CollabRequests, EditPlanButton, ShareButton, useMyUserId, useShares } from "@/components/PlanSharing";
+import { CollabRequests, EditPlanButton, EditPlanDialog, ShareButton, useMyUserId, useShares } from "@/components/PlanSharing";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const Route = createFileRoute("/_authenticated/planner")({
   head: () => ({
@@ -88,6 +89,7 @@ function PlannerPage() {
   const [planToDelete, setPlanToDelete] = useState<Plan | null>(null);
   const [confirmStatus, setConfirmStatus] = useState<{ plan: Plan; next: PlanStatus } | null>(null);
   const [calPlan, setCalPlan] = useState<Plan | null>(null);
+  const [editPlan, setEditPlan] = useState<Plan | null>(null);
 
   const filters = { from, to, status, text: text.trim() };
 
@@ -178,6 +180,7 @@ function PlannerPage() {
   }
 
   return (
+    <TooltipProvider>
     <main className="min-h-screen bg-background">
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
@@ -315,7 +318,18 @@ function PlannerPage() {
                           : "font-medium"
                       }
                     >
-                      {plan.title}
+                      {plan.status === "OPEN" ? (
+                        <button
+                          type="button"
+                          className="text-left underline-offset-4 hover:underline"
+                          onClick={() => setEditPlan(plan)}
+                          aria-label={`${t("sh.edit")} ${plan.title}`}
+                        >
+                          {plan.title}
+                        </button>
+                      ) : (
+                        plan.title
+                      )}
                       {sharedIds.has(plan.id) && (
                         <span className="ml-2 rounded-full bg-secondary px-2 py-0.5 align-middle text-xs font-normal text-secondary-foreground">
                           {t("sh.shared")}
@@ -441,6 +455,16 @@ function PlannerPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {editPlan && (
+        <EditPlanDialog
+          plan={editPlan}
+          open={!!editPlan}
+          onOpenChange={(open) => !open && setEditPlan(null)}
+          onSaved={refresh}
+        />
+      )}
     </main>
+    </TooltipProvider>
   );
 }
