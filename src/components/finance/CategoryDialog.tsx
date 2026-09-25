@@ -13,6 +13,8 @@ import { currentUserId, monthLabel, shiftYM, type TxKind, type YM } from "@/lib/
 interface Props {
   open: boolean;
   onOpenChange: (o: boolean) => void;
+  kind: TxKind;
+  categories: { id: string; name: string; kind: TxKind }[];
   ym: YM;
   monthName: string;
   onSaved: () => void;
@@ -20,11 +22,10 @@ interface Props {
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-export function CategoryDialog({ open, onOpenChange, onSaved }: Props) {
+export function CategoryDialog({ open, onOpenChange, kind, categories, onSaved }: Props) {
   const { ft } = useFT();
   const { lang } = useLang();
   const [name, setName] = useState("");
-  const [kind, setKind] = useState<TxKind>("EXPENSE");
   const [planned, setPlanned] = useState("");
   const [planYm, setPlanYm] = useState<YM>(() => shiftYM({ year: new Date().getFullYear(), month: new Date().getMonth() + 1 }, 1));
   const [saving, setSaving] = useState(false);
@@ -36,7 +37,6 @@ export function CategoryDialog({ open, onOpenChange, onSaved }: Props) {
   useEffect(() => {
     if (open) {
       setName("");
-      setKind("EXPENSE");
       setPlanned("");
       // Default to planning the next month (e.g. in September plan October)
       setPlanYm(shiftYM({ year: new Date().getFullYear(), month: new Date().getMonth() + 1 }, 1));
@@ -48,17 +48,25 @@ export function CategoryDialog({ open, onOpenChange, onSaved }: Props) {
     setSaving(true);
     try {
       const user_id = await currentUserId();
-      const { data, error } = await supabase
-        .from("categories")
-        .insert({ user_id, name: name.trim(), kind })
-        .select()
-        .single();
-      if (error) throw error;
+      const existing = categories.find((c) => c.kind === kind && c.name.trim().toLowerCase() === name.trim().toLowerCase());
+      let categoryId = existing?.id;
+      if (!categoryId) {
+        const { data, error } = await supabase
+          .from("categories")
+          .insert({ user_id, name: name.trim(), kind })
+          .select()
+          .single();
+        if (error) throw error;
+        categoryId = data.id;
+      }
       const amount = Number(planned);
-      if (kind === "EXPENSE" && amount > 0) {
+      if (amount > 0) {
         const { error: be } = await supabase
           .from("budgets")
-          .insert({ user_id, category_id: data.id, year: planYm.year, month: planYm.month, amount });
+          .upsert(
+            { user_id, category_id: categoryId, year: planYm.year, month: planYm.month, amount },
+            { onConflict: "category_id,year,month" },
+          );
         if (be) throw be;
       }
       toast.success(ft("f.saved"));
@@ -75,21 +83,19 @@ export function CategoryDialog({ open, onOpenChange, onSaved }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{ft("f.addCat")}</DialogTitle>
+          <DialogTitle>{kind === "INCOME" ? ft("f.addIncome") : ft("f.addExpense")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-2">
-            {(["EXPENSE", "INCOME"] as const).map((k) => (
-              <Button key={k} type="button" variant={kind === k ? "default" : "outline"} onClick={() => setKind(k)}>
-                {k === "EXPENSE" ? ft("f.expenses") : ft("f.income")}
-              </Button>
-            ))}
-          </div>
           <div className="space-y-1.5">
             <Label htmlFor="cat-name">{ft("f.catName")}</Label>
-            <Input id="cat-name" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input id="cat-name" list="cat-options" autoComplete="off" placeholder={ft("f.catHint")} value={name} onChange={(e) => setName(e.target.value)} />
+            <datalist id="cat-options">
+              {categories.filter((c) => c.kind === kind).map((c) => (
+                <option key={c.id} value={c.name} />
+              ))}
+            </datalist>
           </div>
-          {kind === "EXPENSE" && (
+          {(
             <>
               <div className="space-y-1.5">
                 <Label>{ft("f.planMonth")}</Label>
