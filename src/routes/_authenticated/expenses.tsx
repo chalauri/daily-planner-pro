@@ -195,7 +195,7 @@ function ExpensesPage() {
       [ft("f.title"), mName, currency],
       [ft("f.income"), income.toFixed(2)],
       [ft("f.expenses"), expense.toFixed(2)],
-      [ft("f.savings"), (income - expense).toFixed(2)],
+      [ft("f.savings"), (income - plannedTotal).toFixed(2)],
       [],
       [ft("f.summary")],
       ...summaryTable(),
@@ -221,7 +221,7 @@ function ExpensesPage() {
       th,td{border:1px solid #ccc;padding:6px 8px;text-align:left;font-size:12px}th{background:#f3f3f3}.over td{background:#fde2e2;color:#9b1c1c}
       .kpi{display:flex;gap:24px;margin:12px 0}.kpi div{border:1px solid #ccc;padding:8px 12px;border-radius:6px}</style></head><body>
       <h1>${esc(ft("f.title"))} — ${esc(mName)}</h1>
-      <div class="kpi"><div>${esc(ft("f.income"))}: <b>${esc(fmt(income))}</b></div><div>${esc(ft("f.expenses"))}: <b>${esc(fmt(expense))}</b></div><div>${esc(ft("f.savings"))}: <b>${esc(fmt(income - expense))}</b></div></div>
+      <div class="kpi"><div>${esc(ft("f.income"))}: <b>${esc(fmt(income))}</b></div><div>${esc(ft("f.expenses"))}: <b>${esc(fmt(expense))}</b></div><div>${esc(ft("f.savings"))}: <b>${esc(fmt(income - plannedTotal))}</b></div></div>
       <h2>${esc(ft("f.summary"))}</h2>${table(summaryTable(), (r) => r[4] === ft("f.over"))}
       <h2>${esc(ft("f.tab.tx"))}</h2>${table([
         [ft("f.date"), ft("f.type"), ft("f.category"), ft("f.amount"), ft("f.note")],
@@ -317,7 +317,7 @@ function ExpensesPage() {
           {[
             { label: ft("f.income"), value: fmt(income), tone: "text-success" },
             { label: ft("f.expenses"), value: fmt(expense), tone: "text-destructive" },
-            { label: ft("f.savings"), value: fmt(income - expense), tone: income - expense >= 0 ? "text-primary" : "text-destructive" },
+            { label: ft("f.savings"), value: fmt(income - plannedTotal), tone: income - plannedTotal >= 0 ? "text-primary" : "text-destructive" },
             { label: ft("f.planned"), value: fmt(plannedTotal), tone: "text-foreground" },
           ].map((k) => (
             <div key={k.label} className="surface-card px-4 py-3">
