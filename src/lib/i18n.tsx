@@ -276,6 +276,9 @@ export function LanguageToggle() {
 
 /** Weekday index (0 = Sunday) from a yyyy-MM-dd string, timezone-safe. */
 export function weekdayIndex(iso: string): number {
-  const [y, m, d] = iso.split("-").map(Number);
-  return new Date(y, (m ?? 1) - 1, d ?? 1).getDay();
+  const parts = iso.split("-");
+  const y = Number(parts[0] ?? "1970");
+  const m = Number(parts[1] ?? "1");
+  const d = Number(parts[2] ?? "1");
+  return new Date(y, m - 1, d).getDay();
 }
