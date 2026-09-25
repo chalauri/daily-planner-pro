@@ -56,6 +56,11 @@ function AuthPage() {
           options: { emailRedirectTo: `${window.location.origin}/planner` },
         });
         if (error) throw error;
+        if (data.user && (data.user.identities?.length ?? 0) === 0) {
+          toast.error(t("auth.emailExists"));
+          setMode("signin");
+          return;
+        }
         if (!data.session) {
           setConfirmSent(true);
           return;
@@ -144,6 +149,33 @@ function AuthPage() {
                 ? t("auth.signup.title")
                 : t("sign.in")}
           </Button>
+          {mode === "signin" && (
+            <button
+              type="button"
+              className="w-full text-center text-sm font-medium text-primary underline-offset-4 hover:underline"
+              disabled={loading}
+              onClick={async () => {
+                if (!email) {
+                  toast.error(t("auth.email"));
+                  return;
+                }
+                setLoading(true);
+                try {
+                  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}/reset-password`,
+                  });
+                  if (error) throw error;
+                  toast.success(t("auth.resetSent", { email }));
+                } catch (error) {
+                  toast.error(error instanceof Error ? error.message : t("auth.error"));
+                } finally {
+                  setLoading(false);
+                }
+              }}
+            >
+              {t("auth.forgot")}
+            </button>
+          )}
         </form>
 
         <p className="mt-4 text-center text-sm text-muted-foreground">
