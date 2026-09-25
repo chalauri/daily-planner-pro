@@ -38,7 +38,7 @@ export function PlanCalendar({
     month: "long",
     year: "numeric",
   }).format(month);
-  const weekdays = [1, 2, 3, 4, 5, 6, 0];
+  const weekdays = [1, 2, 3, 4, 5, 6, 0] as const;
 
   return (
     <div className="p-4">
