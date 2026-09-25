@@ -32,6 +32,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { StatusPill } from "@/components/StatusPill";
 import { PlanDialog } from "@/components/PlanDialog";
 import { PlanCalendar } from "@/components/PlanCalendar";
@@ -79,6 +86,7 @@ function PlannerPage() {
   }
   const [planToDelete, setPlanToDelete] = useState<Plan | null>(null);
   const [confirmStatus, setConfirmStatus] = useState<{ plan: Plan; next: PlanStatus } | null>(null);
+  const [calPlan, setCalPlan] = useState<Plan | null>(null);
 
   const filters = { from, to, status, text: text.trim() };
 
@@ -253,6 +261,7 @@ function PlannerPage() {
               onMonthChange={showMonth}
               plans={plans}
               onDayClick={(d) => setAddDate(d)}
+              onPlanClick={(p) => setCalPlan(p)}
             />
           </section>
         ) : (
@@ -342,6 +351,30 @@ function PlannerPage() {
         </section>
         )}
       </div>
+
+      <Dialog open={!!calPlan} onOpenChange={(open) => !open && setCalPlan(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{calPlan?.title ?? t("cal.planTitle")}</DialogTitle>
+            <DialogDescription>{t("cal.planBody")}</DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-2">
+            {(["OPEN", "DONE", "NOT_DONE"] as const).map((s) => (
+              <Button
+                key={s}
+                variant={calPlan?.status === s ? "default" : "outline"}
+                className="justify-start"
+                onClick={() => {
+                  if (calPlan) requestStatus(calPlan, s);
+                  setCalPlan(null);
+                }}
+              >
+                {t(`status.${s}`)}
+              </Button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={!!planToDelete} onOpenChange={(open) => !open && setPlanToDelete(null)}>
         <AlertDialogContent>
