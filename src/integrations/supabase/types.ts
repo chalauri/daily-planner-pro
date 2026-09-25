@@ -41,6 +41,50 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_shares: {
+        Row: {
+          created_at: string
+          id: string
+          invitee_email: string
+          invitee_id: string
+          owner_email: string
+          owner_id: string
+          plan_id: string
+          status: Database["public"]["Enums"]["share_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invitee_email: string
+          invitee_id: string
+          owner_email: string
+          owner_id: string
+          plan_id: string
+          status?: Database["public"]["Enums"]["share_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invitee_email?: string
+          invitee_id?: string
+          owner_email?: string
+          owner_id?: string
+          plan_id?: string
+          status?: Database["public"]["Enums"]["share_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_shares_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plans: {
         Row: {
           calendar_event_id: string | null
@@ -88,11 +132,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      invite_to_plan: {
+        Args: { _email: string; _plan_id: string }
+        Returns: string
+      }
+      is_plan_collaborator: {
+        Args: { _plan_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_plan_invitee: {
+        Args: { _plan_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       plan_recurrence: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY"
       plan_status: "OPEN" | "DONE" | "NOT_DONE"
+      share_status: "PENDING" | "ACCEPTED" | "DECLINED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -222,6 +278,7 @@ export const Constants = {
     Enums: {
       plan_recurrence: ["NONE", "DAILY", "WEEKLY", "MONTHLY"],
       plan_status: ["OPEN", "DONE", "NOT_DONE"],
+      share_status: ["PENDING", "ACCEPTED", "DECLINED"],
     },
   },
 } as const
