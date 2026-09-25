@@ -14,3 +14,7 @@
 - [x] Bilingual UI: English + Georgian with language toggle
 - [x] Hide element with ID `lovable-badge` via global CSS
 - [ ] Reminder email time changed from 23:55 to 21:30 CET (job still to build — blocked on sending domain)
+
+## Expenses
+- [x] Expenses tab: categories, budgets per month, transactions (notes, receipts, monthly repeat), currency default + per-month override (GEL/USD/EUR/PLN)
+- [x] In-app budget alerts (80% / over), month summary, charts, CSV + PDF (print) export, Details per category
