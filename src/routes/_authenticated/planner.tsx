@@ -50,6 +50,7 @@ import { LanguageToggle, useLang, weekdayIndex } from "@/lib/i18n";
 import { CollabRequests, EditPlanButton, EditPlanDialog, ShareButton, useMyUserId, useShares } from "@/components/PlanSharing";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppTabs } from "@/components/AppTabs";
+import { HelpDialog } from "@/components/HelpDialog";
 
 export const Route = createFileRoute("/_authenticated/planner")({
   head: () => ({
@@ -192,6 +193,7 @@ function PlannerPage() {
           </div>
           <div className="flex items-center gap-2">
             <CollabRequests onChanged={refresh} />
+            <HelpDialog />
             <LanguageToggle />
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="h-4 w-4" />
