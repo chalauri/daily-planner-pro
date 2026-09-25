@@ -53,9 +53,9 @@ import { AppTabs } from "@/components/AppTabs";
 export const Route = createFileRoute("/_authenticated/planner")({
   head: () => ({
     meta: [
-      { title: "Your plans — Dayplan" },
+      { title: "Your plans — Personal planner" },
       { name: "description", content: "Today's plans, filters and live statistics." },
-      { property: "og:title", content: "Your plans — Dayplan" },
+      { property: "og:title", content: "Your plans — Personal planner" },
       { property: "og:description", content: "Today's plans, filters and live statistics." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -186,7 +186,7 @@ function PlannerPage() {
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4">
           <div className="flex items-center gap-4">
-            <span className="font-display text-xl font-semibold">Dayplan</span>
+            <span className="font-display text-xl font-semibold">{t("app.name")}</span>
             <AppTabs />
           </div>
           <div className="flex items-center gap-2">

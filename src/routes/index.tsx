@@ -6,13 +6,13 @@ import { LanguageToggle, useLang } from "@/lib/i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Dayplan — plan your day, finish your day" },
+      { title: "Personal planner — plan your day, finish your day" },
       {
         name: "description",
         content:
           "A simple daily planner: add plans, mark them done or not done, filter by date, status or text, and see live statistics.",
       },
-      { property: "og:title", content: "Dayplan — plan your day, finish your day" },
+      { property: "og:title", content: "Personal planner — plan your day, finish your day" },
       {
         property: "og:description",
         content: "A simple daily planner with live statistics and an evening reminder email.",
@@ -35,7 +35,7 @@ function Landing() {
   return (
     <main className="min-h-screen bg-background">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
-        <span className="font-display text-xl font-semibold">Dayplan</span>
+        <span className="font-display text-xl font-semibold">{t("app.name")}</span>
         <div className="flex items-center gap-2">
           <LanguageToggle />
           <Button asChild variant="ghost">

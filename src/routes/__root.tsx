@@ -80,12 +80,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Dayplan — a calm daily planner" },
+      { title: "Personal planner — a calm daily planner" },
       {
         name: "description",
         content: "Plan your day, track what got done, and see your progress at a glance.",
       },
-      { property: "og:title", content: "Dayplan — a calm daily planner" },
+      { property: "og:title", content: "Personal planner — a calm daily planner" },
       {
         property: "og:description",
         content: "Plan your day, track what got done, and see your progress at a glance.",

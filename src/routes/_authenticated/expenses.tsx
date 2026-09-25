@@ -47,9 +47,9 @@ import {
 export const Route = createFileRoute("/_authenticated/expenses")({
   head: () => ({
     meta: [
-      { title: "Expenses — Dayplan" },
+      { title: "Expenses — Personal planner" },
       { name: "description", content: "Track income and expenses, plan monthly budgets and see reports." },
-      { property: "og:title", content: "Expenses — Dayplan" },
+      { property: "og:title", content: "Expenses — Personal planner" },
       { property: "og:description", content: "Track income and expenses, plan monthly budgets and see reports." },
     ],
   }),
@@ -246,7 +246,7 @@ function ExpensesPage() {
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4">
           <div className="flex items-center gap-4">
-            <span className="font-display text-xl font-semibold">Dayplan</span>
+            <span className="font-display text-xl font-semibold">{t("app.name")}</span>
             <AppTabs />
           </div>
           <div className="flex items-center gap-2">
