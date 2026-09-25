@@ -41,6 +41,125 @@ export type Database = {
         }
         Relationships: []
       }
+      budgets: {
+        Row: {
+          amount: number
+          category_id: string
+          created_at: string
+          id: string
+          month: number
+          updated_at: string
+          user_id: string
+          year: number
+        }
+        Insert: {
+          amount?: number
+          category_id: string
+          created_at?: string
+          id?: string
+          month: number
+          updated_at?: string
+          user_id: string
+          year: number
+        }
+        Update: {
+          amount?: number
+          category_id?: string
+          created_at?: string
+          id?: string
+          month?: number
+          updated_at?: string
+          user_id?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budgets_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["tx_kind"]
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["tx_kind"]
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["tx_kind"]
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      finance_settings: {
+        Row: {
+          created_at: string
+          currency: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      month_settings: {
+        Row: {
+          created_at: string
+          currency: string
+          id: string
+          month: number
+          updated_at: string
+          user_id: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          currency: string
+          id?: string
+          month: number
+          updated_at?: string
+          user_id: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          id?: string
+          month?: number
+          updated_at?: string
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
       plan_shares: {
         Row: {
           created_at: string
@@ -127,6 +246,59 @@ export type Database = {
         }
         Relationships: []
       }
+      transactions: {
+        Row: {
+          amount: number
+          category_id: string | null
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["tx_kind"]
+          note: string | null
+          receipt_path: string | null
+          recurrence: string
+          series_id: string | null
+          tx_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["tx_kind"]
+          note?: string | null
+          receipt_path?: string | null
+          recurrence?: string
+          series_id?: string | null
+          tx_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["tx_kind"]
+          note?: string | null
+          receipt_path?: string | null
+          recurrence?: string
+          series_id?: string | null
+          tx_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -149,6 +321,7 @@ export type Database = {
       plan_recurrence: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY"
       plan_status: "OPEN" | "DONE" | "NOT_DONE"
       share_status: "PENDING" | "ACCEPTED" | "DECLINED"
+      tx_kind: "INCOME" | "EXPENSE"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -279,6 +452,7 @@ export const Constants = {
       plan_recurrence: ["NONE", "DAILY", "WEEKLY", "MONTHLY"],
       plan_status: ["OPEN", "DONE", "NOT_DONE"],
       share_status: ["PENDING", "ACCEPTED", "DECLINED"],
+      tx_kind: ["INCOME", "EXPENSE"],
     },
   },
 } as const
