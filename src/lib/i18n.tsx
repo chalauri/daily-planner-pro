@@ -11,13 +11,34 @@ const en = {
   "delete": "Delete",
   "confirm.yes": "Yes, continue",
 
-  "landing.badge": "Daily planner",
+  "landing.badge": "Plans & money, in one place",
   "landing.title1": "Plan your day.",
-  "landing.title2": "Finish your day.",
+  "landing.title2": "See where the month went.",
   "landing.sub":
-    "A quiet place for the handful of things that actually matter today — with honest numbers on how it went.",
+    "Daily plans on one side — income, budgets and what you actually spent on the other. Finish each day knowing exactly how both went.",
   "landing.cta": "Create your account",
   "landing.cta2": "I already have one",
+  "landing.note": "English & Georgian · email confirmation · your plans stay private by default",
+  "landing.mock.today": "Today",
+  "landing.mock.p1": "Morning run",
+  "landing.mock.p2": "Read 20 pages",
+  "landing.mock.p3": "Call the dentist",
+  "landing.mock.open": "open",
+  "landing.mock.done": "done",
+  "landing.mock.notdone": "not done",
+  "landing.mock.c1": "Groceries",
+  "landing.mock.c2": "Rent",
+  "landing.mock.c3": "Transport",
+  "landing.mock.spent": "Spent against plan",
+  "landing.mock.over": "Over budget",
+  "landing.mock.note":
+    "Illustration only — your own categories, amounts and currency sit here.",
+  "landing.section.plans": "Plans",
+  "landing.section.plans.sub":
+    "The handful of things that actually matter today, and honest numbers on how they went.",
+  "landing.section.money": "Money",
+  "landing.section.money.sub":
+    "A plan for the month before it starts, and a clear view of what it really costs.",
   "landing.f1.title": "Today, front and center",
   "landing.f1.text": "You land on today's plans. One click marks a plan done or not done.",
   "landing.f2.title": "Statistics that follow your filters",
@@ -25,6 +46,33 @@ const en = {
   "landing.f3.title": "Evening reminder",
   "landing.f3.text":
     "Every evening at 21:30 we email you the plans you left open, so nothing stays unresolved.",
+  "landing.m1.title": "Budgets per category",
+  "landing.m1.text":
+    "Set a planned amount for each income source and expense category, month by month. Next month is the default, and last month's plan copies over in one click.",
+  "landing.m2.title": "Spending against plan, live",
+  "landing.m2.text":
+    "Record what you actually spent and watch each budget fill up. Close to the limit or past it, the app flags it.",
+  "landing.m3.title": "Reports, receipts and exports",
+  "landing.m3.text":
+    "Charts over time, planned vs actual per category, notes and receipts on entries, plus CSV or PDF export for any month.",
+  "landing.also.title": "Also inside",
+  "landing.also.1": "Recurring plans",
+  "landing.also.2": "Share a plan with family",
+  "landing.also.3": "Table and calendar views",
+  "landing.also.4": "GEL · USD · EUR · PLN",
+  "landing.how.title": "How it works",
+  "landing.how.s1.title": "Create an account",
+  "landing.how.s1.text": "Confirm your email, then pick English or Georgian — the whole app follows.",
+  "landing.how.s2.title": "Set the month up",
+  "landing.how.s2.text":
+    "Add income by source and a planned amount per expense category. You're always one month ahead.",
+  "landing.how.s3.title": "Run the day",
+  "landing.how.s3.text":
+    "Tick plans off as you go, record spending, and get an evening email with whatever is still open.",
+  "landing.cta3.title": "Start with today",
+  "landing.cta3.sub":
+    "Confirm your email and you're in — plans and money, in one quiet place.",
+  "landing.footer": "Personal planner — plans and money, in one place.",
 
   "auth.signup.title": "Create account",
   "auth.signin.title": "Welcome back",
@@ -190,13 +238,34 @@ const ka: Record<TKey, string> = {
   "delete": "წაშლა",
   "confirm.yes": "დიახ, გავაგრძელო",
 
-  "landing.badge": "ყოველდღიური დამგეგმავი",
+  "landing.badge": "გეგმები და ფული — ერთ სივრცეში",
   "landing.title1": "დაგეგმე შენი დღე.",
-  "landing.title2": "დაასრულე შენი დღე.",
+  "landing.title2": "ნახე, რაში წავიდა თვე.",
   "landing.sub":
-    "მშვიდი ადგილი იმ რამდენიმე საქმისთვის, რაც დღეს მართლაც მნიშვნელოვანია — პატიოსანი რიცხვებით, თუ როგორ წარიმართა ყველაფერი.",
+    "ერთ მხარეს — დღიური გეგმები, მეორე მხარეს — შემოსავლები, ბიუჯეტები და ფაქტობრივად დახარჯული თანხები. დღეს ისე დაასრულებ, ზუსტად იცოდი, ორივედ რა მოხდა.",
   "landing.cta": "შექმენი ანგარიში",
   "landing.cta2": "უკვე მაქვს ანგარიში",
+  "landing.note": "ქართული და ინგლისური · ელფოსტის დადასტურება · გეგმები ნაგულისხმევად პირადია",
+  "landing.mock.today": "დღეს",
+  "landing.mock.p1": "დილით სირბილი",
+  "landing.mock.p2": "20 გვერდის წაკითხვა",
+  "landing.mock.p3": "ექიმისთვის დარეკვა",
+  "landing.mock.open": "ღია",
+  "landing.mock.done": "შესრულებულია",
+  "landing.mock.notdone": "შეუსრულებელი",
+  "landing.mock.c1": "სურსათი",
+  "landing.mock.c2": "ქირაო",
+  "landing.mock.c3": "ტრანსპორტი",
+  "landing.mock.spent": "დახარჯულია გეგმასთან",
+  "landing.mock.over": "ბიუჯეტს სცდება",
+  "landing.mock.note":
+    "ეს მხოლოდ მაგალითია — აქ თქვენი კატეგორიები, თანხები და ვალუტა იქნება.",
+  "landing.section.plans": "გეგმები",
+  "landing.section.plans.sub":
+    "ის რამდენიმე საქმე, რაც დღეს მართლაც მნიშვნელოვანია — და პატიოსანი რიცხვები, თუ როგორ წარიმართა.",
+  "landing.section.money": "ფული",
+  "landing.section.money.sub":
+    "გეგმა თვეზე — ჯერ კიდევ მანამ, სანამ ის დაიწყება, და ზუსტი სურათი იმისა, თუ რაში დაიხარჯა.",
   "landing.f1.title": "დღეს — წინა პლანზე",
   "landing.f1.text":
     "გახსნისას უშუალოდ დღევანდელ გეგმებზე აღმოჩნდებით. ერთი დაჭერით მოინიშნება გეგმა შესრულებულად ან შეუსრულებლად.",
@@ -206,6 +275,34 @@ const ka: Record<TKey, string> = {
   "landing.f3.title": "საღამოს შეხსენება",
   "landing.f3.text":
     "ყოველ საღამოს, 21:30 საათზე, ელფოსტით გაგზავნით გეგმებს, რომლებიც ღიად დარჩა, რათა არაფერი დარჩეს მოუგვარებელი.",
+  "landing.m1.title": "ბიუჯეტი კატეგორიის მიხედვით",
+  "landing.m1.text":
+    "ყოველი შემოსავლის წყაროსა და ხარჯის კატეგორიისთვის დააფიქსირე დაგეგმილი თანხა თვე-თვე. ნაგულისხმევად შემდეგი თვეა არჩეული, წინა თვის გეგმა კი ერთი დაჭერით გადადის.",
+  "landing.m2.title": "ხარჯი გეგმასთან შედარებით, რეალურ დროში",
+  "landing.m2.text":
+    "ჩაიწერე ფაქტობრივი ხარჯი და ნახე, როგორ ივსება თითოეული ბიუჯეტი. ზღვარს რომ მიუახლოვდები ან გადააჭარბებ, აპი გაფრთხილებს.",
+  "landing.m3.title": "ანგარიშგება, ჩეკები და ექსპორტი",
+  "landing.m3.text":
+    "დიაგრამები დროში, დაგეგმილი ფაქტობრივთან შედარებით თითოეულ კატეგორიაში, ჩანაწერების შენიშვნები და ჩეკები, ასევე CSV ან PDF ექსპორტი ნებისმიერი თვისთვის.",
+  "landing.also.title": "ასევე შიგნით",
+  "landing.also.1": "განმეორებადი გეგმები",
+  "landing.also.2": "გეგმის გაზიარება ოჯახისთვის",
+  "landing.also.3": "ცხრილისა და კალენდრის ხედი",
+  "landing.also.4": "GEL · USD · EUR · PLN",
+  "landing.how.title": "როგორ მუშაობს",
+  "landing.how.s1.title": "შექმენი ანგარიში",
+  "landing.how.s1.text":
+    "დაადასტურე ელფოსტა, შემდეგ აირჩიე ქართული ან ინგლისური — მთელი აპი მას მიჰყვება.",
+  "landing.how.s2.title": "მოამზადე თვე",
+  "landing.how.s2.text":
+    "დაამატე შემოსავალი წყაროების მიხედვით და დაგეგმილი თანხა თითოეული ხარჯის კატეგორიისთვის. ყოველთვის ერთი თვით წინ ხარ.",
+  "landing.how.s3.title": "იმოქმედე დღეში",
+  "landing.how.s3.text":
+    "ნიშნე გეგმების სტატუსი, ჩაიწერე ხარჯები, საღამოს კი ელფოსტით მიიღე შეხსენება იმის შესახებ, რაც ღია დარჩა.",
+  "landing.cta3.title": "დაიწყე დღესვე",
+  "landing.cta3.sub":
+    "დაადასტურე ელფოსტა და უკვე შიგნით ხარ — გეგმები და ფული ერთ მშვიდ სივრცეში.",
+  "landing.footer": "პირადი დამგეგმავი — გეგმები და ფული ერთ სივრცეში.",
 
   "auth.signup.title": "ანგარიშის შექმნა",
   "auth.signin.title": "კეთილი იყოს თქვენი დაბრუნება",

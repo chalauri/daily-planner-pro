@@ -18,3 +18,7 @@
 ## Expenses
 - [x] Expenses tab: categories, budgets per month, transactions (notes, receipts, monthly repeat), currency default + per-month override (GEL/USD/EUR/PLN)
 - [x] In-app budget alerts (80% / over), month summary, charts, CSV + PDF (print) export, Details per category
+
+## Landing screen (before login)
+- [x] Copy now covers both Plans and Money: hero, two preview cards (today plans / monthly budgets), six feature cards, "also inside" chips, how-it-works, closing sign-up panel, footer
+- [x] English + Georgian, month label localized, no page errors
