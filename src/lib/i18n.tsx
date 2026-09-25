@@ -1,3 +1,4 @@
+import type React from "react";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -470,7 +471,10 @@ interface LangContextValue {
   t: (key: TKey, params?: Record<string, string | number>) => string;
 }
 
-const LangContext = createContext<LangContextValue | null>(null);
+// Keep one context instance across hot reloads so an updated module never
+// loses track of the provider that is already mounted.
+const g = globalThis as unknown as { __planLangCtx?: React.Context<LangContextValue | null> };
+const LangContext = g.__planLangCtx ?? (g.__planLangCtx = createContext<LangContextValue | null>(null));
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
