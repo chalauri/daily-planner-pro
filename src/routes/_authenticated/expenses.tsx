@@ -83,6 +83,7 @@ function ExpensesPage() {
   const [details, setDetails] = useState<string | null>(null);
   const [delTx, setDelTx] = useState<Transaction | null>(null);
   const [delCat, setDelCat] = useState<string | null>(null);
+  const [editCat, setEditCat] = useState<null | { id: string; name: string; amount: number; kind: "INCOME" | "EXPENSE" }>(null);
 
   const categories = cats.data ?? [];
   const txs = month.data?.transactions ?? [];
@@ -380,16 +381,7 @@ function ExpensesPage() {
                         <tr key={r.category.id} className={`border-b border-border last:border-0 ${st === "over" ? "bg-destructive/5" : ""}`}>
                           <td className="px-4 py-3 font-medium">{r.category.name}</td>
                           <td className="px-4 py-3">
-                            <Input
-                              key={`${r.category.id}-${ym.year}-${ym.month}-${r.planned}`}
-                              type="number"
-                              min="0"
-                              step="0.01"
-                              className="h-8 w-28"
-                              aria-label={`${ft("f.planned")} ${r.category.name}`}
-                              defaultValue={r.planned || ""}
-                              onBlur={(e) => savePlanned(r.category.id, e.target.value, r.planned)}
-                            />
+                            {r.planned ? fmt(r.planned) : "—"}
                           </td>
                           <td className="px-4 py-3">{fmt(r.spent)}</td>
                           <td className={`px-4 py-3 ${r.planned - r.spent < 0 ? "font-semibold text-destructive" : ""}`}>{fmt(r.planned - r.spent)}</td>
@@ -419,6 +411,9 @@ function ExpensesPage() {
                                 }}
                               >
                                 <Plus className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${r.category.name}`} onClick={() => setEditCat({ id: r.category.id, name: r.category.name, amount: r.planned, kind: "EXPENSE" })}>
+                                <Pencil className="h-4 w-4" />
                               </Button>
                               <Button variant="ghost" size="icon" aria-label={`Delete ${r.category.name}`} onClick={() => setDelCat(r.category.id)}>
                                 <Trash2 className="h-4 w-4" />
@@ -452,6 +447,9 @@ function ExpensesPage() {
                         <td className="px-4 py-3">
                           <div className="flex justify-end gap-1">
                             <Button variant="outline" size="sm" onClick={() => setDetails(c.id)}>{ft("f.details")}</Button>
+                            <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${c.name}`} onClick={() => setEditCat({ id: c.id, name: c.name, amount: expected > 0 ? expected : total, kind: "INCOME" })}>
+                              <Pencil className="h-4 w-4" />
+                            </Button>
                             <Button variant="ghost" size="icon" aria-label={`Delete ${c.name}`} onClick={() => setDelCat(c.id)}>
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -549,6 +547,7 @@ function ExpensesPage() {
         onSaved={refresh}
       />
       <CategoryDialog open={catOpen !== null} kind={catOpen ?? "EXPENSE"} onOpenChange={(o) => !o && setCatOpen(null)} categories={categories} ym={ym} monthName={mName} onSaved={refresh} />
+      <CategoryDialog open={editCat !== null} kind={editCat?.kind ?? "EXPENSE"} edit={editCat} onOpenChange={(o) => !o && setEditCat(null)} categories={categories} ym={ym} monthName={mName} onSaved={refresh} />
 
       <Dialog open={details !== null} onOpenChange={(o) => !o && setDetails(null)}>
         <DialogContent className="max-w-2xl">
