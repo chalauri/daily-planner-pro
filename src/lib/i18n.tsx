@@ -1,7 +1,9 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 
-export type Lang = "en" | "ka";
+import { pl } from "./i18n-pl";
+
+export type Lang = "en" | "ka" | "pl";
 
 const en = {
   "app.name": "Personal planner",
@@ -18,7 +20,7 @@ const en = {
     "Daily plans on one side — income, budgets and what you actually spent on the other. Finish each day knowing exactly how both went.",
   "landing.cta": "Create your account",
   "landing.cta2": "I already have one",
-  "landing.note": "English & Georgian · email confirmation · your plans stay private by default",
+  "landing.note": "English, Georgian & Polish · email confirmation · your plans stay private by default",
   "landing.mock.today": "Today",
   "landing.mock.p1": "Morning run",
   "landing.mock.p2": "Read 20 pages",
@@ -62,7 +64,7 @@ const en = {
   "landing.also.4": "GEL · USD · EUR · PLN",
   "landing.how.title": "How it works",
   "landing.how.s1.title": "Create an account",
-  "landing.how.s1.text": "Confirm your email, then pick English or Georgian — the whole app follows.",
+  "landing.how.s1.text": "Confirm your email, then pick your language — the whole app follows.",
   "landing.how.s2.title": "Set the month up",
   "landing.how.s2.text":
     "Add income by source and a planned amount per expense category. You're always one month ahead.",
@@ -240,12 +242,12 @@ const ka: Record<TKey, string> = {
 
   "landing.badge": "გეგმები და ფული — ერთ სივრცეში",
   "landing.title1": "დაგეგმე შენი დღე.",
-  "landing.title2": "ნახე, რაში წავიდა თვე.",
+  "landing.title2": "დაგეგმე და აკონტროლე შენი ფინანსები.",
   "landing.sub":
     "ერთ მხარეს — დღიური გეგმები, მეორე მხარეს — შემოსავლები, ბიუჯეტები და ფაქტობრივად დახარჯული თანხები. დღეს ისე დაასრულებ, ზუსტად იცოდი, ორივედ რა მოხდა.",
   "landing.cta": "შექმენი ანგარიში",
   "landing.cta2": "უკვე მაქვს ანგარიში",
-  "landing.note": "ქართული და ინგლისური · ელფოსტის დადასტურება · გეგმები ნაგულისხმევად პირადია",
+  "landing.note": "ქართული, ინგლისური და პოლონური · ელფოსტის დადასტურება · გეგმები ნაგულისხმევად პირადია",
   "landing.mock.today": "დღეს",
   "landing.mock.p1": "დილით სირბილი",
   "landing.mock.p2": "20 გვერდის წაკითხვა",
@@ -292,7 +294,7 @@ const ka: Record<TKey, string> = {
   "landing.how.title": "როგორ მუშაობს",
   "landing.how.s1.title": "შექმენი ანგარიში",
   "landing.how.s1.text":
-    "დაადასტურე ელფოსტა, შემდეგ აირჩიე ქართული ან ინგლისური — მთელი აპი მას მიჰყვება.",
+    "დაადასტურე ელფოსტა, შემდეგ აირჩიე ენა — მთელი აპი მას მიჰყვება.",
   "landing.how.s2.title": "მოამზადე თვე",
   "landing.how.s2.text":
     "დაამატე შემოსავალი წყაროების მიხედვით და დაგეგმილი თანხა თითოეული ხარჯის კატეგორიისთვის. ყოველთვის ერთი თვით წინ ხარ.",
@@ -458,7 +460,7 @@ const ka: Record<TKey, string> = {
     "„ანგარიშები\" განყოფილება გვიჩვენებს გრაფიკებს დროში, დაგეგმილსა და რეალურს კატეგორიებით, აგრეთვე CSV/PDF ექსპორტს.",
 };
 
-const dictionaries: Record<Lang, Record<TKey, string>> = { en, ka };
+const dictionaries: Record<Lang, Record<TKey, string>> = { en, ka, pl };
 
 const STORAGE_KEY = "dayplan-lang";
 
@@ -475,7 +477,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (saved === "ka" || saved === "en") setLangState(saved);
+    if (saved === "ka" || saved === "en" || saved === "pl") setLangState(saved);
   }, []);
 
   const setLang = (l: Lang) => {
@@ -502,18 +504,29 @@ export function useLang(): LangContextValue {
   return ctx;
 }
 
+const LANG_LABELS: { code: Lang; label: string }[] = [
+  { code: "en", label: "EN" },
+  { code: "ka", label: "ქარ" },
+  { code: "pl", label: "PL" },
+];
+
 export function LanguageToggle() {
   const { lang, setLang } = useLang();
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      className="font-medium"
-      aria-label="Change language / ენის შეცვლა"
-      onClick={() => setLang(lang === "en" ? "ka" : "en")}
-    >
-      {lang === "en" ? "ქარ" : "EN"}
-    </Button>
+    <div className="flex items-center gap-0.5" role="group" aria-label="Language / ენა / Język">
+      {LANG_LABELS.map((l) => (
+        <Button
+          key={l.code}
+          variant={lang === l.code ? "secondary" : "ghost"}
+          size="sm"
+          className="h-8 px-2 font-medium"
+          aria-pressed={lang === l.code}
+          onClick={() => setLang(l.code)}
+        >
+          {l.label}
+        </Button>
+      ))}
+    </div>
   );
 }
 
@@ -530,5 +543,9 @@ const KA_MONTHS = ["იანვარი","თებერვალი","მა
 /** "October 2026" / "ოქტომბერი 2026" — Georgian names hardcoded since browsers often lack ka locale data. */
 export function formatMonthYear(year: number, month1: number, lang: string): string {
   if (lang === "ka") return `${KA_MONTHS[month1 - 1]} ${year}`;
+  if (lang === "pl") {
+    const m = new Date(year, month1 - 1, 1).toLocaleDateString("pl-PL", { month: "long" });
+    return `${m.charAt(0).toUpperCase()}${m.slice(1)} ${year}`;
+  }
   return new Date(year, month1 - 1, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" });
 }

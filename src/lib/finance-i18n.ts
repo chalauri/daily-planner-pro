@@ -1,4 +1,5 @@
 import { useLang } from "@/lib/i18n";
+import { plF } from "./finance-i18n-pl";
 
 const en = {
   "tab.plans": "Plans",
@@ -172,7 +173,7 @@ export type { FKey };
 
 export function useFT() {
   const { lang } = useLang();
-  const dict = lang === "ka" ? ka : en;
+  const dict = lang === "ka" ? ka : lang === "pl" ? plF : en;
   const ft = (key: FKey, params?: Record<string, string | number>) => {
     let text = dict[key] ?? en[key];
     if (params) for (const [k, v] of Object.entries(params)) text = text.replaceAll(`{${k}}`, String(v));

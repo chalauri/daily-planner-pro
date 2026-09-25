@@ -33,7 +33,7 @@ export function monthLabel(ym: YM, lang: string) {
 
 export function money(n: number, currency: string, lang: string) {
   try {
-    return new Intl.NumberFormat(lang === "ka" ? "ka-GE" : "en-US", {
+    return new Intl.NumberFormat(lang === "ka" ? "ka-GE" : lang === "pl" ? "pl-PL" : "en-US", {
       style: "currency",
       currency,
       maximumFractionDigits: 2,
