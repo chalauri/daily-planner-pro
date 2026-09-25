@@ -43,7 +43,6 @@ function defaultDate(ym: YM) {
 
 export function TransactionDialog({ open, onOpenChange, ym, categories, currency, editing, defaultCategoryId, onSaved }: Props) {
   const { ft, lang } = useFT();
-  const [kind, setKind] = useState<TxKind>("EXPENSE");
   const [categoryId, setCategoryId] = useState<string>(NONE);
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(defaultDate(ym));
@@ -56,14 +55,12 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
   useEffect(() => {
     if (!open) return;
     if (editing) {
-      setKind(editing.kind);
       setCategoryId(editing.category_id ?? NONE);
       setAmount(String(editing.amount));
       setDate(editing.tx_date);
       setNote(editing.note ?? "");
     } else {
       const cat = categories.find((c) => c.id === defaultCategoryId);
-      setKind(cat?.kind ?? "EXPENSE");
       setCategoryId(cat?.id ?? NONE);
       setAmount("");
       const d = defaultDate(ym);
@@ -75,7 +72,8 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
     setRepeat(false);
   }, [open, editing, ym, defaultCategoryId, categories]);
 
-  const cats = categories.filter((c) => c.kind === kind);
+  const kind: TxKind = "EXPENSE";
+  const cats = categories.filter((c) => c.kind === "EXPENSE");
 
   const dates = useMemo(() => {
     if (!repeat || !date || !until) return [date];
@@ -164,21 +162,6 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
           <DialogTitle>{editing ? ft("f.editTx") : ft("f.addTx")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-2">
-            {(["EXPENSE", "INCOME"] as const).map((k) => (
-              <Button
-                key={k}
-                type="button"
-                variant={kind === k ? "default" : "outline"}
-                onClick={() => {
-                  setKind(k);
-                  setCategoryId(NONE);
-                }}
-              >
-                {k === "EXPENSE" ? ft("f.expenses") : ft("f.income")}
-              </Button>
-            ))}
-          </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="tx-amount">{ft("f.amount")} ({currency})</Label>
