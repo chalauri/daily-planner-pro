@@ -48,6 +48,7 @@ import { computeStats, todayISO, type Plan, type PlanStatus } from "@/lib/plan-t
 import { LanguageToggle, useLang, weekdayIndex } from "@/lib/i18n";
 import { CollabRequests, EditPlanButton, EditPlanDialog, ShareButton, useMyUserId, useShares } from "@/components/PlanSharing";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AppTabs } from "@/components/AppTabs";
 
 export const Route = createFileRoute("/_authenticated/planner")({
   head: () => ({
@@ -184,7 +185,10 @@ function PlannerPage() {
     <main className="min-h-screen bg-background">
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <span className="font-display text-xl font-semibold">Dayplan</span>
+          <div className="flex items-center gap-4">
+            <span className="font-display text-xl font-semibold">Dayplan</span>
+            <AppTabs />
+          </div>
           <div className="flex items-center gap-2">
             <CollabRequests onChanged={refresh} />
             <LanguageToggle />
