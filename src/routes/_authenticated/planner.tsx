@@ -46,6 +46,7 @@ import { format, startOfMonth, endOfMonth } from "date-fns";
 import { PlanStatsBar } from "@/components/PlanStats";
 import { computeStats, todayISO, type Plan, type PlanStatus } from "@/lib/plan-types";
 import { LanguageToggle, useLang, weekdayIndex } from "@/lib/i18n";
+import { CollabRequests, EditPlanButton, ShareButton, useMyUserId, useShares } from "@/components/PlanSharing";
 
 export const Route = createFileRoute("/_authenticated/planner")({
   head: () => ({
@@ -90,7 +91,9 @@ function PlannerPage() {
 
   const filters = { from, to, status, text: text.trim() };
 
-  const { data: plans = [], isLoading } = useQuery({
+  const me = useMyUserId();
+  const { data: shares = [] } = useShares();
+  const { data: rawPlans = [], isLoading } = useQuery({
     queryKey: ["plans", filters],
     queryFn: async () => {
       let query = supabase
@@ -113,6 +116,16 @@ function PlannerPage() {
     },
   });
 
+  const plans = useMemo(() => {
+    const hidden = new Set(
+      shares.filter((sh) => sh.invitee_id === me && sh.status !== "ACCEPTED").map((sh) => sh.plan_id),
+    );
+    return rawPlans.filter((p) => !hidden.has(p.id));
+  }, [rawPlans, shares, me]);
+  const sharedIds = useMemo(
+    () => new Set(shares.filter((sh) => sh.status === "ACCEPTED").map((sh) => sh.plan_id)),
+    [shares],
+  );
   const stats = useMemo(() => computeStats(plans), [plans]);
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["plans"] });
 
@@ -170,6 +183,7 @@ function PlannerPage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <span className="font-display text-xl font-semibold">Dayplan</span>
           <div className="flex items-center gap-2">
+            <CollabRequests onChanged={refresh} />
             <LanguageToggle />
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="h-4 w-4" />
@@ -302,6 +316,11 @@ function PlannerPage() {
                       }
                     >
                       {plan.title}
+                      {sharedIds.has(plan.id) && (
+                        <span className="ml-2 rounded-full bg-secondary px-2 py-0.5 align-middle text-xs font-normal text-secondary-foreground">
+                          {t("sh.shared")}
+                        </span>
+                      )}
                     </p>
                     {plan.description && (
                       <p className="mt-0.5 text-sm text-muted-foreground">{plan.description}</p>
@@ -334,14 +353,20 @@ function PlannerPage() {
                         <X className="h-4 w-4" />
                         {t("status.NOT_DONE")}
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setPlanToDelete(plan)}
-                        aria-label={t("pl.aria.delete", { title: plan.title })}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <EditPlanButton plan={plan} onSaved={refresh} />
+                      {plan.user_id === me && (
+                        <>
+                          <ShareButton plan={plan} />
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setPlanToDelete(plan)}
+                            aria-label={t("pl.aria.delete", { title: plan.title })}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>
