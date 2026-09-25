@@ -90,7 +90,6 @@ function ExpensesPage() {
   const rows = useMemo(() => buildCategoryRows(categories, budgets, txs), [categories, budgets, txs]);
   const catName = (id: string | null) => categories.find((c) => c.id === id)?.name ?? ft("f.unplanned");
 
-  const income = txs.filter((x) => x.kind === "INCOME").reduce((s, x) => s + Number(x.amount), 0);
   const expense = txs.filter((x) => x.kind === "EXPENSE").reduce((s, x) => s + Number(x.amount), 0);
   const plannedTotal = rows.reduce((s, r) => s + r.planned, 0);
   const uncategorized = txs.filter((x) => x.kind === "EXPENSE" && !x.category_id).reduce((s, x) => s + Number(x.amount), 0);
@@ -102,6 +101,12 @@ function ExpensesPage() {
       total: txs.filter((x) => x.category_id === c.id).reduce((s, x) => s + Number(x.amount), 0),
       expected: Number(budgets.find((b) => b.category_id === c.id)?.amount ?? 0),
     }));
+  const categorizedIncomeIds = new Set(incomeRows.map((r) => r.c.id));
+  const income =
+    incomeRows.reduce((s, r) => s + (r.expected > 0 ? r.expected : r.total), 0) +
+    txs
+      .filter((x) => x.kind === "INCOME" && (!x.category_id || !categorizedIncomeIds.has(x.category_id)))
+      .reduce((s, x) => s + Number(x.amount), 0);
 
   async function signOut() {
     await queryClient.cancelQueries();
