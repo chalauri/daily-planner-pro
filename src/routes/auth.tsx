@@ -56,6 +56,11 @@ function AuthPage() {
           options: { emailRedirectTo: `${window.location.origin}/planner` },
         });
         if (error) throw error;
+        if (data.user && (data.user.identities?.length ?? 0) === 0) {
+          toast.error(t("auth.emailExists"));
+          setMode("signin");
+          return;
+        }
         if (!data.session) {
           setConfirmSent(true);
           return;
