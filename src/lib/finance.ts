@@ -1,3 +1,4 @@
+import { formatMonthYear } from "@/lib/i18n";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addMonths, format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,10 +28,7 @@ export function shiftYM(ym: YM, delta: number): YM {
 }
 
 export function monthLabel(ym: YM, lang: string) {
-  return new Date(ym.year, ym.month - 1, 1).toLocaleDateString(lang === "ka" ? "ka-GE" : "en-US", {
-    month: "long",
-    year: "numeric",
-  });
+  return formatMonthYear(ym.year, ym.month, lang);
 }
 
 export function money(n: number, currency: string, lang: string) {

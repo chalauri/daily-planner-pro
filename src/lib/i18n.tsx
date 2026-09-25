@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 export type Lang = "en" | "ka";
 
 const en = {
+  "app.name": "Personal planner",
   "sign.in": "Sign in",
   "sign.out": "Sign out",
   "cancel": "Cancel",
@@ -160,6 +161,7 @@ const en = {
 export type TKey = keyof typeof en;
 
 const ka: Record<TKey, string> = {
+  "app.name": "პირადი დამგეგმავი",
   "sign.in": "შესვლა",
   "sign.out": "გასვლა",
   "cancel": "გაუქმება",
@@ -381,4 +383,11 @@ export function weekdayIndex(iso: string): number {
   const m = Number(parts[1] ?? "1");
   const d = Number(parts[2] ?? "1");
   return new Date(y, m - 1, d).getDay();
+}
+
+const KA_MONTHS = ["იანვარი","თებერვალი","მარტი","აპრილი","მაისი","ივნისი","ივლისი","აგვისტო","სექტემბერი","ოქტომბერი","ნოემბერი","დეკემბერი"];
+/** "October 2026" / "ოქტომბერი 2026" — Georgian names hardcoded since browsers often lack ka locale data. */
+export function formatMonthYear(year: number, month1: number, lang: string): string {
+  if (lang === "ka") return `${KA_MONTHS[month1 - 1]} ${year}`;
+  return new Date(year, month1 - 1, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" });
 }

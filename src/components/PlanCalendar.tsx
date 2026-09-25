@@ -1,3 +1,4 @@
+import { formatMonthYear } from "@/lib/i18n";
 import { addMonths, endOfMonth, endOfWeek, format, startOfMonth, startOfWeek, addDays } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -36,10 +37,7 @@ export function PlanCalendar({
   for (const p of plans) byDate.set(p.plan_date, [...(byDate.get(p.plan_date) ?? []), p]);
 
   const today = todayISO();
-  const monthLabel = new Intl.DateTimeFormat(lang === "ka" ? "ka-GE" : "en-US", {
-    month: "long",
-    year: "numeric",
-  }).format(month);
+  const monthLabel = formatMonthYear(month.getFullYear(), month.getMonth() + 1, lang);
   const weekdays = [1, 2, 3, 4, 5, 6, 0] as const;
 
   return (

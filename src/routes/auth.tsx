@@ -18,10 +18,10 @@ export const Route = createFileRoute("/auth")({
   },
   head: () => ({
     meta: [
-      { title: "Sign in — Dayplan" },
-      { name: "description", content: "Sign in or create your Dayplan account." },
-      { property: "og:title", content: "Sign in — Dayplan" },
-      { property: "og:description", content: "Sign in or create your Dayplan account." },
+      { title: "Sign in — Personal planner" },
+      { name: "description", content: "Sign in or create your Personal planner account." },
+      { property: "og:title", content: "Sign in — Personal planner" },
+      { property: "og:description", content: "Sign in or create your Personal planner account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -106,9 +106,7 @@ function AuthPage() {
     <main className="flex min-h-screen items-center justify-center bg-background px-6 py-12">
       <div className="w-full max-w-sm">
         <div className="flex items-center justify-between">
-          <Link to="/" className="font-display text-xl font-semibold">
-            Dayplan
-          </Link>
+          <Link to="/" className="font-display text-xl font-semibold">{t("app.name")}</Link>
           <LanguageToggle />
         </div>
         <h1 className="mt-8 text-3xl">
