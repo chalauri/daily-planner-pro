@@ -67,13 +67,13 @@ export function ShareButton({ plan }: { plan: Plan }) {
       _email: email.trim(),
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     const map: Record<string, string> = {
       no_account: t("sh.noAccount"),
       self: t("sh.self"),
       not_owner: t("sh.notOwner"),
     };
-    if (data !== "ok") return toast.error(map[data as string] ?? String(data));
+    if (data !== "ok") { toast.error(map[data as string] ?? String(data)); return; }
     toast.success(t("sh.sent"));
     setEmail("");
     void qc.invalidateQueries({ queryKey: ["shares"] });
@@ -81,7 +81,7 @@ export function ShareButton({ plan }: { plan: Plan }) {
 
   async function remove(id: string) {
     const { error } = await supabase.from("plan_shares").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     void qc.invalidateQueries({ queryKey: ["shares"] });
   }
 
@@ -161,7 +161,7 @@ export function EditPlanButton({ plan, onSaved }: { plan: Plan; onSaved: () => v
       .from("plans")
       .update({ title: title.trim(), description: desc.trim() || null, plan_date: date })
       .eq("id", plan.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(t("ed.saved"));
     setOpen(false);
     onSaved();
@@ -233,7 +233,7 @@ export function CollabRequests({ onChanged }: { onChanged: () => void }) {
 
   async function respond(s: Share, status: ShareStatus) {
     const { error } = await supabase.from("plan_shares").update({ status }).eq("id", s.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(status === "ACCEPTED" ? t("sh.accepted") : t("sh.declined"));
     await qc.invalidateQueries({ queryKey: ["shares"] });
     onChanged();
