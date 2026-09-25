@@ -64,6 +64,7 @@ function PlannerPage() {
   const [to, setTo] = useState(todayISO());
   const [status, setStatus] = useState<StatusFilter>("ALL");
   const [text, setText] = useState("");
+  const [addDate, setAddDate] = useState<string | null>(null);
   const [view, setView] = useState<"table" | "calendar">("table");
   const [month, setMonth] = useState(() => startOfMonth(new Date()));
 
@@ -180,7 +181,12 @@ function PlannerPage() {
                 : t("pl.showingRange", { from: from || "…", to: to || "…" })}
             </p>
           </div>
-          <PlanDialog defaultDate={from || todayISO()} onCreated={refresh} />
+          <PlanDialog
+            defaultDate={from || todayISO()}
+            onCreated={refresh}
+            forcedDate={addDate}
+            onForcedClose={() => setAddDate(null)}
+          />
         </div>
 
         <section className="surface-card grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -246,11 +252,7 @@ function PlannerPage() {
               month={month}
               onMonthChange={showMonth}
               plans={plans}
-              onDayClick={(d) => {
-                setFrom(d);
-                setTo(d);
-                setView("table");
-              }}
+              onDayClick={(d) => setAddDate(d)}
             />
           </section>
         ) : (

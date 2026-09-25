@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -35,9 +35,25 @@ function buildDates(start: string, repeat: Repeat, until: string): string[] {
   return out;
 }
 
-export function PlanDialog({ defaultDate, onCreated }: { defaultDate: string; onCreated: () => void }) {
+export function PlanDialog({
+  defaultDate,
+  onCreated,
+  forcedDate = null,
+  onForcedClose,
+}: {
+  defaultDate: string;
+  onCreated: () => void;
+  forcedDate?: string | null;
+  onForcedClose?: () => void;
+}) {
   const { t } = useLang();
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (forcedDate) {
+      setDate(forcedDate);
+      setOpen(true);
+    }
+  }, [forcedDate]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(defaultDate || todayISO());
@@ -83,6 +99,7 @@ export function PlanDialog({ defaultDate, onCreated }: { defaultDate: string; on
     setTitle("");
     setDescription("");
     setOpen(false);
+    onForcedClose?.();
     onCreated();
   }
 
@@ -92,6 +109,7 @@ export function PlanDialog({ defaultDate, onCreated }: { defaultDate: string; on
       onOpenChange={(next) => {
         setOpen(next);
         if (next) setDate(defaultDate || todayISO());
+        if (!next) onForcedClose?.();
       }}
     >
       <DialogTrigger asChild>
