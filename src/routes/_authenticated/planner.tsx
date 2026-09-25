@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CalendarDays, Check, LogOut, Rows3, RotateCcw, Search, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -313,14 +314,23 @@ function PlannerPage() {
                 </TableRow>
               )}
               {plans.map((plan) => (
-                <TableRow key={plan.id} className={plan.status === "DONE" ? "opacity-70" : ""}>
+                <TableRow
+                  key={plan.id}
+                  className={
+                    plan.status === "NOT_DONE"
+                      ? "bg-danger-soft/60 hover:bg-danger-soft"
+                      : plan.status === "DONE"
+                        ? "bg-success-soft/40 hover:bg-success-soft/70"
+                        : ""
+                  }
+                >
                   <TableCell>
                     <p
-                      className={
-                        plan.status === "DONE"
-                          ? "font-medium line-through decoration-muted-foreground"
-                          : "font-medium"
-                      }
+                      className={cn(
+                        "font-medium",
+                        plan.status === "DONE" && "text-success",
+                        plan.status === "NOT_DONE" && "text-destructive",
+                      )}
                     >
                       {plan.status === "OPEN" ? (
                         <button

@@ -8,7 +8,7 @@ import { todayISO, type Plan, type PlanStatus } from "@/lib/plan-types";
 
 const chip: Record<PlanStatus, string> = {
   OPEN: "bg-warning-soft text-warning-foreground",
-  DONE: "bg-success-soft text-success line-through",
+  DONE: "bg-success-soft text-success",
   NOT_DONE: "bg-danger-soft text-destructive",
 };
 
