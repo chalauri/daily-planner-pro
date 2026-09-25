@@ -153,6 +153,8 @@ const en = {
   "ed.name": "Title",
   "ed.desc": "Description",
   "ed.date": "Date",
+  "pl.onlyOpenEdit": "Only open plans can be edited",
+  "pl.onlyOpenShare": "Only open plans can be shared",
 };
 
 export type TKey = keyof typeof en;
@@ -309,6 +311,8 @@ const ka: Record<TKey, string> = {
   "ed.name": "სათაური",
   "ed.desc": "აღწერა",
   "ed.date": "თარიღი",
+  "pl.onlyOpenEdit": "მხოლოდ ღია გეგმების რედაქტირებაა შესაძლებელი",
+  "pl.onlyOpenShare": "მხოლოდ ღია გეგმების გაზიარებაა შესაძლებელი",
 };
 
 const dictionaries: Record<Lang, Record<TKey, string>> = { en, ka };
