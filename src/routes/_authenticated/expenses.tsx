@@ -446,7 +446,6 @@ function ExpensesPage() {
                         <td className="px-4 py-3 text-success">{fmt(expected > 0 ? expected : total)}</td>
                         <td className="px-4 py-3">
                           <div className="flex justify-end gap-1">
-                            <Button variant="outline" size="sm" onClick={() => setDetails(c.id)}>{ft("f.details")}</Button>
                             <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${c.name}`} onClick={() => setEditCat({ id: c.id, name: c.name, amount: expected > 0 ? expected : total, kind: "INCOME" })}>
                               <Pencil className="h-4 w-4" />
                             </Button>
