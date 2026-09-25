@@ -213,6 +213,33 @@ export function EditPlanDialog({
           </form>
         </DialogContent>
       </Dialog>
+  );
+}
+
+export function EditPlanButton({ plan, onSaved }: { plan: Plan; onSaved: () => void }) {
+  const { t } = useLang();
+  const [open, setOpen] = useState(false);
+  const locked = plan.status !== "OPEN";
+
+  return (
+    <>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex">
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={locked}
+              onClick={() => setOpen(true)}
+              aria-label={`${t("sh.edit")} ${plan.title}`}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </span>
+        </TooltipTrigger>
+        {locked && <TooltipContent>{t("pl.onlyOpenEdit")}</TooltipContent>}
+      </Tooltip>
+      <EditPlanDialog plan={plan} open={open} onOpenChange={setOpen} onSaved={onSaved} />
     </>
   );
 }
