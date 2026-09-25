@@ -11,13 +11,34 @@ const en = {
   "delete": "Delete",
   "confirm.yes": "Yes, continue",
 
-  "landing.badge": "Daily planner",
+  "landing.badge": "Plans & money, in one place",
   "landing.title1": "Plan your day.",
-  "landing.title2": "Finish your day.",
+  "landing.title2": "See where the month went.",
   "landing.sub":
-    "A quiet place for the handful of things that actually matter today — with honest numbers on how it went.",
+    "Daily plans on one side — income, budgets and what you actually spent on the other. Finish each day knowing exactly how both went.",
   "landing.cta": "Create your account",
   "landing.cta2": "I already have one",
+  "landing.note": "English & Georgian · email confirmation · your plans stay private by default",
+  "landing.mock.today": "Today",
+  "landing.mock.p1": "Morning run",
+  "landing.mock.p2": "Read 20 pages",
+  "landing.mock.p3": "Call the dentist",
+  "landing.mock.open": "open",
+  "landing.mock.done": "done",
+  "landing.mock.notdone": "not done",
+  "landing.mock.c1": "Groceries",
+  "landing.mock.c2": "Rent",
+  "landing.mock.c3": "Transport",
+  "landing.mock.spent": "Spent against plan",
+  "landing.mock.over": "Over budget",
+  "landing.mock.note":
+    "Illustration only — your own categories, amounts and currency sit here.",
+  "landing.section.plans": "Plans",
+  "landing.section.plans.sub":
+    "The handful of things that actually matter today, and honest numbers on how they went.",
+  "landing.section.money": "Money",
+  "landing.section.money.sub":
+    "A plan for the month before it starts, and a clear view of what it really costs.",
   "landing.f1.title": "Today, front and center",
   "landing.f1.text": "You land on today's plans. One click marks a plan done or not done.",
   "landing.f2.title": "Statistics that follow your filters",
@@ -25,6 +46,33 @@ const en = {
   "landing.f3.title": "Evening reminder",
   "landing.f3.text":
     "Every evening at 21:30 we email you the plans you left open, so nothing stays unresolved.",
+  "landing.m1.title": "Budgets per category",
+  "landing.m1.text":
+    "Set a planned amount for each income source and expense category, month by month. Next month is the default, and last month's plan copies over in one click.",
+  "landing.m2.title": "Spending against plan, live",
+  "landing.m2.text":
+    "Record what you actually spent and watch each budget fill up. Close to the limit or past it, the app flags it.",
+  "landing.m3.title": "Reports, receipts and exports",
+  "landing.m3.text":
+    "Charts over time, planned vs actual per category, notes and receipts on entries, plus CSV or PDF export for any month.",
+  "landing.also.title": "Also inside",
+  "landing.also.1": "Recurring plans",
+  "landing.also.2": "Share a plan with family",
+  "landing.also.3": "Table and calendar views",
+  "landing.also.4": "GEL · USD · EUR · PLN",
+  "landing.how.title": "How it works",
+  "landing.how.s1.title": "Create an account",
+  "landing.how.s1.text": "Confirm your email, then pick English or Georgian — the whole app follows.",
+  "landing.how.s2.title": "Set the month up",
+  "landing.how.s2.text":
+    "Add income by source and a planned amount per expense category. You're always one month ahead.",
+  "landing.how.s3.title": "Run the day",
+  "landing.how.s3.text":
+    "Tick plans off as you go, record spending, and get an evening email with whatever is still open.",
+  "landing.cta3.title": "Start with today",
+  "landing.cta3.sub":
+    "Confirm your email and you're in — plans and money, in one quiet place.",
+  "landing.footer": "Personal planner — plans and money, in one place.",
 
   "auth.signup.title": "Create account",
   "auth.signin.title": "Welcome back",
