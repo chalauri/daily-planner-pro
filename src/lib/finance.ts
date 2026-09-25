@@ -90,6 +90,11 @@ export function useYearTrend(ym: YM) {
         .gte("tx_date", from)
         .lt("tx_date", to);
       if (error) throw error;
+      const { data: bud, error: bErr } = await supabase
+        .from("budgets")
+        .select("amount, year, month, categories!inner(kind)")
+        .eq("categories.kind", "INCOME");
+      if (bErr) throw bErr;
       const rows: { key: string; ym: YM; income: number; expense: number }[] = [];
       for (let i = 0; i < 12; i++) {
         const m = shiftYM(start, i);
@@ -100,6 +105,17 @@ export function useYearTrend(ym: YM) {
         if (!row) continue;
         if (r.kind === "INCOME") row.income += Number(r.amount);
         else row.expense += Number(r.amount);
+      }
+      // Income is entered as a single amount per income category (budget row);
+      // use it for months that have one, like the Income card does.
+      const planned = new Map<string, number>();
+      for (const b of bud ?? []) {
+        const k = `${b.year}-${String(b.month).padStart(2, "0")}`;
+        planned.set(k, (planned.get(k) ?? 0) + Number(b.amount));
+      }
+      for (const row of rows) {
+        const p = planned.get(row.key);
+        if (p && p > 0) row.income = p;
       }
       return rows;
     },
