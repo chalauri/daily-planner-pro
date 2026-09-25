@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Check, LogOut, RotateCcw, Search, Trash2, X } from "lucide-react";
+import { CalendarDays, Check, LogOut, Rows3, RotateCcw, Search, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { StatusPill } from "@/components/StatusPill";
 import { PlanDialog } from "@/components/PlanDialog";
+import { PlanCalendar } from "@/components/PlanCalendar";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 import { PlanStatsBar } from "@/components/PlanStats";
 import { computeStats, todayISO, type Plan, type PlanStatus } from "@/lib/plan-types";
 import { LanguageToggle, useLang, weekdayIndex } from "@/lib/i18n";
@@ -62,6 +64,18 @@ function PlannerPage() {
   const [to, setTo] = useState(todayISO());
   const [status, setStatus] = useState<StatusFilter>("ALL");
   const [text, setText] = useState("");
+  const [view, setView] = useState<"table" | "calendar">("table");
+  const [month, setMonth] = useState(() => startOfMonth(new Date()));
+
+  function showMonth(m: Date) {
+    setMonth(m);
+    setFrom(format(startOfMonth(m), "yyyy-MM-dd"));
+    setTo(format(endOfMonth(m), "yyyy-MM-dd"));
+  }
+  function switchView(v: "table" | "calendar") {
+    setView(v);
+    if (v === "calendar") showMonth(from ? startOfMonth(new Date(from + "T00:00:00")) : month);
+  }
   const [planToDelete, setPlanToDelete] = useState<Plan | null>(null);
   const [confirmStatus, setConfirmStatus] = useState<{ plan: Plan; next: PlanStatus } | null>(null);
 
@@ -215,6 +229,31 @@ function PlannerPage() {
 
         <PlanStatsBar stats={stats} />
 
+        <div className="inline-flex rounded-md border border-border bg-card p-1" role="tablist">
+          <Button size="sm" role="tab" aria-selected={view === "table"} variant={view === "table" ? "default" : "ghost"} onClick={() => switchView("table")}>
+            <Rows3 className="h-4 w-4" />
+            {t("view.table")}
+          </Button>
+          <Button size="sm" role="tab" aria-selected={view === "calendar"} variant={view === "calendar" ? "default" : "ghost"} onClick={() => switchView("calendar")}>
+            <CalendarDays className="h-4 w-4" />
+            {t("view.calendar")}
+          </Button>
+        </div>
+
+        {view === "calendar" ? (
+          <section className="surface-card overflow-hidden">
+            <PlanCalendar
+              month={month}
+              onMonthChange={showMonth}
+              plans={plans}
+              onDayClick={(d) => {
+                setFrom(d);
+                setTo(d);
+                setView("table");
+              }}
+            />
+          </section>
+        ) : (
         <section className="surface-card overflow-hidden">
           <Table>
             <TableHeader>
@@ -299,6 +338,7 @@ function PlannerPage() {
             </TableBody>
           </Table>
         </section>
+        )}
       </div>
 
       <AlertDialog open={!!planToDelete} onOpenChange={(open) => !open && setPlanToDelete(null)}>
