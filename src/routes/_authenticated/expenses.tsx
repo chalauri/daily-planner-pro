@@ -79,7 +79,7 @@ function ExpensesPage() {
   const [txOpen, setTxOpen] = useState(false);
   const [editing, setEditing] = useState<Transaction | null>(null);
   const [txDefaultCat, setTxDefaultCat] = useState<string | null>(null);
-  const [catOpen, setCatOpen] = useState(false);
+  const [catOpen, setCatOpen] = useState<null | "INCOME" | "EXPENSE">(null);
   const [details, setDetails] = useState<string | null>(null);
   const [delTx, setDelTx] = useState<Transaction | null>(null);
   const [delCat, setDelCat] = useState<string | null>(null);
@@ -97,7 +97,11 @@ function ExpensesPage() {
   const over = rows.filter((r) => r.planned > 0 && r.spent > r.planned);
   const incomeRows = categories
     .filter((c) => c.kind === "INCOME")
-    .map((c) => ({ c, total: txs.filter((x) => x.category_id === c.id).reduce((s, x) => s + Number(x.amount), 0) }));
+    .map((c) => ({
+      c,
+      total: txs.filter((x) => x.category_id === c.id).reduce((s, x) => s + Number(x.amount), 0),
+      expected: Number(budgets.find((b) => b.category_id === c.id)?.amount ?? 0),
+    }));
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -288,9 +292,13 @@ function ExpensesPage() {
                 </SelectContent>
               </Select>
             </div>
-            <Button variant="outline" onClick={() => setCatOpen(true)}>
+            <Button variant="outline" onClick={() => setCatOpen("INCOME")}>
               <Plus className="h-4 w-4" />
-              {ft("f.addCat")}
+              {ft("f.addIncome")}
+            </Button>
+            <Button variant="outline" onClick={() => setCatOpen("EXPENSE")}>
+              <Plus className="h-4 w-4" />
+              {ft("f.addExpense")}
             </Button>
             <Button
               onClick={() => {
@@ -424,10 +432,19 @@ function ExpensesPage() {
               <div className="surface-card overflow-x-auto">
                 <h3 className="px-4 pt-4 font-display text-lg font-semibold">{ft("f.incomeBySource")}</h3>
                 <table className="w-full text-sm">
+                    <thead>
+                    <tr className="border-b border-border text-left text-muted-foreground">
+                      <th className="px-4 py-2 font-medium">{ft("f.category")}</th>
+                      <th className="px-4 py-2 font-medium">{ft("f.expected")}</th>
+                      <th className="px-4 py-2 font-medium">{ft("f.received")}</th>
+                      <th />
+                    </tr>
+                  </thead>
                   <tbody>
-                    {incomeRows.map(({ c, total }) => (
+                    {incomeRows.map(({ c, total, expected }) => (
                       <tr key={c.id} className="border-b border-border last:border-0">
                         <td className="px-4 py-3 font-medium">{c.name}</td>
+                        <td className="px-4 py-3">{fmt(expected)}</td>
                         <td className="px-4 py-3 text-success">{fmt(total)}</td>
                         <td className="px-4 py-3">
                           <div className="flex justify-end gap-1">
@@ -528,7 +545,7 @@ function ExpensesPage() {
         defaultCategoryId={txDefaultCat}
         onSaved={refresh}
       />
-      <CategoryDialog open={catOpen} onOpenChange={setCatOpen} ym={ym} monthName={mName} onSaved={refresh} />
+      <CategoryDialog open={catOpen !== null} kind={catOpen ?? "EXPENSE"} onOpenChange={(o) => !o && setCatOpen(null)} categories={categories} ym={ym} monthName={mName} onSaved={refresh} />
 
       <Dialog open={details !== null} onOpenChange={(o) => !o && setDetails(null)}>
         <DialogContent className="max-w-2xl">
