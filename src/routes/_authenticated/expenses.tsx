@@ -558,7 +558,7 @@ function ExpensesPage() {
       <CategoryDialog open={editCat !== null} kind={editCat?.kind ?? "EXPENSE"} edit={editCat} onOpenChange={(o) => !o && setEditCat(null)} categories={categories} ym={ym} monthName={mName} onSaved={refresh} />
 
       <Dialog open={details !== null} onOpenChange={(o) => !o && setDetails(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {ft("f.txIn", { cat: catName(details) })} — <span className="capitalize">{mName}</span>
