@@ -24,6 +24,7 @@ import { HelpDialog } from "@/components/HelpDialog";
 import { LanguageToggle, useLang } from "@/lib/i18n";
 import { useFT } from "@/lib/finance-i18n";
 import { TransactionDialog } from "@/components/finance/TransactionDialog";
+import { BulkExpenseDialog } from "@/components/finance/BulkExpenseDialog";
 import { CategoryDialog } from "@/components/finance/CategoryDialog";
 import { FinanceReports } from "@/components/finance/FinanceReports";
 import {
@@ -78,6 +79,7 @@ function ExpensesPage() {
   const mName = monthLabel(ym, lang);
 
   const [txOpen, setTxOpen] = useState(false);
+  const [bulkOpen, setBulkOpen] = useState(false);
   const [editing, setEditing] = useState<Transaction | null>(null);
   const [txDefaultCat, setTxDefaultCat] = useState<string | null>(null);
   const [catOpen, setCatOpen] = useState<null | "INCOME" | "EXPENSE">(null);
@@ -318,6 +320,10 @@ function ExpensesPage() {
               <Plus className="h-4 w-4" />
               {ft("f.addTx")}
             </Button>
+            <Button variant="outline" onClick={() => setBulkOpen(true)}>
+              <Plus className="h-4 w-4" />
+              {lang === "ka" ? "მასობრივი დამატება" : lang === "pl" ? "Dodaj zbiorczo" : "Bulk add"}
+            </Button>
           </div>
         </div>
 
@@ -537,6 +543,7 @@ function ExpensesPage() {
         </Tabs>
       </div>
 
+      <BulkExpenseDialog open={bulkOpen} onOpenChange={setBulkOpen} categories={categories} currency={currency} onSaved={refresh} />
       <TransactionDialog
         open={txOpen}
         onOpenChange={setTxOpen}
