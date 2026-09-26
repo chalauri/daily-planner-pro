@@ -50,7 +50,7 @@ export function parseBulk(text: string): Line[] {
     if (!tokens.length) continue;
     const amounts: number[] = [];
     while (tokens.length) {
-      const t = tokens[tokens.length - 1].replace(",", ".");
+      const t = (tokens[tokens.length - 1] ?? "").replace(",", ".");
       if (!/^\d+(\.\d+)?$/.test(t)) break;
       amounts.unshift(Number(t));
       tokens.pop();
