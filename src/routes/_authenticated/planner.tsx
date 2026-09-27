@@ -176,7 +176,10 @@ function PlannerPage() {
   }
 
   function friendlyDate(iso: string) {
-    const [year, monthNumber, day] = iso.split("-").map(Number);
+    const parts = iso.split("-");
+    const year = Number(parts[0] ?? "1970");
+    const monthNumber = Number(parts[1] ?? "1");
+    const day = Number(parts[2] ?? "1");
     const date = new Date(year, monthNumber - 1, day);
     const locale = lang === "ka" ? "ka-GE" : lang === "pl" ? "pl-PL" : "en-US";
     const formatted = new Intl.DateTimeFormat(locale, {
