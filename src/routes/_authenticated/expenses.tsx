@@ -355,7 +355,20 @@ function ExpensesPage() {
                   {loading ? (
                     <tr><td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">{ft("f.loading")}</td></tr>
                   ) : rows.length === 0 ? (
-                    <tr><td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">{ft("f.noCats")}</td></tr>
+                    <tr>
+                      <td colSpan={6} className="p-0">
+                        <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+                          <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-primary/25 bg-secondary text-primary">
+                            <FileText className="h-7 w-7" strokeWidth={1.5} />
+                          </div>
+                          <h2 className="text-xl">{ft("f.noCats")}</h2>
+                          <Button className="mt-6" onClick={() => setCatOpen("EXPENSE")}>
+                            <Plus className="h-4 w-4" />
+                            {ft("f.addExpense")}
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
                   ) : (
                     rows.map((r) => {
                       const st = budgetState(r.planned, r.spent);
@@ -651,7 +664,7 @@ function TxTable({
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-1">
                     {x.receipt_path && (
-                      <Button variant="ghost" size="icon" aria-label={ft("f.viewReceipt")} onClick={() => onReceipt(x.receipt_path!)}>
+                      <Button variant="ghost" size="icon" aria-label={ft("f.viewReceipt")} onClick={() => x.receipt_path && onReceipt(x.receipt_path)}>
                         <Paperclip className="h-4 w-4" />
                       </Button>
                     )}
