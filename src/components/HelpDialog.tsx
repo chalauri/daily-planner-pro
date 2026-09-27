@@ -30,7 +30,7 @@ function Step({ icon, text }: { icon: ReactNode; text: string }) {
   );
 }
 
-export function HelpDialog() {
+export function HelpDialog({ triggerClassName }: { triggerClassName?: string } = {}) {
   const { t } = useLang();
   const [open, setOpen] = useState(false);
   const iconCls = "h-4 w-4";
@@ -53,7 +53,7 @@ export function HelpDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-1.5 font-medium">
+        <Button variant="ghost" size="sm" className={triggerClassName ?? "gap-1.5 font-medium"}>
           <CircleHelp className="h-4 w-4" />
           {t("help.button")}
         </Button>

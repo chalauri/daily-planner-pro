@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Use `AppHeader` for every signed-in section so navigation, language, requests, help, account, and sign-out controls remain consistent.
