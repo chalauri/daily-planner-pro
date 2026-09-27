@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { CalendarDays, Check, LogOut, Rows3, RotateCcw, Search, Trash2, X } from "lucide-react";
+import { CalendarDays, CalendarRange, Check, ListTodo, LogOut, Rows3, RotateCcw, Search, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -51,6 +51,7 @@ import { CollabRequests, EditPlanButton, EditPlanDialog, ShareButton, useMyUserI
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppTabs } from "@/components/AppTabs";
 import { HelpDialog } from "@/components/HelpDialog";
+import { YearlyPlans } from "@/components/YearlyPlans";
 
 export const Route = createFileRoute("/_authenticated/planner")({
   head: () => ({
@@ -78,6 +79,7 @@ function PlannerPage() {
   const [text, setText] = useState("");
   const [addDate, setAddDate] = useState<string | null>(null);
   const [view, setView] = useState<"table" | "calendar">("table");
+  const [section, setSection] = useState<"daily" | "yearly">("daily");
   const [month, setMonth] = useState(() => startOfMonth(new Date()));
 
   function showMonth(m: Date) {
@@ -204,6 +206,21 @@ function PlannerPage() {
       </header>
 
       <div className="mx-auto max-w-6xl space-y-6 px-6 py-8">
+        <div className="inline-flex rounded-md border border-border bg-card p-1" role="tablist">
+          <Button size="sm" role="tab" aria-selected={section === "daily"} variant={section === "daily" ? "default" : "ghost"} onClick={() => setSection("daily")}>
+            <ListTodo className="h-4 w-4" />
+            {t("pl.tab.daily")}
+          </Button>
+          <Button size="sm" role="tab" aria-selected={section === "yearly"} variant={section === "yearly" ? "default" : "ghost"} onClick={() => setSection("yearly")}>
+            <CalendarRange className="h-4 w-4" />
+            {t("pl.tab.yearly")}
+          </Button>
+        </div>
+
+        {section === "yearly" ? (
+          <YearlyPlans />
+        ) : (
+        <>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl">{t("pl.title")}</h1>
@@ -404,6 +421,8 @@ function PlannerPage() {
             </TableBody>
           </Table>
         </section>
+        )}
+        </>
         )}
       </div>
 
