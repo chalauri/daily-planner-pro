@@ -8,6 +8,8 @@ import type { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
@@ -195,20 +197,11 @@ function SavingsPage() {
         <div className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-3 lg:grid-cols-6">
           <div className="space-y-1"><Label>{s("from")}</Label><Input type="month" value={from} onChange={(e) => setFrom(e.target.value)} /></div>
           <div className="space-y-1"><Label>{s("to")}</Label><Input type="month" value={to} onChange={(e) => setTo(e.target.value)} /></div>
-          <div className="space-y-1"><Label>{s("type")}</Label>
-            <Select value={fKind} onValueChange={setFKind}><SelectTrigger className={selCls}><SelectValue /></SelectTrigger>
-              <SelectContent><SelectItem value={ALL}>{s("all")}</SelectItem>{KINDS.map((k) => <SelectItem key={k} value={k}>{s(k)}</SelectItem>)}</SelectContent></Select>
-          </div>
-          <div className="space-y-1"><Label>{s("currency")}</Label>
-            <Select value={fCur} onValueChange={setFCur}><SelectTrigger className={selCls}><SelectValue /></SelectTrigger>
-              <SelectContent><SelectItem value={ALL}>{s("all")}</SelectItem>{CURRENCIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select>
-          </div>
-          <div className="space-y-1"><Label>{s("company")}</Label>
-            <Select value={fCo} onValueChange={setFCo}><SelectTrigger className={selCls}><SelectValue /></SelectTrigger>
-              <SelectContent><SelectItem value={ALL}>{s("all")}</SelectItem>{companies.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select>
-          </div>
+          <MultiFilter label={s("type")} allLabel={s("all")} options={KINDS.map((k) => ({ value: k, label: s(k) }))} selected={fKind} onChange={setFKind} />
+          <MultiFilter label={s("currency")} allLabel={s("all")} options={CURRENCIES.map((c) => ({ value: c, label: c }))} selected={fCur} onChange={setFCur} />
+          <MultiFilter label={s("company")} allLabel={s("all")} options={companies.map((c) => ({ value: c, label: c }))} selected={fCo} onChange={setFCo} />
           <div className="flex items-end">
-            <Button variant="ghost" className="w-full" onClick={() => { setFrom(""); setTo(""); setFKind(ALL); setFCur(ALL); setFCo(ALL); }}>{s("reset")}</Button>
+            <Button variant="ghost" className="w-full" onClick={() => { setFrom(""); setTo(""); setFKind([]); setFCur([]); setFCo([]); }}>{s("reset")}</Button>
           </div>
         </div>
 
