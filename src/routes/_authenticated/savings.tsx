@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ChevronsUpDown, Pencil, Plus, Trash2 } from "lucide-react";
+import { ChevronsUpDown, Download, Pencil, PiggyBank, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,7 @@ const T = {
     period: "Period", del: "Delete this saving?", delYes: "Delete", companyReq: "Enter company name",
     amountReq: "Enter an amount greater than 0", saved: "Saved", reset: "Reset filters", csv: "Export CSV",
     totalsHint: "Totals are shown per currency — different currencies are never added together.",
+    emptySub: "Add a cash, stock, or retirement saving to start tracking your progress.",
   },
   ka: {
     title: "დანაზოგი", add: "დანაზოგის დამატება", edit: "დანაზოგის რედაქტირება", month: "თვე", year: "წელი", type: "ტიპი",
@@ -47,6 +48,7 @@ const T = {
     period: "პერიოდი", del: "წავშალოთ ეს დანაზოგი?", delYes: "წაშლა", companyReq: "შეიყვანეთ კომპანიის სახელი",
     amountReq: "შეიყვანეთ 0-ზე მეტი თანხა", saved: "შენახულია", reset: "ფილტრების გასუფთავება", csv: "CSV ექსპორტი",
     totalsHint: "ჯამები ნაჩვენებია ვალუტების მიხედვით — სხვადასხვა ვალუტა არ იკრიბება.",
+    emptySub: "დაამატეთ ნაღდი, აქციების ან საპენსიო დანაზოგი პროგრესის სანახავად.",
   },
   pl: {
     title: "Oszczędności", add: "Dodaj oszczędność", edit: "Edytuj oszczędność", month: "Miesiąc", year: "Rok", type: "Typ",
@@ -56,6 +58,7 @@ const T = {
     period: "Okres", del: "Usunąć tę oszczędność?", delYes: "Usuń", companyReq: "Podaj nazwę firmy",
     amountReq: "Podaj kwotę większą od 0", saved: "Zapisano", reset: "Wyczyść filtry", csv: "Eksport CSV",
     totalsHint: "Sumy są pokazane dla każdej waluty osobno — różne waluty nie są sumowane.",
+    emptySub: "Dodaj oszczędność gotówkową, akcyjną lub emerytalną, aby śledzić postępy.",
   },
 };
 type SKey = keyof typeof T.en;
@@ -149,27 +152,36 @@ function SavingsPage() {
     <main className="min-h-screen bg-background">
       <AppHeader />
 
-      <div className="mx-auto max-w-6xl space-y-6 px-6 py-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="mx-auto max-w-6xl space-y-6 px-4 py-8 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="font-display text-3xl font-semibold">{s("title")}</h1>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={exportCsv} disabled={!filtered.length}>{s("csv")}</Button>
+            <Button variant="outline" onClick={exportCsv} disabled={!filtered.length}><Download className="h-4 w-4" />{s("csv")}</Button>
             <Button onClick={() => setDialog("new")}><Plus className="h-4 w-4" />{s("add")}</Button>
           </div>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {(usedCurrencies.length ? usedCurrencies : ["GEL"]).map((c) => (
-            <div key={c} className="rounded-lg border border-border bg-card p-4">
+          {(usedCurrencies.length ? usedCurrencies : ["GEL"]).map((c, index) => (
+            <div
+              key={c}
+              className={`rounded-xl border border-border border-l-4 p-4 shadow-sm ${
+                index % 3 === 0
+                  ? "border-l-success bg-success-soft/45"
+                  : index % 3 === 1
+                    ? "border-l-primary bg-secondary/65"
+                    : "border-l-warning bg-warning-soft/45"
+              }`}
+            >
               <div className="text-xs uppercase tracking-wide text-muted-foreground">{s("total")} · {c}</div>
-              <div className="mt-1 text-2xl font-semibold">{fmt(totals.get(c) ?? 0, c)}</div>
+              <div className="mt-1 font-display text-3xl font-semibold tabular-nums">{fmt(totals.get(c) ?? 0, c)}</div>
             </div>
           ))}
         </div>
 
-        <div className="grid gap-3 rounded-lg border border-border bg-card p-4 sm:grid-cols-3 lg:grid-cols-6">
-          <div className="space-y-1"><Label>{s("from")}</Label><Input type="month" value={from} onChange={(e) => setFrom(e.target.value)} /></div>
-          <div className="space-y-1"><Label>{s("to")}</Label><Input type="month" value={to} onChange={(e) => setTo(e.target.value)} /></div>
+        <div className="surface-card grid gap-3 p-4 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="space-y-1.5"><Label>{s("from")}</Label><Input className="h-8" type="month" value={from} onChange={(e) => setFrom(e.target.value)} /></div>
+          <div className="space-y-1.5"><Label>{s("to")}</Label><Input className="h-8" type="month" value={to} onChange={(e) => setTo(e.target.value)} /></div>
           <MultiFilter label={s("type")} allLabel={s("all")} options={KINDS.map((k) => ({ value: k, label: s(k) }))} selected={fKind} onChange={setFKind} />
           <MultiFilter label={s("currency")} allLabel={s("all")} options={CURRENCIES.map((c) => ({ value: c, label: c }))} selected={fCur} onChange={setFCur} />
           <MultiFilter label={s("company")} allLabel={s("all")} options={companies.map((c) => ({ value: c, label: c }))} selected={fCo} onChange={setFCo} />
@@ -179,20 +191,30 @@ function SavingsPage() {
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex gap-1 rounded-lg bg-muted p-1">
+          <div className="inline-flex rounded-md border border-border bg-card p-1" role="tablist">
             {(["entries", "monthly", "yearly"] as const).map((v) => (
-              <button key={v} onClick={() => setView(v)}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium ${view === v ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
+              <Button key={v} size="sm" role="tab" aria-selected={view === v} variant={view === v ? "default" : "ghost"} onClick={() => setView(v)}>
                 {s(v)}
-              </button>
+              </Button>
             ))}
           </div>
           <p className="text-xs text-muted-foreground">{s("totalsHint")}</p>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-border bg-card">
+        <div className="surface-card overflow-x-auto">
           {filtered.length === 0 ? (
-            <p className="p-8 text-center text-muted-foreground">{list.isLoading ? "…" : s("empty")}</p>
+            <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-primary/25 bg-secondary text-primary">
+                <PiggyBank className="h-7 w-7" strokeWidth={1.5} />
+              </div>
+              <h2 className="text-xl">{list.isLoading ? "…" : s("empty")}</h2>
+              {!list.isLoading && <p className="mt-2 max-w-md text-sm text-muted-foreground">{s("emptySub")}</p>}
+              {!list.isLoading && (
+                <Button className="mt-6" onClick={() => setDialog("new")}>
+                  <Plus className="h-4 w-4" />{s("add")}
+                </Button>
+              )}
+            </div>
           ) : view === "entries" ? (
             <table className="w-full text-sm">
               <thead className="border-b border-border text-left text-muted-foreground">
@@ -200,12 +222,21 @@ function SavingsPage() {
               </thead>
               <tbody>
                 {filtered.map((r) => (
-                  <tr key={r.id} className="border-b border-border last:border-0">
+                  <tr
+                    key={r.id}
+                    className={`border-b border-l-4 border-border last:border-b-0 ${
+                      r.kind === "CASH"
+                        ? "border-l-warning bg-warning-soft/30 hover:bg-warning-soft/50"
+                        : r.kind === "STOCKS"
+                          ? "border-l-success bg-success-soft/30 hover:bg-success-soft/50"
+                          : "border-l-primary bg-secondary/50 hover:bg-secondary/75"
+                    }`}
+                  >
                     <td className="p-3">{formatMonthYear(r.year, r.month, lang)}</td>
                     <td className="p-3">{s(r.kind)}</td>
                     <td className="p-3">{r.company ?? "—"}</td>
                     <td className="p-3 text-muted-foreground">{r.note ?? ""}</td>
-                    <td className="p-3 text-right font-medium">{fmt(Number(r.amount), r.currency)}</td>
+                    <td className="p-3 text-right text-base font-semibold tabular-nums">{fmt(Number(r.amount), r.currency)}</td>
                     <td className="p-3 text-right whitespace-nowrap">
                       <Button size="icon" variant="ghost" onClick={() => setDialog(r)} aria-label={s("edit")}><Pencil className="h-4 w-4" /></Button>
                       <Button size="icon" variant="ghost" onClick={() => setToDelete(r)} aria-label={s("delYes")}><Trash2 className="h-4 w-4" /></Button>
@@ -215,7 +246,7 @@ function SavingsPage() {
               </tbody>
               <tfoot className="border-t-2 border-border font-semibold">
                 {usedCurrencies.map((c) => (
-                  <tr key={c}><td className="p-3" colSpan={4}>{s("total")} · {c}</td><td className="p-3 text-right">{fmt(totals.get(c) ?? 0, c)}</td><td /></tr>
+                  <tr key={c}><td className="p-3" colSpan={4}>{s("total")} · {c}</td><td className="p-3 text-right text-base tabular-nums">{fmt(totals.get(c) ?? 0, c)}</td><td /></tr>
                 ))}
               </tfoot>
             </table>
@@ -226,14 +257,17 @@ function SavingsPage() {
               </thead>
               <tbody>
                 {grouped.map(([p, m]) => (
-                  <tr key={p} className="border-b border-border last:border-0">
+                  <tr key={p} className="border-b border-l-4 border-border border-l-primary bg-secondary/35 last:border-b-0 hover:bg-secondary/60">
                     <td className="p-3">{periodLabel(p)}</td>
-                    {usedCurrencies.map((c) => <td key={c} className="p-3 text-right">{m.has(c) ? fmt(m.get(c)!, c) : "—"}</td>)}
+                    {usedCurrencies.map((c) => {
+                      const amount = m.get(c);
+                      return <td key={c} className="p-3 text-right text-base font-medium tabular-nums">{amount === undefined ? "—" : fmt(amount, c)}</td>;
+                    })}
                   </tr>
                 ))}
               </tbody>
               <tfoot className="border-t-2 border-border font-semibold">
-                <tr><td className="p-3">{s("total")}</td>{usedCurrencies.map((c) => <td key={c} className="p-3 text-right">{fmt(totals.get(c) ?? 0, c)}</td>)}</tr>
+                <tr><td className="p-3">{s("total")}</td>{usedCurrencies.map((c) => <td key={c} className="p-3 text-right text-base tabular-nums">{fmt(totals.get(c) ?? 0, c)}</td>)}</tr>
               </tfoot>
             </table>
           )}
@@ -357,7 +391,7 @@ function MultiFilter({ label, allLabel, options, selected, onChange }: {
       <Label>{label}</Label>
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" role="combobox" className="w-full justify-between font-normal">
+          <Button variant="outline" role="combobox" className="h-8 w-full justify-between font-normal">
             <span className="truncate">{summary}</span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>

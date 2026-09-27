@@ -239,8 +239,8 @@ function ExpensesPage() {
     <main className="min-h-screen bg-background">
       <AppHeader />
 
-      <div className="mx-auto max-w-6xl space-y-6 px-6 py-8">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="mx-auto max-w-6xl space-y-6 px-4 py-8 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon" aria-label="Previous month" onClick={() => setYM(shiftYM(ym, -1))}>
               <ChevronLeft className="h-4 w-4" />
@@ -254,7 +254,7 @@ function ExpensesPage() {
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground">{ft("f.defaultCurrency")}</p>
               <Select value={cur.data?.def ?? "GEL"} onValueChange={setDefaultCurrency}>
-                <SelectTrigger className="w-28" aria-label={ft("f.defaultCurrency")}>
+                <SelectTrigger className="h-8 w-28" aria-label={ft("f.defaultCurrency")}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -267,7 +267,7 @@ function ExpensesPage() {
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground">{ft("f.monthCurrency")}</p>
               <Select value={cur.data?.override ?? "default"} onValueChange={setMonthCurrency}>
-                <SelectTrigger className="w-40" aria-label={ft("f.monthCurrency")}>
+                <SelectTrigger className="h-8 w-40" aria-label={ft("f.monthCurrency")}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -305,14 +305,14 @@ function ExpensesPage() {
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { label: ft("f.income"), value: fmt(income), tone: "text-success" },
-            { label: ft("f.expenses"), value: fmt(expense), tone: "text-destructive" },
-            { label: ft("f.savings"), value: fmt(income - plannedTotal), tone: income - plannedTotal >= 0 ? "text-primary" : "text-destructive" },
-            { label: ft("f.planned"), value: fmt(plannedTotal), tone: "text-foreground" },
+            { label: ft("f.income"), value: fmt(income), tone: "text-success", card: "border-l-success bg-success-soft/45" },
+            { label: ft("f.expenses"), value: fmt(expense), tone: "text-destructive", card: "border-l-destructive bg-danger-soft/55" },
+            { label: ft("f.savings"), value: fmt(income - plannedTotal), tone: income - plannedTotal >= 0 ? "text-primary" : "text-destructive", card: "border-l-primary bg-secondary/65" },
+            { label: ft("f.planned"), value: fmt(plannedTotal), tone: "text-warning", card: "border-l-warning bg-warning-soft/45" },
           ].map((k) => (
-            <div key={k.label} className="surface-card px-4 py-3">
+            <div key={k.label} className={`rounded-xl border border-border border-l-4 px-4 py-4 shadow-sm ${k.card}`}>
               <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">{k.label}</p>
-              <p className={`mt-1 font-display text-2xl font-semibold ${k.tone}`}>{k.value}</p>
+              <p className={`mt-1 font-display text-3xl font-semibold tabular-nums ${k.tone}`}>{k.value}</p>
             </div>
           ))}
         </div>
@@ -325,7 +325,7 @@ function ExpensesPage() {
         )}
 
         <Tabs defaultValue="budget">
-          <TabsList>
+          <TabsList className="h-auto rounded-md border border-border bg-card p-1">
             <TabsTrigger value="budget">{ft("f.tab.budget")}</TabsTrigger>
             <TabsTrigger value="tx">{ft("f.tab.tx")}</TabsTrigger>
             <TabsTrigger value="reports">{ft("f.tab.reports")}</TabsTrigger>
@@ -355,20 +355,42 @@ function ExpensesPage() {
                   {loading ? (
                     <tr><td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">{ft("f.loading")}</td></tr>
                   ) : rows.length === 0 ? (
-                    <tr><td colSpan={6} className="px-4 py-6 text-center text-muted-foreground">{ft("f.noCats")}</td></tr>
+                    <tr>
+                      <td colSpan={6} className="p-0">
+                        <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+                          <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-primary/25 bg-secondary text-primary">
+                            <FileText className="h-7 w-7" strokeWidth={1.5} />
+                          </div>
+                          <h2 className="text-xl">{ft("f.noCats")}</h2>
+                          <Button className="mt-6" onClick={() => setCatOpen("EXPENSE")}>
+                            <Plus className="h-4 w-4" />
+                            {ft("f.addExpense")}
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
                   ) : (
                     rows.map((r) => {
                       const st = budgetState(r.planned, r.spent);
                       const pct = r.planned > 0 ? Math.min(100, Math.round((r.spent / r.planned) * 100)) : r.spent > 0 ? 100 : 0;
                       const bar = st === "over" ? "bg-destructive" : st === "near" ? "bg-warning" : "bg-success";
                       return (
-                        <tr key={r.category.id} className={`border-b border-border last:border-0 ${st === "over" ? "bg-destructive/5" : ""}`}>
+                        <tr
+                          key={r.category.id}
+                          className={`border-b border-l-4 border-border last:border-b-0 ${
+                            st === "over"
+                              ? "border-l-destructive bg-danger-soft/60 hover:bg-danger-soft"
+                              : st === "near"
+                                ? "border-l-warning bg-warning-soft/45 hover:bg-warning-soft/65"
+                                : "border-l-success bg-success-soft/30 hover:bg-success-soft/50"
+                          }`}
+                        >
                           <td className="px-4 py-3 font-medium">{r.category.name}</td>
-                          <td className="px-4 py-3">
+                          <td className="px-4 py-3 text-base font-medium tabular-nums">
                             {r.planned ? fmt(r.planned) : "—"}
                           </td>
-                          <td className="px-4 py-3">{fmt(r.spent)}</td>
-                          <td className={`px-4 py-3 ${r.planned - r.spent < 0 ? "font-semibold text-destructive" : ""}`}>{fmt(r.planned - r.spent)}</td>
+                          <td className="px-4 py-3 text-base font-medium tabular-nums">{fmt(r.spent)}</td>
+                          <td className={`px-4 py-3 text-base font-semibold tabular-nums ${r.planned - r.spent < 0 ? "text-destructive" : ""}`}>{fmt(r.planned - r.spent)}</td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
                               <div className="h-2 w-24 overflow-hidden rounded-full bg-muted">
@@ -425,9 +447,9 @@ function ExpensesPage() {
                   </thead>
                   <tbody>
                     {incomeRows.map(({ c, total, expected }) => (
-                      <tr key={c.id} className="border-b border-border last:border-0">
+                      <tr key={c.id} className="border-b border-l-4 border-border border-l-success bg-success-soft/30 last:border-b-0 hover:bg-success-soft/50">
                         <td className="px-4 py-3 font-medium">{c.name}</td>
-                        <td className="px-4 py-3 text-success">{fmt(expected > 0 ? expected : total)}</td>
+                        <td className="px-4 py-3 text-base font-semibold text-success tabular-nums">{fmt(expected > 0 ? expected : total)}</td>
                         <td className="px-4 py-3">
                           <div className="flex justify-end gap-1">
                             <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${c.name}`} onClick={() => setEditCat({ id: c.id, name: c.name, amount: expected > 0 ? expected : total, kind: "INCOME" })}>
@@ -486,14 +508,14 @@ function ExpensesPage() {
                   {rows.map((r) => {
                     const isOver = budgetState(r.planned, r.spent) === "over";
                     return (
-                      <tr key={r.category.id} className={`border-b border-border ${isOver ? "bg-destructive/10 text-destructive" : ""}`}>
+                      <tr key={r.category.id} className={`border-b border-l-4 border-border ${isOver ? "border-l-destructive bg-danger-soft/60 text-destructive" : "border-l-success bg-success-soft/30"}`}>
                         <td className="px-4 py-2 font-medium">
                           {r.category.name}
                           {isOver && <span className="ml-2 text-xs font-semibold">({ft("f.over")})</span>}
                         </td>
-                        <td className="px-4 py-2">{fmt(r.planned)}</td>
-                        <td className="px-4 py-2">{fmt(r.spent)}</td>
-                        <td className="px-4 py-2">{fmt(r.planned - r.spent)}</td>
+                        <td className="px-4 py-2 text-base font-medium tabular-nums">{fmt(r.planned)}</td>
+                        <td className="px-4 py-2 text-base font-medium tabular-nums">{fmt(r.spent)}</td>
+                        <td className="px-4 py-2 text-base font-medium tabular-nums">{fmt(r.planned - r.spent)}</td>
                       </tr>
                     );
                   })}
@@ -604,6 +626,16 @@ function TxTable({
   onReceipt: (path: string) => void;
 }) {
   const { ft } = useFT();
+  if (txs.length === 0) {
+    return (
+      <div className="surface-card flex min-h-56 flex-col items-center justify-center px-6 py-10 text-center">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-primary/25 bg-secondary text-primary">
+          <FileText className="h-6 w-6" strokeWidth={1.5} />
+        </div>
+        <p className="font-display text-lg font-semibold">{ft("f.noTx")}</p>
+      </div>
+    );
+  }
   return (
     <div className="surface-card overflow-x-auto">
       <table className="w-full text-sm">
@@ -617,17 +649,14 @@ function TxTable({
           </tr>
         </thead>
         <tbody>
-          {txs.length === 0 ? (
-            <tr><td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">{ft("f.noTx")}</td></tr>
-          ) : (
-            txs.map((x) => (
-              <tr key={x.id} className="border-b border-border last:border-0">
+          {txs.map((x) => (
+              <tr key={x.id} className="border-b border-l-4 border-border border-l-destructive bg-danger-soft/25 last:border-b-0 hover:bg-danger-soft/45">
                 <td className="px-4 py-3 whitespace-nowrap">{x.tx_date}</td>
                 <td className="px-4 py-3">
                   {catName(x.category_id)}
                   {x.recurrence === "MONTHLY" && <span className="ml-2 rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">{ft("f.recurring")}</span>}
                 </td>
-                <td className={`px-4 py-3 font-medium whitespace-nowrap ${x.kind === "INCOME" ? "text-success" : "text-destructive"}`}>
+                <td className={`px-4 py-3 text-base font-semibold whitespace-nowrap tabular-nums ${x.kind === "INCOME" ? "text-success" : "text-destructive"}`}>
                   {x.kind === "INCOME" ? "+" : "−"}
                   {fmt(Number(x.amount))}
                 </td>
@@ -635,7 +664,7 @@ function TxTable({
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-1">
                     {x.receipt_path && (
-                      <Button variant="ghost" size="icon" aria-label={ft("f.viewReceipt")} onClick={() => onReceipt(x.receipt_path!)}>
+                      <Button variant="ghost" size="icon" aria-label={ft("f.viewReceipt")} onClick={() => x.receipt_path && onReceipt(x.receipt_path)}>
                         <Paperclip className="h-4 w-4" />
                       </Button>
                     )}
@@ -648,8 +677,7 @@ function TxTable({
                   </div>
                 </td>
               </tr>
-            ))
-          )}
+            ))}
         </tbody>
       </table>
     </div>
