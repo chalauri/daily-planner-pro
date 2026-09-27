@@ -98,7 +98,7 @@ function SavingsPage() {
 
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [fKind, setFKind] = useState<Kind[]>([]);
+  const [fKind, setFKind] = useState<string[]>([]);
   const [fCur, setFCur] = useState<string[]>([]);
   const [fCo, setFCo] = useState<string[]>([]);
   const [view, setView] = useState<"entries" | "monthly" | "yearly">("entries");
