@@ -7,7 +7,7 @@ import { pl } from "./i18n-pl";
 export type Lang = "en" | "ka" | "pl";
 
 const en = {
-  "app.name": "Personal planner",
+  "app.name": "Plan & Prosper",
   "sign.in": "Sign in",
   "sign.out": "Sign out",
   "cancel": "Cancel",
@@ -260,7 +260,7 @@ const en = {
 export type TKey = keyof typeof en;
 
 const ka: Record<TKey, string> = {
-  "app.name": "პირადი დამგეგმავი",
+  "app.name": "Plan & Prosper",
   "sign.in": "შესვლა",
   "sign.out": "გასვლა",
   "cancel": "გაუქმება",

@@ -1,7 +1,7 @@
 import type { TKey } from "./i18n";
 
 export const pl: Record<TKey, string> = {
-  "app.name": "Osobisty planer",
+  "app.name": "Plan & Prosper",
   "sign.in": "Zaloguj się",
   "sign.out": "Wyloguj się",
   "cancel": "Anuluj",
