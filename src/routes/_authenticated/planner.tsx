@@ -292,8 +292,7 @@ function PlannerPage() {
               onPlanClick={(p) => setCalPlan(p)}
             />
           </section>
-        ) : (
-        {!isLoading && plans.length === 0 ? (
+        ) : !isLoading && plans.length === 0 ? (
         <section className="surface-card flex min-h-72 flex-col items-center justify-center px-6 py-12 text-center">
           <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-primary/25 bg-secondary text-primary">
             <Target className="h-7 w-7" strokeWidth={1.5} />
@@ -419,7 +418,6 @@ function PlannerPage() {
             </TableBody>
           </Table>
         </section>
-        )}
         )}
         </>
         )}

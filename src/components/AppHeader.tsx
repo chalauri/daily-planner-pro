@@ -42,7 +42,7 @@ export function AppHeader({ onRequestsChanged }: { onRequestsChanged?: () => voi
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [saving, setSaving] = useState(false);
-  const activeLanguage = LANGUAGES.find((item) => item.code === lang) ?? LANGUAGES[0];
+  const activeLanguage = LANGUAGES.find((item) => item.code === lang) ?? { code: "en", short: "EN", name: "English" };
 
   async function signOut() {
     await queryClient.cancelQueries();
