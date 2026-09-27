@@ -24,3 +24,7 @@
 - [x] Copy now covers both Plans and Money: hero, two preview cards (today plans / monthly budgets), six feature cards, "also inside" chips, how-it-works, closing sign-up panel, footer
 - [x] English + Georgian, month label localized, no page errors
 - [x] Savings tab: cash/stocks/retirement, 4 currencies, company combobox, filters, entries/monthly/yearly tables with per-currency totals, CSV
+
+## Signed-in interface
+- [x] Shared header with left-aligned brand/navigation, language dropdown, and account menu for requests, help, password update, and sign out
+- [x] Planner refinements: status-tinted statistics and rows, friendly dates, compact filters, aligned add action, and illustrated empty state
