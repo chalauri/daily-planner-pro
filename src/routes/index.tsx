@@ -12,7 +12,8 @@ import {
   Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LanguageToggle, formatMonthYear, useLang } from "@/lib/i18n";
+import { LanguageMenu } from "@/components/LanguageMenu";
+import { formatMonthYear, useLang } from "@/lib/i18n";
 
 type Icon = ComponentType<{ className?: string }>;
 
