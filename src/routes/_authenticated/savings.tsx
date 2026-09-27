@@ -99,9 +99,9 @@ function SavingsPage() {
 
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [fKind, setFKind] = useState(ALL);
-  const [fCur, setFCur] = useState(ALL);
-  const [fCo, setFCo] = useState(ALL);
+  const [fKind, setFKind] = useState<Kind[]>([]);
+  const [fCur, setFCur] = useState<string[]>([]);
+  const [fCo, setFCo] = useState<string[]>([]);
   const [view, setView] = useState<"entries" | "monthly" | "yearly">("entries");
   const [dialog, setDialog] = useState<Saving | "new" | null>(null);
   const [toDelete, setToDelete] = useState<Saving | null>(null);
@@ -110,9 +110,9 @@ function SavingsPage() {
     const k = ymKey(r.year, r.month);
     if (from && k < from) return false;
     if (to && k > to) return false;
-    if (fKind !== ALL && r.kind !== fKind) return false;
-    if (fCur !== ALL && r.currency !== fCur) return false;
-    if (fCo !== ALL && r.company !== fCo) return false;
+    if (fKind.length && !fKind.includes(r.kind)) return false;
+    if (fCur.length && !fCur.includes(r.currency)) return false;
+    if (fCo.length && (r.company ? !fCo.includes(r.company) : true)) return false;
     return true;
   });
 
