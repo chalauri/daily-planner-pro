@@ -3,6 +3,7 @@ import type { FKey } from "./finance-i18n";
 export const plF: Record<FKey, string> = {
   "tab.plans": "Plany",
   "tab.expenses": "Wydatki",
+  "tab.savings": "Oszczędności",
   "f.title": "Pieniądze",
   "f.currency": "Waluta",
   "f.defaultCurrency": "Waluta domyślna",
