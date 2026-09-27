@@ -65,6 +65,7 @@ export function YearlyPlans() {
   const queryClient = useQueryClient();
   const [year, setYear] = useState(() => new Date().getFullYear());
   const [addOpen, setAddOpen] = useState(false);
+  const [addYear, setAddYear] = useState(() => new Date().getFullYear());
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
@@ -135,11 +136,25 @@ export function YearlyPlans() {
       toast.error(t("d.errSession"));
       return;
     }
+    const newTitle = title.trim();
+    const { data: existing } = await supabase
+      .from("yearly_plans")
+      .select("title")
+      .eq("year", addYear);
+    const dup = (existing ?? []).some(
+      (p) => p.title.trim().toLowerCase() === newTitle.toLowerCase(),
+    );
+    if (dup) {
+      setSaving(false);
+      toast.error(t("yr.duplicate", { year: addYear }));
+      return;
+    }
     const { error } = await supabase.from("yearly_plans").insert({
       user_id: userId,
-      year,
-      title: title.trim(),
+      year: addYear,
+      title: newTitle,
       description: description.trim() || null,
+      result_percent: 0,
     });
     setSaving(false);
     if (error) {
@@ -150,6 +165,7 @@ export function YearlyPlans() {
     setTitle("");
     setDescription("");
     setAddOpen(false);
+    setYear(addYear);
     refresh();
   }
 
@@ -241,7 +257,12 @@ export function YearlyPlans() {
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
-        <Button onClick={() => setAddOpen(true)}>
+        <Button
+          onClick={() => {
+            setAddYear(year);
+            setAddOpen(true);
+          }}
+        >
           <Plus className="h-4 w-4" />
           {t("yr.add")}
         </Button>
@@ -402,10 +423,24 @@ export function YearlyPlans() {
         <DialogContent>
           <form onSubmit={addPlan}>
             <DialogHeader>
-              <DialogTitle>{t("yr.addTitle", { year })}</DialogTitle>
+              <DialogTitle>{t("yr.addTitle", { year: addYear })}</DialogTitle>
               <DialogDescription>{t("yr.addDesc")}</DialogDescription>
             </DialogHeader>
             <div className="mt-4 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="yr-year">{t("yr.year")}</Label>
+                <Input
+                  id="yr-year"
+                  type="number"
+                  required
+                  min={2000}
+                  max={2100}
+                  value={addYear}
+                  onChange={(e) =>
+                    setAddYear(Number(e.target.value) || new Date().getFullYear())
+                  }
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="yr-title">{t("d.title")}</Label>
                 <Input
