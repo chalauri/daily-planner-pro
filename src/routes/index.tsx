@@ -12,7 +12,8 @@ import {
   Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LanguageToggle, formatMonthYear, useLang } from "@/lib/i18n";
+import { LanguageMenu } from "@/components/LanguageMenu";
+import { formatMonthYear, useLang } from "@/lib/i18n";
 
 type Icon = ComponentType<{ className?: string }>;
 
@@ -94,9 +95,9 @@ function Landing() {
           </span>
           <span className="font-display text-xl font-semibold">{t("app.name")}</span>
         </Link>
-        <div className="flex items-center gap-2">
-          <LanguageToggle />
-          <Button asChild variant="ghost">
+        <div className="flex items-center gap-1.5">
+          <LanguageMenu />
+          <Button asChild variant="outline" className="rounded-lg border-foreground/20 font-medium hover:border-foreground hover:bg-foreground hover:text-background">
             <Link to="/auth">{t("sign.in")}</Link>
           </Button>
         </div>
@@ -113,11 +114,16 @@ function Landing() {
           <span className="text-primary italic">{t("landing.title2")}</span>
         </h1>
         <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground">{t("landing.sub")}</p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Button asChild size="lg">
+        <div className="mt-8 flex flex-wrap items-stretch justify-center gap-3">
+          <Button asChild size="lg" className="h-12 min-w-56 justify-center rounded-xl px-8 text-base">
             <Link to="/auth">{t("landing.cta")}</Link>
           </Button>
-          <Button asChild size="lg" variant="outline">
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="h-12 min-w-56 justify-center rounded-xl border-foreground/25 bg-transparent px-8 text-base shadow-sm transition-colors hover:border-foreground hover:bg-foreground hover:text-background"
+          >
             <Link to="/auth" search={{ mode: "signin" }}>
               {t("landing.cta2")}
             </Link>
@@ -241,19 +247,23 @@ function Landing() {
       />
 
       <section className="mx-auto max-w-5xl px-6 pb-16">
-        <div className="surface-card flex flex-wrap items-center justify-center gap-2 p-5">
-          <span className="mr-2 text-[11px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
+        <div className="surface-card p-5">
+          <p className="text-[11px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
             {t("landing.also.title")}
-          </span>
-          {alsoInside.map((item) => (
-            <span
-              key={item.label}
-              className="flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-secondary-foreground"
-            >
-              <item.icon className="h-3.5 w-3.5 text-primary" />
-              {item.label}
-            </span>
-          ))}
+          </p>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3 lg:justify-between">
+            {alsoInside.map((item) => (
+              <span
+                key={item.label}
+                className="flex items-center justify-center gap-2.5 whitespace-nowrap rounded-full border border-border bg-secondary/50 px-4 py-2.5 text-sm text-secondary-foreground"
+              >
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                  <item.icon className="h-3 w-3 text-primary" />
+                </span>
+                {item.label}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -299,8 +309,8 @@ function Landing() {
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-6 py-8 text-xs text-muted-foreground sm:flex-row">
           <span>{t("landing.footer")}</span>
-          <div className="flex items-center gap-2">
-            <LanguageToggle />
+          <div className="flex items-center gap-1.5">
+            <LanguageMenu />
             <Button asChild variant="ghost" size="sm">
               <Link to="/auth">{t("sign.in")}</Link>
             </Button>
@@ -322,9 +332,9 @@ function FeatureSection({
 }) {
   return (
     <section className="mx-auto max-w-5xl px-6 pb-16">
-      <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-2 border-b border-border pb-4">
-        <h2 className="font-display text-2xl">{label}</h2>
-        <p className="max-w-md text-sm text-muted-foreground">{sub}</p>
+      <div className="border-b border-border pb-5">
+        <h2 className="font-display text-2xl leading-snug">{label}</h2>
+        <p className="mt-2 max-w-xl text-sm text-muted-foreground">{sub}</p>
       </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         {features.map((f) => (
