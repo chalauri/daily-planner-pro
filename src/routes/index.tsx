@@ -251,11 +251,11 @@ function Landing() {
           <p className="text-[11px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
             {t("landing.also.title")}
           </p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3 lg:justify-between">
             {alsoInside.map((item) => (
               <span
                 key={item.label}
-                className="flex items-center justify-center gap-2.5 rounded-full border border-border bg-secondary/50 px-4 py-2.5 text-sm text-secondary-foreground"
+                className="flex items-center justify-center gap-2.5 whitespace-nowrap rounded-full border border-border bg-secondary/50 px-4 py-2.5 text-sm text-secondary-foreground"
               >
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10">
                   <item.icon className="h-3 w-3 text-primary" />
@@ -333,7 +333,7 @@ function FeatureSection({
   return (
     <section className="mx-auto max-w-5xl px-6 pb-16">
       <div className="border-b border-border pb-5">
-        <h2 className="font-display text-2xl">{label}</h2>
+        <h2 className="font-display text-2xl leading-snug">{label}</h2>
         <p className="mt-2 max-w-xl text-sm text-muted-foreground">{sub}</p>
       </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
