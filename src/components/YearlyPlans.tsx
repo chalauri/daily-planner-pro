@@ -165,6 +165,7 @@ export function YearlyPlans() {
     setTitle("");
     setDescription("");
     setAddOpen(false);
+    setYear(addYear);
     refresh();
   }
 
@@ -256,7 +257,12 @@ export function YearlyPlans() {
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
-        <Button onClick={() => setAddOpen(true)}>
+        <Button
+          onClick={() => {
+            setAddYear(year);
+            setAddOpen(true);
+          }}
+        >
           <Plus className="h-4 w-4" />
           {t("yr.add")}
         </Button>
