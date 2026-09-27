@@ -246,6 +246,48 @@ export type Database = {
         }
         Relationships: []
       }
+      savings: {
+        Row: {
+          amount: number
+          company: string | null
+          created_at: string
+          currency: string
+          id: string
+          kind: Database["public"]["Enums"]["saving_type"]
+          month: number
+          note: string | null
+          updated_at: string
+          user_id: string
+          year: number
+        }
+        Insert: {
+          amount: number
+          company?: string | null
+          created_at?: string
+          currency: string
+          id?: string
+          kind?: Database["public"]["Enums"]["saving_type"]
+          month: number
+          note?: string | null
+          updated_at?: string
+          user_id: string
+          year: number
+        }
+        Update: {
+          amount?: number
+          company?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["saving_type"]
+          month?: number
+          note?: string | null
+          updated_at?: string
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number
@@ -391,6 +433,7 @@ export type Database = {
     Enums: {
       plan_recurrence: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY"
       plan_status: "OPEN" | "DONE" | "NOT_DONE"
+      saving_type: "CASH" | "STOCKS" | "RETIREMENT"
       share_status: "PENDING" | "ACCEPTED" | "DECLINED"
       tx_kind: "INCOME" | "EXPENSE"
     }
@@ -522,6 +565,7 @@ export const Constants = {
     Enums: {
       plan_recurrence: ["NONE", "DAILY", "WEEKLY", "MONTHLY"],
       plan_status: ["OPEN", "DONE", "NOT_DONE"],
+      saving_type: ["CASH", "STOCKS", "RETIREMENT"],
       share_status: ["PENDING", "ACCEPTED", "DECLINED"],
       tx_kind: ["INCOME", "EXPENSE"],
     },
