@@ -95,9 +95,9 @@ function Landing() {
           </span>
           <span className="font-display text-xl font-semibold">{t("app.name")}</span>
         </Link>
-        <div className="flex items-center gap-2">
-          <LanguageToggle />
-          <Button asChild variant="ghost">
+        <div className="flex items-center gap-1.5">
+          <LanguageMenu />
+          <Button asChild variant="outline" className="rounded-lg border-foreground/20 font-medium hover:border-foreground hover:bg-foreground hover:text-background">
             <Link to="/auth">{t("sign.in")}</Link>
           </Button>
         </div>
@@ -114,11 +114,16 @@ function Landing() {
           <span className="text-primary italic">{t("landing.title2")}</span>
         </h1>
         <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground">{t("landing.sub")}</p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Button asChild size="lg">
+        <div className="mt-8 flex flex-wrap items-stretch justify-center gap-3">
+          <Button asChild size="lg" className="h-12 min-w-56 justify-center rounded-xl px-8 text-base">
             <Link to="/auth">{t("landing.cta")}</Link>
           </Button>
-          <Button asChild size="lg" variant="outline">
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="h-12 min-w-56 justify-center rounded-xl border-foreground/25 bg-transparent px-8 text-base shadow-sm transition-colors hover:border-foreground hover:bg-foreground hover:text-background"
+          >
             <Link to="/auth" search={{ mode: "signin" }}>
               {t("landing.cta2")}
             </Link>
