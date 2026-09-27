@@ -4,9 +4,9 @@ import { useFT } from "@/lib/finance-i18n";
 
 export function AppTabs() {
   const { ft } = useFT();
-  const base = "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors";
+  const base = "inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors";
   return (
-    <nav className="flex items-center gap-1 rounded-lg bg-muted p-1" aria-label="Sections">
+    <nav className="flex w-max items-center gap-1 rounded-lg bg-muted p-1" aria-label="Sections">
       <Link
         to="/planner"
         className={base}

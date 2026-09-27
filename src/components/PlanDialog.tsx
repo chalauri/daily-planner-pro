@@ -40,11 +40,13 @@ export function PlanDialog({
   onCreated,
   forcedDate = null,
   onForcedClose,
+  triggerLabel,
 }: {
   defaultDate: string;
   onCreated: () => void;
   forcedDate?: string | null;
   onForcedClose?: () => void;
+  triggerLabel?: string;
 }) {
   const { t } = useLang();
   const [open, setOpen] = useState(false);
@@ -115,7 +117,7 @@ export function PlanDialog({
       <DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4" />
-          {t("pl.add")}
+          {triggerLabel ?? t("pl.add")}
         </Button>
       </DialogTrigger>
       <DialogContent>

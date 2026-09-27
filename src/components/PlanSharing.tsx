@@ -245,7 +245,7 @@ export function EditPlanButton({ plan, onSaved }: { plan: Plan; onSaved: () => v
 }
 
 /** Header button + auto popup on login when there are pending requests. */
-export function CollabRequests({ onChanged }: { onChanged: () => void }) {
+export function CollabRequests({ onChanged, triggerClassName }: { onChanged: () => void; triggerClassName?: string }) {
   const { t } = useLang();
   const qc = useQueryClient();
   const me = useMyUserId();
@@ -285,7 +285,7 @@ export function CollabRequests({ onChanged }: { onChanged: () => void }) {
 
   return (
     <>
-      <Button variant="ghost" size="sm" onClick={() => setOpen(true)}>
+      <Button variant="ghost" size="sm" className={triggerClassName} onClick={() => setOpen(true)}>
         <Inbox className="h-4 w-4" />
         {t("sh.requests")}
         {pending.length > 0 && (

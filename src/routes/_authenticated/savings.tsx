@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ChevronsUpDown, LogOut, Pencil, Plus, Trash2 } from "lucide-react";
+import { ChevronsUpDown, Pencil, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
@@ -21,9 +21,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { AppTabs } from "@/components/AppTabs";
-import { HelpDialog } from "@/components/HelpDialog";
-import { LanguageToggle, formatMonthYear, useLang } from "@/lib/i18n";
+import { AppHeader } from "@/components/AppHeader";
+import { formatMonthYear, useLang } from "@/lib/i18n";
 import { CURRENCIES, currentUserId, downloadFile, money, toCsv } from "@/lib/finance";
 
 type Saving = Database["public"]["Tables"]["savings"]["Row"];
@@ -80,7 +79,6 @@ const ymKey = (y: number, m: number) => `${y}-${String(m).padStart(2, "0")}`;
 function SavingsPage() {
   const { t, lang } = useLang();
   const s = (k: SKey) => (T[lang as keyof typeof T] ?? T.en)[k];
-  const navigate = useNavigate();
   const qc = useQueryClient();
   const list = useQuery({
     queryKey: ["savings"],
@@ -133,13 +131,6 @@ function SavingsPage() {
   const usedCurrencies = CURRENCIES.filter((c) => totals.has(c));
   const periodLabel = (p: string) => (p.length === 4 ? p : formatMonthYear(Number(p.slice(0, 4)), Number(p.slice(5)), lang));
 
-  async function signOut() {
-    await qc.cancelQueries();
-    qc.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  }
-
   async function remove() {
     if (!toDelete) return;
     const { error } = await supabase.from("savings").delete().eq("id", toDelete.id);
@@ -156,22 +147,7 @@ function SavingsPage() {
   }
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4">
-          <div className="flex items-center gap-4">
-            <span className="font-display text-xl font-semibold">{t("app.name")}</span>
-            <AppTabs />
-          </div>
-          <div className="flex items-center gap-2">
-            <HelpDialog />
-            <LanguageToggle />
-            <Button variant="ghost" size="sm" onClick={signOut}>
-              <LogOut className="h-4 w-4" />
-              {t("sign.out")}
-            </Button>
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
       <div className="mx-auto max-w-6xl space-y-6 px-6 py-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
