@@ -4,6 +4,7 @@ import { plF } from "./finance-i18n-pl";
 const en = {
   "tab.plans": "Plans",
   "tab.expenses": "Expenses",
+  "tab.savings": "Savings",
   "f.title": "Money",
   "f.currency": "Currency",
   "f.defaultCurrency": "Default currency",
@@ -89,6 +90,7 @@ type FKey = keyof typeof en;
 const ka: Record<FKey, string> = {
   "tab.plans": "გეგმები",
   "tab.expenses": "ხარჯები",
+  "tab.savings": "დანაზოგი",
   "f.title": "ფინანსები",
   "f.currency": "ვალუტა",
   "f.defaultCurrency": "ძირითადი ვალუტა",

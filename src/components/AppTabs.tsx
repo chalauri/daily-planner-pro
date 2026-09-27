@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarCheck, Wallet } from "lucide-react";
+import { CalendarCheck, PiggyBank, Wallet } from "lucide-react";
 import { useFT } from "@/lib/finance-i18n";
 
 export function AppTabs() {
@@ -24,6 +24,15 @@ export function AppTabs() {
       >
         <Wallet className="h-4 w-4" />
         {ft("tab.expenses")}
+      </Link>
+      <Link
+        to="/savings"
+        className={base}
+        activeProps={{ className: "bg-background text-foreground shadow-sm" }}
+        inactiveProps={{ className: "text-muted-foreground hover:text-foreground" }}
+      >
+        <PiggyBank className="h-4 w-4" />
+        {ft("tab.savings")}
       </Link>
     </nav>
   );
