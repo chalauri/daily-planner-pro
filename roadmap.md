@@ -28,3 +28,9 @@
 ## Signed-in interface
 - [x] Shared header with left-aligned brand/navigation, language dropdown, and account menu for requests, help, password update, and sign out
 - [x] Planner refinements: status-tinted statistics and rows, friendly dates, compact filters, aligned add action, and illustrated empty state
+
+## Landing page refinements — verified in preview
+- [x] Header language links replaced by a single globe dropdown (EN/ქარ/PL) matching the app header, with Sign in beside it (same in footer)
+- [x] Secondary hero button "I already have one" given a subtle dark border, crisp dark hover fill, and the same size/structure as the primary button
+- [x] Plans and Money section headers stack the descriptive sub-text under the title on the left
+- [x] "ALSO INSIDE" pills: consistent padding, icon in a tinted circle, single row evenly spaced across the card (stacks on narrow screens)
