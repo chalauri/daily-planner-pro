@@ -1,8 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { CalendarDays, CalendarRange, Check, ListTodo, LogOut, Rows3, RotateCcw, Search, Trash2, X } from "lucide-react";
+import { CalendarDays, CalendarRange, Check, ListTodo, Rows3, RotateCcw, Search, Target, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -46,11 +46,10 @@ import { PlanCalendar } from "@/components/PlanCalendar";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { PlanStatsBar } from "@/components/PlanStats";
 import { computeStats, todayISO, type Plan, type PlanStatus } from "@/lib/plan-types";
-import { LanguageToggle, useLang, weekdayIndex } from "@/lib/i18n";
-import { CollabRequests, EditPlanButton, EditPlanDialog, ShareButton, useMyUserId, useShares } from "@/components/PlanSharing";
+import { useLang, weekdayIndex } from "@/lib/i18n";
+import { EditPlanButton, EditPlanDialog, ShareButton, useMyUserId, useShares } from "@/components/PlanSharing";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AppTabs } from "@/components/AppTabs";
-import { HelpDialog } from "@/components/HelpDialog";
+import { AppHeader } from "@/components/AppHeader";
 import { YearlyPlans } from "@/components/YearlyPlans";
 
 export const Route = createFileRoute("/_authenticated/planner")({
@@ -70,9 +69,8 @@ export const Route = createFileRoute("/_authenticated/planner")({
 type StatusFilter = PlanStatus | "ALL";
 
 function PlannerPage() {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [from, setFrom] = useState(todayISO());
   const [to, setTo] = useState(todayISO());
   const [status, setStatus] = useState<StatusFilter>("ALL");
@@ -170,13 +168,6 @@ function PlannerPage() {
     refresh();
   }
 
-  async function signOut() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  }
-
   function resetToToday() {
     setFrom(todayISO());
     setTo(todayISO());
@@ -184,26 +175,22 @@ function PlannerPage() {
     setText("");
   }
 
+  function friendlyDate(iso: string) {
+    const [year, monthNumber, day] = iso.split("-").map(Number);
+    const date = new Date(year, monthNumber - 1, day);
+    const locale = lang === "ka" ? "ka-GE" : lang === "pl" ? "pl-PL" : "en-US";
+    const formatted = new Intl.DateTimeFormat(locale, {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+    }).format(date);
+    return iso === todayISO() ? t("pl.todayDate", { date: formatted }) : formatted;
+  }
+
   return (
     <TooltipProvider>
     <main className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4">
-          <div className="flex items-center gap-4">
-            <span className="font-display text-xl font-semibold">{t("app.name")}</span>
-            <AppTabs />
-          </div>
-          <div className="flex items-center gap-2">
-            <CollabRequests onChanged={refresh} />
-            <HelpDialog />
-            <LanguageToggle />
-            <Button variant="ghost" size="sm" onClick={signOut}>
-              <LogOut className="h-4 w-4" />
-              {t("sign.out")}
-            </Button>
-          </div>
-        </div>
-      </header>
+      <AppHeader onRequestsChanged={refresh} />
 
       <div className="mx-auto max-w-6xl space-y-6 px-6 py-8">
         <div className="inline-flex rounded-md border border-border bg-card p-1" role="tablist">
@@ -221,12 +208,12 @@ function PlannerPage() {
           <YearlyPlans />
         ) : (
         <>
-        <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl">{t("pl.title")}</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               {from === to
-                ? t("pl.showingOne", { date: from })
+                ? friendlyDate(from)
                 : t("pl.showingRange", { from: from || "…", to: to || "…" })}
             </p>
           </div>
@@ -238,19 +225,19 @@ function PlannerPage() {
           />
         </div>
 
-        <section className="surface-card grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-5">
+        <section className="surface-card grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-5">
           <div className="space-y-1.5">
             <Label htmlFor="from">{t("pl.from")}</Label>
-            <Input id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+            <Input id="from" className="h-8" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="to">{t("pl.to")}</Label>
-            <Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+            <Input id="to" className="h-8" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="status">{t("pl.status")}</Label>
             <Select value={status} onValueChange={(v) => setStatus(v as StatusFilter)}>
-              <SelectTrigger id="status">
+              <SelectTrigger id="status" className="h-8">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -267,7 +254,7 @@ function PlannerPage() {
               <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 id="text"
-                className="pl-9"
+                className="h-8 pl-9"
                 placeholder={t("pl.searchPh")}
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -306,6 +293,24 @@ function PlannerPage() {
             />
           </section>
         ) : (
+        {!isLoading && plans.length === 0 ? (
+        <section className="surface-card flex min-h-72 flex-col items-center justify-center px-6 py-12 text-center">
+          <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-primary/25 bg-secondary text-primary">
+            <Target className="h-7 w-7" strokeWidth={1.5} />
+          </div>
+          <h2 className="text-xl">{t("pl.emptyTitle")}</h2>
+          <p className="mt-2 max-w-md text-sm text-muted-foreground">{t("pl.emptySub")}</p>
+          <div className="mt-6">
+            <PlanDialog
+              defaultDate={from || todayISO()}
+              onCreated={refresh}
+              forcedDate={addDate}
+              onForcedClose={() => setAddDate(null)}
+              triggerLabel={t("pl.emptyAction")}
+            />
+          </div>
+        </section>
+        ) : (
         <section className="surface-card overflow-hidden">
           <Table>
             <TableHeader>
@@ -325,22 +330,15 @@ function PlannerPage() {
                   </TableCell>
                 </TableRow>
               )}
-              {!isLoading && plans.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
-                    {t("pl.empty")}
-                  </TableCell>
-                </TableRow>
-              )}
               {plans.map((plan) => (
                 <TableRow
                   key={plan.id}
                   className={
                     plan.status === "NOT_DONE"
-                      ? "bg-danger-soft/60 hover:bg-danger-soft"
+                      ? "border-l-4 border-l-destructive bg-danger-soft/60 hover:bg-danger-soft"
                       : plan.status === "DONE"
-                        ? "bg-success-soft/40 hover:bg-success-soft/70"
-                        : ""
+                        ? "border-l-4 border-l-success bg-success-soft/45 hover:bg-success-soft/70"
+                        : "border-l-4 border-l-warning bg-warning-soft/35 hover:bg-warning-soft/55"
                   }
                 >
                   <TableCell>
@@ -421,6 +419,7 @@ function PlannerPage() {
             </TableBody>
           </Table>
         </section>
+        )}
         )}
         </>
         )}

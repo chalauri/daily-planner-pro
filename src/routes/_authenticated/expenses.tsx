@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { AlertTriangle, ChevronLeft, ChevronRight, Copy, Download, FileText, LogOut, Paperclip, Pencil, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, ChevronLeft, ChevronRight, Copy, Download, FileText, Paperclip, Pencil, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,9 +19,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { AppTabs } from "@/components/AppTabs";
-import { HelpDialog } from "@/components/HelpDialog";
-import { LanguageToggle, useLang } from "@/lib/i18n";
+import { AppHeader } from "@/components/AppHeader";
+import { useLang } from "@/lib/i18n";
 import { useFT } from "@/lib/finance-i18n";
 import { TransactionDialog } from "@/components/finance/TransactionDialog";
 import { BulkExpenseDialog } from "@/components/finance/BulkExpenseDialog";
@@ -66,7 +65,6 @@ function nowYM(): YM {
 function ExpensesPage() {
   const { t } = useLang();
   const { ft, lang } = useFT();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const refresh = useInvalidateFinance();
   const [ym, setYM] = useState<YM>(nowYM);
@@ -111,13 +109,6 @@ function ExpensesPage() {
     txs
       .filter((x) => x.kind === "INCOME" && (!x.category_id || !categorizedIncomeIds.has(x.category_id)))
       .reduce((s, x) => s + Number(x.amount), 0);
-
-  async function signOut() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  }
 
   async function savePlanned(categoryId: string, value: string, current: number) {
     const amount = Number(value || 0);
@@ -246,22 +237,7 @@ function ExpensesPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-6 py-4">
-          <div className="flex items-center gap-4">
-            <span className="font-display text-xl font-semibold">{t("app.name")}</span>
-            <AppTabs />
-          </div>
-          <div className="flex items-center gap-2">
-            <HelpDialog />
-            <LanguageToggle />
-            <Button variant="ghost" size="sm" onClick={signOut}>
-              <LogOut className="h-4 w-4" />
-              {t("sign.out")}
-            </Button>
-          </div>
-        </div>
-      </header>
+      <AppHeader />
 
       <div className="mx-auto max-w-6xl space-y-6 px-6 py-8">
         <div className="flex flex-wrap items-end justify-between gap-4">
