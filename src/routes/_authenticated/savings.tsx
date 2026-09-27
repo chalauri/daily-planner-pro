@@ -366,3 +366,38 @@ function SavingDialog({ initial, companies, s, onClose, onSaved }: {
     </Dialog>
   );
 }
+
+function MultiFilter({ label, allLabel, options, selected, onChange }: {
+  label: string; allLabel: string; options: { value: string; label: string }[];
+  selected: string[]; onChange: (next: string[]) => void;
+}) {
+  const toggle = (v: string) =>
+    onChange(selected.includes(v) ? selected.filter((x) => x !== v) : [...selected, v]);
+  const summary = selected.length === 0
+    ? allLabel
+    : options.filter((o) => selected.includes(o.value)).map((o) => o.label).join(", ");
+  return (
+    <div className="space-y-1">
+      <Label>{label}</Label>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" role="combobox" className="w-full justify-between font-normal">
+            <span className="truncate">{summary}</span>
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent align="start" className="w-56 max-h-72 overflow-y-auto p-2">
+          {options.map((o) => (
+            <label key={o.value} className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent">
+              <Checkbox checked={selected.includes(o.value)} onCheckedChange={() => toggle(o.value)} />
+              <span className="truncate">{o.label}</span>
+            </label>
+          ))}
+          {selected.length > 0 && (
+            <Button variant="ghost" size="sm" className="mt-1 w-full" onClick={() => onChange([])}>{allLabel}</Button>
+          )}
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
