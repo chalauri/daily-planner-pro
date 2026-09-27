@@ -65,6 +65,7 @@ export function YearlyPlans() {
   const queryClient = useQueryClient();
   const [year, setYear] = useState(() => new Date().getFullYear());
   const [addOpen, setAddOpen] = useState(false);
+  const [addYear, setAddYear] = useState(() => new Date().getFullYear());
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
@@ -135,11 +136,25 @@ export function YearlyPlans() {
       toast.error(t("d.errSession"));
       return;
     }
+    const newTitle = title.trim();
+    const { data: existing } = await supabase
+      .from("yearly_plans")
+      .select("title")
+      .eq("year", addYear);
+    const dup = (existing ?? []).some(
+      (p) => p.title.trim().toLowerCase() === newTitle.toLowerCase(),
+    );
+    if (dup) {
+      setSaving(false);
+      toast.error(t("yr.duplicate", { year: addYear }));
+      return;
+    }
     const { error } = await supabase.from("yearly_plans").insert({
       user_id: userId,
-      year,
-      title: title.trim(),
+      year: addYear,
+      title: newTitle,
       description: description.trim() || null,
+      result_percent: 0,
     });
     setSaving(false);
     if (error) {
