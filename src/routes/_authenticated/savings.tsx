@@ -143,7 +143,7 @@ function SavingsPage() {
     if (!toDelete) return;
     const { error } = await supabase.from("savings").delete().eq("id", toDelete.id);
     setToDelete(null);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["savings"] });
   }
 
@@ -314,9 +314,9 @@ function SavingDialog({ initial, companies, s, onClose, onSaved }: {
 
   async function save() {
     const amt = Number(amount.replace(",", "."));
-    if (!(amt > 0)) return toast.error(s("amountReq"));
+    if (!(amt > 0)) { toast.error(s("amountReq")); return; }
     const co = company.trim();
-    if (needsCompany && !co) return toast.error(s("companyReq"));
+    if (needsCompany && !co) { toast.error(s("companyReq")); return; }
     // reuse existing spelling if it matches case-insensitively
     const existing = companies.find((c) => c.toLowerCase() === co.toLowerCase());
     setBusy(true);
@@ -329,7 +329,7 @@ function SavingDialog({ initial, companies, s, onClose, onSaved }: {
       ? await supabase.from("savings").update(payload).eq("id", initial.id)
       : await supabase.from("savings").insert({ ...payload, user_id: await currentUserId() });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     onSaved();
   }
 
