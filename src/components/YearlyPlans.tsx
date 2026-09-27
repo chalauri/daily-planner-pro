@@ -423,10 +423,24 @@ export function YearlyPlans() {
         <DialogContent>
           <form onSubmit={addPlan}>
             <DialogHeader>
-              <DialogTitle>{t("yr.addTitle", { year })}</DialogTitle>
+              <DialogTitle>{t("yr.addTitle", { year: addYear })}</DialogTitle>
               <DialogDescription>{t("yr.addDesc")}</DialogDescription>
             </DialogHeader>
             <div className="mt-4 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="yr-year">{t("yr.year")}</Label>
+                <Input
+                  id="yr-year"
+                  type="number"
+                  required
+                  min={2000}
+                  max={2100}
+                  value={addYear}
+                  onChange={(e) =>
+                    setAddYear(Number(e.target.value) || new Date().getFullYear())
+                  }
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="yr-title">{t("d.title")}</Label>
                 <Input
