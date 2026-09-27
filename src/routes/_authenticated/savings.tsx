@@ -29,7 +29,6 @@ import { CURRENCIES, currentUserId, downloadFile, money, toCsv } from "@/lib/fin
 type Saving = Database["public"]["Tables"]["savings"]["Row"];
 type Kind = Database["public"]["Enums"]["saving_type"];
 const KINDS: Kind[] = ["CASH", "STOCKS", "RETIREMENT"];
-const ALL = "__all";
 
 const T = {
   en: {
@@ -155,8 +154,6 @@ function SavingsPage() {
     for (const [c, v] of totals) data.push([s("total"), "", "", c, v, ""]);
     downloadFile("savings.csv", toCsv(data), "text/csv;charset=utf-8");
   }
-
-  const selCls = "w-full";
   return (
     <main className="min-h-screen bg-background">
       <header className="border-b border-border">
