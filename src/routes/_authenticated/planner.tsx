@@ -206,6 +206,21 @@ function PlannerPage() {
       </header>
 
       <div className="mx-auto max-w-6xl space-y-6 px-6 py-8">
+        <div className="inline-flex rounded-md border border-border bg-card p-1" role="tablist">
+          <Button size="sm" role="tab" aria-selected={section === "daily"} variant={section === "daily" ? "default" : "ghost"} onClick={() => setSection("daily")}>
+            <ListTodo className="h-4 w-4" />
+            {t("pl.tab.daily")}
+          </Button>
+          <Button size="sm" role="tab" aria-selected={section === "yearly"} variant={section === "yearly" ? "default" : "ghost"} onClick={() => setSection("yearly")}>
+            <CalendarRange className="h-4 w-4" />
+            {t("pl.tab.yearly")}
+          </Button>
+        </div>
+
+        {section === "yearly" ? (
+          <YearlyPlans />
+        ) : (
+        <>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl">{t("pl.title")}</h1>
@@ -406,6 +421,8 @@ function PlannerPage() {
             </TableBody>
           </Table>
         </section>
+        )}
+        </>
         )}
       </div>
 
