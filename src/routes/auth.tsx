@@ -6,8 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LanguageToggle, useLang } from "@/lib/i18n";
+import { useLang } from "@/lib/i18n";
 import { HelpDialog } from "@/components/HelpDialog";
+import { LanguageMenu } from "@/components/LanguageMenu";
 
 type Mode = "signin" | "signup";
 
@@ -110,7 +111,7 @@ function AuthPage() {
           <Link to="/" className="font-display text-xl font-semibold">{t("app.name")}</Link>
           <div className="flex items-center gap-1">
             <HelpDialog />
-            <LanguageToggle />
+            <LanguageMenu />
           </div>
         </div>
         <h1 className="mt-8 text-3xl">
