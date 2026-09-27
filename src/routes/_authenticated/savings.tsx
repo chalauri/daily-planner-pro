@@ -165,7 +165,7 @@ function SavingsPage() {
           {(usedCurrencies.length ? usedCurrencies : ["GEL"]).map((c, index) => (
             <div
               key={c}
-              className={`rounded-xl border border-border border-l-4 p-4 shadow-sm ${
+              className={`min-h-24 rounded-xl border border-border border-l-4 px-4 py-4 shadow-sm ${
                 index % 3 === 0
                   ? "border-l-success bg-success-soft/45"
                   : index % 3 === 1
@@ -191,7 +191,7 @@ function SavingsPage() {
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="inline-flex rounded-md border border-border bg-card p-1" role="tablist">
+          <div className="inline-flex rounded-md border border-border bg-card p-1 shadow-sm" role="tablist">
             {(["entries", "monthly", "yearly"] as const).map((v) => (
               <Button key={v} size="sm" role="tab" aria-selected={view === v} variant={view === v ? "default" : "ghost"} onClick={() => setView(v)}>
                 {s(v)}
@@ -217,26 +217,29 @@ function SavingsPage() {
             </div>
           ) : view === "entries" ? (
             <table className="w-full text-sm">
-              <thead className="border-b border-border text-left text-muted-foreground">
+              <thead className="border-b border-border bg-muted/45 text-left text-xs text-muted-foreground uppercase">
                 <tr><th className="p-3">{s("period")}</th><th className="p-3">{s("type")}</th><th className="p-3">{s("company")}</th><th className="p-3">{s("note")}</th><th className="p-3 text-right">{s("amount")}</th><th className="p-3" /></tr>
               </thead>
               <tbody>
                 {filtered.map((r) => (
                   <tr
                     key={r.id}
-                    className={`border-b border-l-4 border-border last:border-b-0 ${
+                    className={`border-b border-l-4 border-border odd:bg-card even:bg-muted/30 last:border-b-0 hover:bg-muted/55 ${
                       r.kind === "CASH"
-                        ? "border-l-warning bg-warning-soft/30 hover:bg-warning-soft/50"
+                        ? "border-l-warning"
                         : r.kind === "STOCKS"
-                          ? "border-l-success bg-success-soft/30 hover:bg-success-soft/50"
-                          : "border-l-primary bg-secondary/50 hover:bg-secondary/75"
+                          ? "border-l-success"
+                          : "border-l-primary"
                     }`}
                   >
                     <td className="p-3">{formatMonthYear(r.year, r.month, lang)}</td>
                     <td className="p-3">{s(r.kind)}</td>
                     <td className="p-3">{r.company ?? "—"}</td>
                     <td className="p-3 text-muted-foreground">{r.note ?? ""}</td>
-                    <td className="p-3 text-right text-base font-semibold tabular-nums">{fmt(Number(r.amount), r.currency)}</td>
+                    <td className="p-3 text-right text-base font-semibold tabular-nums">
+                      <span className="mr-2 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">{r.currency}</span>
+                      {fmt(Number(r.amount), r.currency)}
+                    </td>
                     <td className="p-3 text-right whitespace-nowrap">
                       <Button size="icon" variant="ghost" onClick={() => setDialog(r)} aria-label={s("edit")}><Pencil className="h-4 w-4" /></Button>
                       <Button size="icon" variant="ghost" onClick={() => setToDelete(r)} aria-label={s("delYes")}><Trash2 className="h-4 w-4" /></Button>
@@ -252,12 +255,12 @@ function SavingsPage() {
             </table>
           ) : (
             <table className="w-full text-sm">
-              <thead className="border-b border-border text-left text-muted-foreground">
+              <thead className="border-b border-border bg-muted/45 text-left text-xs text-muted-foreground uppercase">
                 <tr><th className="p-3">{s("period")}</th>{usedCurrencies.map((c) => <th key={c} className="p-3 text-right">{c}</th>)}</tr>
               </thead>
               <tbody>
                 {grouped.map(([p, m]) => (
-                  <tr key={p} className="border-b border-l-4 border-border border-l-primary bg-secondary/35 last:border-b-0 hover:bg-secondary/60">
+                  <tr key={p} className="border-b border-l-4 border-border border-l-primary odd:bg-card even:bg-muted/30 last:border-b-0 hover:bg-muted/55">
                     <td className="p-3">{periodLabel(p)}</td>
                     {usedCurrencies.map((c) => {
                       const amount = m.get(c);

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { AlertTriangle, ChevronLeft, ChevronRight, Copy, Download, FileText, Paperclip, Pencil, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, ChevronLeft, ChevronRight, Copy, Download, Eye, FileText, Paperclip, Pencil, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -240,18 +240,18 @@ function ExpensesPage() {
       <AppHeader />
 
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-8 sm:px-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" aria-label="Previous month" onClick={() => setYM(shiftYM(ym, -1))}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <h1 className="min-w-48 text-center font-display text-3xl font-semibold capitalize">{mName}</h1>
-            <Button variant="outline" size="icon" aria-label="Next month" onClick={() => setYM(shiftYM(ym, 1))}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-wrap items-end gap-3">
-            <div className="space-y-1">
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="icon" className="h-8 w-8" aria-label="Previous month" onClick={() => setYM(shiftYM(ym, -1))}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <h1 className="min-w-44 text-center font-display text-3xl font-semibold capitalize">{mName}</h1>
+              <Button variant="outline" size="icon" className="h-8 w-8" aria-label="Next month" onClick={() => setYM(shiftYM(ym, 1))}>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="space-y-1.5">
               <p className="text-xs text-muted-foreground">{ft("f.defaultCurrency")}</p>
               <Select value={cur.data?.def ?? "GEL"} onValueChange={setDefaultCurrency}>
                 <SelectTrigger className="h-8 w-28" aria-label={ft("f.defaultCurrency")}>
@@ -264,7 +264,7 @@ function ExpensesPage() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <p className="text-xs text-muted-foreground">{ft("f.monthCurrency")}</p>
               <Select value={cur.data?.override ?? "default"} onValueChange={setMonthCurrency}>
                 <SelectTrigger className="h-8 w-40" aria-label={ft("f.monthCurrency")}>
@@ -278,6 +278,8 @@ function ExpensesPage() {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-end gap-2">
             <Button variant="outline" onClick={() => setCatOpen("INCOME")}>
               <Plus className="h-4 w-4" />
               {ft("f.addIncome")}
@@ -285,6 +287,10 @@ function ExpensesPage() {
             <Button variant="outline" onClick={() => setCatOpen("EXPENSE")}>
               <Plus className="h-4 w-4" />
               {ft("f.addExpense")}
+            </Button>
+            <Button variant="outline" onClick={() => setBulkOpen(true)}>
+              <Plus className="h-4 w-4" />
+              {lang === "ka" ? "მასობრივი დამატება" : lang === "pl" ? "Dodaj zbiorczo" : "Bulk add"}
             </Button>
             <Button
               onClick={() => {
@@ -296,10 +302,6 @@ function ExpensesPage() {
               <Plus className="h-4 w-4" />
               {ft("f.addTx")}
             </Button>
-            <Button variant="outline" onClick={() => setBulkOpen(true)}>
-              <Plus className="h-4 w-4" />
-              {lang === "ka" ? "მასობრივი დამატება" : lang === "pl" ? "Dodaj zbiorczo" : "Bulk add"}
-            </Button>
           </div>
         </div>
 
@@ -310,7 +312,7 @@ function ExpensesPage() {
             { label: ft("f.savings"), value: fmt(income - plannedTotal), tone: income - plannedTotal >= 0 ? "text-primary" : "text-destructive", card: "border-l-primary bg-secondary/65" },
             { label: ft("f.planned"), value: fmt(plannedTotal), tone: "text-warning", card: "border-l-warning bg-warning-soft/45" },
           ].map((k) => (
-            <div key={k.label} className={`rounded-xl border border-border border-l-4 px-4 py-4 shadow-sm ${k.card}`}>
+          <div key={k.label} className={`min-h-24 rounded-xl border border-border border-l-4 px-4 py-4 shadow-sm ${k.card}`}>
               <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">{k.label}</p>
               <p className={`mt-1 font-display text-3xl font-semibold tabular-nums ${k.tone}`}>{k.value}</p>
             </div>
@@ -318,14 +320,14 @@ function ExpensesPage() {
         </div>
 
         {over.length > 0 && (
-          <div className="flex items-center gap-2 rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          <div className="inline-flex max-w-full items-center gap-2 self-start rounded-full border border-destructive/25 bg-danger-soft px-4 py-2.5 text-sm font-medium text-destructive shadow-sm">
             <AlertTriangle className="h-4 w-4 shrink-0" />
             {ft("f.overBanner", { cats: over.map((r) => r.category.name).join(", ") })}
           </div>
         )}
 
         <Tabs defaultValue="budget">
-          <TabsList className="h-auto rounded-md border border-border bg-card p-1">
+          <TabsList className="h-auto rounded-md border border-border bg-card p-1 shadow-sm">
             <TabsTrigger value="budget">{ft("f.tab.budget")}</TabsTrigger>
             <TabsTrigger value="tx">{ft("f.tab.tx")}</TabsTrigger>
             <TabsTrigger value="reports">{ft("f.tab.reports")}</TabsTrigger>
@@ -341,7 +343,7 @@ function ExpensesPage() {
             </div>
             <div className="surface-card overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="border-b border-border text-left text-xs text-muted-foreground uppercase">
+                <thead className="border-b border-border bg-muted/45 text-left text-xs text-muted-foreground uppercase">
                   <tr>
                     <th className="px-4 py-3">{ft("f.category")}</th>
                     <th className="px-4 py-3">{ft("f.planned")} ({currency})</th>
@@ -393,8 +395,8 @@ function ExpensesPage() {
                           <td className={`px-4 py-3 text-base font-semibold tabular-nums ${r.planned - r.spent < 0 ? "text-destructive" : ""}`}>{fmt(r.planned - r.spent)}</td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
-                              <div className="h-2 w-24 overflow-hidden rounded-full bg-muted">
-                                <div className={`h-full ${bar}`} style={{ width: `${pct}%` }} />
+                              <div className="h-2.5 w-28 overflow-hidden rounded-full bg-muted shadow-inner">
+                                <div className={`h-full rounded-full ${bar}`} style={{ width: `${pct}%` }} />
                               </div>
                               <span className={`text-xs ${st === "over" ? "text-destructive" : st === "near" ? "text-warning" : "text-muted-foreground"}`}>
                                 {st === "over" ? ft("f.over") : st === "near" ? ft("f.near") : `${pct}%`}
@@ -403,8 +405,8 @@ function ExpensesPage() {
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex justify-end gap-1">
-                              <Button variant="outline" size="sm" onClick={() => setDetails(r.category.id)}>
-                                {ft("f.details")}
+                              <Button variant="ghost" size="icon" aria-label={`${ft("f.details")} ${r.category.name}`} title={ft("f.details")} onClick={() => setDetails(r.category.id)}>
+                                <Eye className="h-4 w-4" />
                               </Button>
                               <Button
                                 variant="ghost"
@@ -438,7 +440,7 @@ function ExpensesPage() {
               <div className="surface-card overflow-x-auto">
                 <h3 className="px-4 pt-4 font-display text-lg font-semibold">{ft("f.incomeBySource")}</h3>
                 <table className="w-full text-sm">
-                    <thead>
+                    <thead className="bg-muted/45">
                     <tr className="border-b border-border text-left text-muted-foreground">
                       <th className="px-4 py-2 font-medium">{ft("f.category")}</th>
                       <th className="px-4 py-2 font-medium">{ft("f.income")}</th>
@@ -496,7 +498,7 @@ function ExpensesPage() {
             <div className="surface-card overflow-x-auto">
               <h3 className="px-4 pt-4 font-display text-lg font-semibold">{ft("f.summary")}</h3>
               <table className="w-full text-sm">
-                <thead className="border-b border-border text-left text-xs text-muted-foreground uppercase">
+                <thead className="border-b border-border bg-muted/45 text-left text-xs text-muted-foreground uppercase">
                   <tr>
                     <th className="px-4 py-3">{ft("f.category")}</th>
                     <th className="px-4 py-3">{ft("f.planned")}</th>
@@ -639,7 +641,7 @@ function TxTable({
   return (
     <div className="surface-card overflow-x-auto">
       <table className="w-full text-sm">
-        <thead className="border-b border-border text-left text-xs text-muted-foreground uppercase">
+        <thead className="border-b border-border bg-muted/45 text-left text-xs text-muted-foreground uppercase">
           <tr>
             <th className="px-4 py-3">{ft("f.date")}</th>
             <th className="px-4 py-3">{ft("f.category")}</th>
