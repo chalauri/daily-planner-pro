@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { AppTabs } from "@/components/AppTabs";
 import { CollabRequests } from "@/components/PlanSharing";
 import { HelpDialog } from "@/components/HelpDialog";
+import { FeedbackDialog } from "@/components/FeedbackDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -116,6 +117,7 @@ export function AppHeader({ onRequestsChanged }: { onRequestsChanged?: () => voi
                     triggerClassName="h-8 w-full justify-start px-2 text-sm font-normal"
                   />
                   <HelpDialog triggerClassName="h-8 w-full justify-start px-2 text-sm font-normal" />
+                  <FeedbackDialog triggerClassName="h-8 w-full justify-start px-2 text-sm font-normal" />
                 </div>
                 <DropdownMenuItem onSelect={() => setPasswordOpen(true)}>
                   <KeyRound />
