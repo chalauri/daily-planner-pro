@@ -320,7 +320,15 @@ function SavingDialog({ initial, companies, s, onClose, onSaved }: {
   const [company, setCompany] = useState(initial?.company ?? "");
   const [note, setNote] = useState(initial?.note ?? "");
   const [busy, setBusy] = useState(false);
-  const needsCompany = kind !== "CASH";
+  const needsCompany = kind === "STOCKS" || kind === "RETIREMENT";
+  const currencyOptions = kind === "CRYPTO" ? CRYPTO_CURRENCIES : CURRENCIES;
+
+  function pickKind(k: Kind) {
+    setKind(k);
+    // sensible default currency per type, still freely editable
+    if (k === "CRYPTO" && !CRYPTO_CURRENCIES.includes(currency)) setCurrency("BTC");
+    if (k !== "CRYPTO" && !CURRENCIES.includes(currency as (typeof CURRENCIES)[number])) setCurrency("PLN");
+  }
 
   async function save() {
     const amt = Number(amount.replace(",", "."));
@@ -358,12 +366,12 @@ function SavingDialog({ initial, companies, s, onClose, onSaved }: {
             <Input type="number" value={year} onChange={(e) => setYear(Number(e.target.value))} min={1990} max={2100} />
           </div>
           <div className="space-y-1"><Label>{s("type")}</Label>
-            <Select value={kind} onValueChange={(v) => setKind(v as Kind)}><SelectTrigger><SelectValue /></SelectTrigger>
+            <Select value={kind} onValueChange={(v) => pickKind(v as Kind)}><SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>{KINDS.map((k) => <SelectItem key={k} value={k}>{s(k)}</SelectItem>)}</SelectContent></Select>
           </div>
           <div className="space-y-1"><Label>{s("currency")}</Label>
-            <Select value={currency} onValueChange={setCurrency}><SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>{CURRENCIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select>
+            <Input list="saving-currencies" value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} maxLength={12} />
+            <datalist id="saving-currencies">{currencyOptions.map((c) => <option key={c} value={c} />)}</datalist>
           </div>
           <div className="space-y-1 sm:col-span-2"><Label>{s("amount")}</Label>
             <Input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" />
