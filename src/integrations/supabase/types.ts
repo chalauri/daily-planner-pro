@@ -433,7 +433,7 @@ export type Database = {
     Enums: {
       plan_recurrence: "NONE" | "DAILY" | "WEEKLY" | "MONTHLY"
       plan_status: "OPEN" | "DONE" | "NOT_DONE"
-      saving_type: "CASH" | "STOCKS" | "RETIREMENT"
+      saving_type: "CASH" | "STOCKS" | "RETIREMENT" | "CRYPTO"
       share_status: "PENDING" | "ACCEPTED" | "DECLINED"
       tx_kind: "INCOME" | "EXPENSE"
     }
@@ -565,7 +565,7 @@ export const Constants = {
     Enums: {
       plan_recurrence: ["NONE", "DAILY", "WEEKLY", "MONTHLY"],
       plan_status: ["OPEN", "DONE", "NOT_DONE"],
-      saving_type: ["CASH", "STOCKS", "RETIREMENT"],
+      saving_type: ["CASH", "STOCKS", "RETIREMENT", "CRYPTO"],
       share_status: ["PENDING", "ACCEPTED", "DECLINED"],
       tx_kind: ["INCOME", "EXPENSE"],
     },
