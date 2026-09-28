@@ -27,38 +27,39 @@ import { CURRENCIES, currentUserId, downloadFile, money, toCsv } from "@/lib/fin
 
 type Saving = Database["public"]["Tables"]["savings"]["Row"];
 type Kind = Database["public"]["Enums"]["saving_type"];
-const KINDS: Kind[] = ["CASH", "STOCKS", "RETIREMENT"];
+const KINDS: Kind[] = ["CASH", "STOCKS", "RETIREMENT", "CRYPTO"];
+const CRYPTO_CURRENCIES = ["BTC", "ETH"];
 
 const T = {
   en: {
     title: "Savings", add: "Add saving", edit: "Edit saving", month: "Month", year: "Year", type: "Type",
     currency: "Currency", amount: "Amount", company: "Company", note: "Note", from: "From", to: "To",
-    all: "All", CASH: "Cash", STOCKS: "Stocks", RETIREMENT: "Retirement", save: "Save", cancel: "Cancel",
+    all: "All", CASH: "Cash", STOCKS: "Stocks", RETIREMENT: "Retirement", CRYPTO: "Crypto", save: "Save", cancel: "Cancel",
     entries: "Entries", monthly: "Monthly", yearly: "Yearly", total: "Total", empty: "No savings match these filters.",
     period: "Period", del: "Delete this saving?", delYes: "Delete", companyReq: "Enter company name",
     amountReq: "Enter an amount greater than 0", saved: "Saved", reset: "Reset filters", csv: "Export CSV",
     totalsHint: "Totals are shown per currency — different currencies are never added together.",
-    emptySub: "Add a cash, stock, or retirement saving to start tracking your progress.",
+    emptySub: "Add a cash, stock, retirement, or crypto saving to start tracking your progress.",
   },
   ka: {
     title: "დანაზოგი", add: "დანაზოგის დამატება", edit: "დანაზოგის რედაქტირება", month: "თვე", year: "წელი", type: "ტიპი",
     currency: "ვალუტა", amount: "თანხა", company: "კომპანია", note: "შენიშვნა", from: "დან", to: "მდე",
-    all: "ყველა", CASH: "ნაღდი", STOCKS: "აქციები", RETIREMENT: "საპენსიო", save: "შენახვა", cancel: "გაუქმება",
+    all: "ყველა", CASH: "ნაღდი", STOCKS: "აქციები", RETIREMENT: "საპენსიო", CRYPTO: "კრიპტო", save: "შენახვა", cancel: "გაუქმება",
     entries: "ჩანაწერები", monthly: "თვიური", yearly: "წლიური", total: "ჯამი", empty: "ფილტრებს დანაზოგი არ ემთხვევა.",
     period: "პერიოდი", del: "წავშალოთ ეს დანაზოგი?", delYes: "წაშლა", companyReq: "შეიყვანეთ კომპანიის სახელი",
     amountReq: "შეიყვანეთ 0-ზე მეტი თანხა", saved: "შენახულია", reset: "ფილტრების გასუფთავება", csv: "CSV ექსპორტი",
     totalsHint: "ჯამები ნაჩვენებია ვალუტების მიხედვით — სხვადასხვა ვალუტა არ იკრიბება.",
-    emptySub: "დაამატეთ ნაღდი, აქციების ან საპენსიო დანაზოგი პროგრესის სანახავად.",
+    emptySub: "დაამატეთ ნაღდი, აქციების, საპენსიო ან კრიპტო დანაზოგი პროგრესის სანახავად.",
   },
   pl: {
     title: "Oszczędności", add: "Dodaj oszczędność", edit: "Edytuj oszczędność", month: "Miesiąc", year: "Rok", type: "Typ",
     currency: "Waluta", amount: "Kwota", company: "Firma", note: "Notatka", from: "Od", to: "Do",
-    all: "Wszystkie", CASH: "Gotówka", STOCKS: "Akcje", RETIREMENT: "Emerytalne", save: "Zapisz", cancel: "Anuluj",
+    all: "Wszystkie", CASH: "Gotówka", STOCKS: "Akcje", RETIREMENT: "Emerytalne", CRYPTO: "Krypto", save: "Zapisz", cancel: "Anuluj",
     entries: "Wpisy", monthly: "Miesięcznie", yearly: "Rocznie", total: "Suma", empty: "Brak oszczędności dla tych filtrów.",
     period: "Okres", del: "Usunąć tę oszczędność?", delYes: "Usuń", companyReq: "Podaj nazwę firmy",
     amountReq: "Podaj kwotę większą od 0", saved: "Zapisano", reset: "Wyczyść filtry", csv: "Eksport CSV",
     totalsHint: "Sumy są pokazane dla każdej waluty osobno — różne waluty nie są sumowane.",
-    emptySub: "Dodaj oszczędność gotówkową, akcyjną lub emerytalną, aby śledzić postępy.",
+    emptySub: "Dodaj oszczędność gotówkową, akcyjną, emerytalną lub krypto, aby śledzić postępy.",
   },
 };
 type SKey = keyof typeof T.en;
