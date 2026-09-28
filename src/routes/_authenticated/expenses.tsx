@@ -171,6 +171,9 @@ function ExpensesPage() {
 
   async function confirmDeleteCat() {
     if (!delCat) return;
+    const { error: txErr } = await supabase.from("transactions").delete().eq("category_id", delCat);
+    if (txErr) { toast.error(txErr.message); return; }
+    await supabase.from("budgets").delete().eq("category_id", delCat);
     const { error } = await supabase.from("categories").delete().eq("id", delCat);
     if (error) toast.error(error.message);
     else toast.success(ft("f.deleted"));
