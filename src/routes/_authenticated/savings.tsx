@@ -27,38 +27,39 @@ import { CURRENCIES, currentUserId, downloadFile, money, toCsv } from "@/lib/fin
 
 type Saving = Database["public"]["Tables"]["savings"]["Row"];
 type Kind = Database["public"]["Enums"]["saving_type"];
-const KINDS: Kind[] = ["CASH", "STOCKS", "RETIREMENT"];
+const KINDS: Kind[] = ["CASH", "STOCKS", "RETIREMENT", "CRYPTO"];
+const CRYPTO_CURRENCIES = ["BTC", "ETH"];
 
 const T = {
   en: {
     title: "Savings", add: "Add saving", edit: "Edit saving", month: "Month", year: "Year", type: "Type",
     currency: "Currency", amount: "Amount", company: "Company", note: "Note", from: "From", to: "To",
-    all: "All", CASH: "Cash", STOCKS: "Stocks", RETIREMENT: "Retirement", save: "Save", cancel: "Cancel",
+    all: "All", CASH: "Cash", STOCKS: "Stocks", RETIREMENT: "Retirement", CRYPTO: "Crypto", save: "Save", cancel: "Cancel",
     entries: "Entries", monthly: "Monthly", yearly: "Yearly", total: "Total", empty: "No savings match these filters.",
     period: "Period", del: "Delete this saving?", delYes: "Delete", companyReq: "Enter company name",
     amountReq: "Enter an amount greater than 0", saved: "Saved", reset: "Reset filters", csv: "Export CSV",
     totalsHint: "Totals are shown per currency — different currencies are never added together.",
-    emptySub: "Add a cash, stock, or retirement saving to start tracking your progress.",
+    emptySub: "Add a cash, stock, retirement, or crypto saving to start tracking your progress.",
   },
   ka: {
     title: "დანაზოგი", add: "დანაზოგის დამატება", edit: "დანაზოგის რედაქტირება", month: "თვე", year: "წელი", type: "ტიპი",
     currency: "ვალუტა", amount: "თანხა", company: "კომპანია", note: "შენიშვნა", from: "დან", to: "მდე",
-    all: "ყველა", CASH: "ნაღდი", STOCKS: "აქციები", RETIREMENT: "საპენსიო", save: "შენახვა", cancel: "გაუქმება",
+    all: "ყველა", CASH: "ნაღდი", STOCKS: "აქციები", RETIREMENT: "საპენსიო", CRYPTO: "კრიპტო", save: "შენახვა", cancel: "გაუქმება",
     entries: "ჩანაწერები", monthly: "თვიური", yearly: "წლიური", total: "ჯამი", empty: "ფილტრებს დანაზოგი არ ემთხვევა.",
     period: "პერიოდი", del: "წავშალოთ ეს დანაზოგი?", delYes: "წაშლა", companyReq: "შეიყვანეთ კომპანიის სახელი",
     amountReq: "შეიყვანეთ 0-ზე მეტი თანხა", saved: "შენახულია", reset: "ფილტრების გასუფთავება", csv: "CSV ექსპორტი",
     totalsHint: "ჯამები ნაჩვენებია ვალუტების მიხედვით — სხვადასხვა ვალუტა არ იკრიბება.",
-    emptySub: "დაამატეთ ნაღდი, აქციების ან საპენსიო დანაზოგი პროგრესის სანახავად.",
+    emptySub: "დაამატეთ ნაღდი, აქციების, საპენსიო ან კრიპტო დანაზოგი პროგრესის სანახავად.",
   },
   pl: {
     title: "Oszczędności", add: "Dodaj oszczędność", edit: "Edytuj oszczędność", month: "Miesiąc", year: "Rok", type: "Typ",
     currency: "Waluta", amount: "Kwota", company: "Firma", note: "Notatka", from: "Od", to: "Do",
-    all: "Wszystkie", CASH: "Gotówka", STOCKS: "Akcje", RETIREMENT: "Emerytalne", save: "Zapisz", cancel: "Anuluj",
+    all: "Wszystkie", CASH: "Gotówka", STOCKS: "Akcje", RETIREMENT: "Emerytalne", CRYPTO: "Krypto", save: "Zapisz", cancel: "Anuluj",
     entries: "Wpisy", monthly: "Miesięcznie", yearly: "Rocznie", total: "Suma", empty: "Brak oszczędności dla tych filtrów.",
     period: "Okres", del: "Usunąć tę oszczędność?", delYes: "Usuń", companyReq: "Podaj nazwę firmy",
     amountReq: "Podaj kwotę większą od 0", saved: "Zapisano", reset: "Wyczyść filtry", csv: "Eksport CSV",
     totalsHint: "Sumy są pokazane dla każdej waluty osobno — różne waluty nie są sumowane.",
-    emptySub: "Dodaj oszczędność gotówkową, akcyjną lub emerytalną, aby śledzić postępy.",
+    emptySub: "Dodaj oszczędność gotówkową, akcyjną, emerytalną lub krypto, aby śledzić postępy.",
   },
 };
 type SKey = keyof typeof T.en;
@@ -131,7 +132,11 @@ function SavingsPage() {
     }
     return [...m.entries()].sort((a, b) => b[0].localeCompare(a[0]));
   }, [filtered, view]);
-  const usedCurrencies = CURRENCIES.filter((c) => totals.has(c));
+  const usedCurrencies = [...totals.keys()].sort((a, b) => a.localeCompare(b));
+  const allCurrencies = useMemo(
+    () => [...new Set([...CURRENCIES, ...CRYPTO_CURRENCIES, ...rows.map((r) => r.currency)])].sort((a, b) => a.localeCompare(b)),
+    [rows],
+  );
   const periodLabel = (p: string) => (p.length === 4 ? p : formatMonthYear(Number(p.slice(0, 4)), Number(p.slice(5)), lang));
 
   async function remove() {
@@ -183,7 +188,7 @@ function SavingsPage() {
           <div className="space-y-1.5"><Label>{s("from")}</Label><Input className="h-8" type="month" value={from} onChange={(e) => setFrom(e.target.value)} /></div>
           <div className="space-y-1.5"><Label>{s("to")}</Label><Input className="h-8" type="month" value={to} onChange={(e) => setTo(e.target.value)} /></div>
           <MultiFilter label={s("type")} allLabel={s("all")} options={KINDS.map((k) => ({ value: k, label: s(k) }))} selected={fKind} onChange={setFKind} />
-          <MultiFilter label={s("currency")} allLabel={s("all")} options={CURRENCIES.map((c) => ({ value: c, label: c }))} selected={fCur} onChange={setFCur} />
+          <MultiFilter label={s("currency")} allLabel={s("all")} options={allCurrencies.map((c) => ({ value: c, label: c }))} selected={fCur} onChange={setFCur} />
           <MultiFilter label={s("company")} allLabel={s("all")} options={companies.map((c) => ({ value: c, label: c }))} selected={fCo} onChange={setFCo} />
           <div className="flex items-end">
             <Button variant="ghost" className="w-full" onClick={() => { setFrom(""); setTo(""); setFKind([]); setFCur([]); setFCo([]); }}>{s("reset")}</Button>
@@ -229,7 +234,9 @@ function SavingsPage() {
                         ? "border-l-warning"
                         : r.kind === "STOCKS"
                           ? "border-l-success"
-                          : "border-l-primary"
+                          : r.kind === "CRYPTO"
+                            ? "border-l-accent-foreground"
+                            : "border-l-primary"
                     }`}
                   >
                     <td className="p-3">{formatMonthYear(r.year, r.month, lang)}</td>
@@ -313,7 +320,15 @@ function SavingDialog({ initial, companies, s, onClose, onSaved }: {
   const [company, setCompany] = useState(initial?.company ?? "");
   const [note, setNote] = useState(initial?.note ?? "");
   const [busy, setBusy] = useState(false);
-  const needsCompany = kind !== "CASH";
+  const needsCompany = kind === "STOCKS" || kind === "RETIREMENT";
+  const currencyOptions = kind === "CRYPTO" ? CRYPTO_CURRENCIES : CURRENCIES;
+
+  function pickKind(k: Kind) {
+    setKind(k);
+    // sensible default currency per type, still freely editable
+    if (k === "CRYPTO" && !CRYPTO_CURRENCIES.includes(currency)) setCurrency("BTC");
+    if (k !== "CRYPTO" && !CURRENCIES.includes(currency as (typeof CURRENCIES)[number])) setCurrency("PLN");
+  }
 
   async function save() {
     const amt = Number(amount.replace(",", "."));
@@ -351,12 +366,12 @@ function SavingDialog({ initial, companies, s, onClose, onSaved }: {
             <Input type="number" value={year} onChange={(e) => setYear(Number(e.target.value))} min={1990} max={2100} />
           </div>
           <div className="space-y-1"><Label>{s("type")}</Label>
-            <Select value={kind} onValueChange={(v) => setKind(v as Kind)}><SelectTrigger><SelectValue /></SelectTrigger>
+            <Select value={kind} onValueChange={(v) => pickKind(v as Kind)}><SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>{KINDS.map((k) => <SelectItem key={k} value={k}>{s(k)}</SelectItem>)}</SelectContent></Select>
           </div>
           <div className="space-y-1"><Label>{s("currency")}</Label>
-            <Select value={currency} onValueChange={setCurrency}><SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>{CURRENCIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select>
+            <Input list="saving-currencies" value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} maxLength={12} />
+            <datalist id="saving-currencies">{currencyOptions.map((c) => <option key={c} value={c} />)}</datalist>
           </div>
           <div className="space-y-1 sm:col-span-2"><Label>{s("amount")}</Label>
             <Input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" />

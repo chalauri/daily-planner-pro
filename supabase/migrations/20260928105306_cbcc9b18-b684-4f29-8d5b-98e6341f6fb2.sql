@@ -1,0 +1,1 @@
+ALTER TYPE public.saving_type ADD VALUE IF NOT EXISTS 'CRYPTO';
