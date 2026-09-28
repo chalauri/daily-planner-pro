@@ -132,7 +132,11 @@ function SavingsPage() {
     }
     return [...m.entries()].sort((a, b) => b[0].localeCompare(a[0]));
   }, [filtered, view]);
-  const usedCurrencies = CURRENCIES.filter((c) => totals.has(c));
+  const usedCurrencies = [...totals.keys()].sort((a, b) => a.localeCompare(b));
+  const allCurrencies = useMemo(
+    () => [...new Set([...CURRENCIES, ...CRYPTO_CURRENCIES, ...rows.map((r) => r.currency)])].sort((a, b) => a.localeCompare(b)),
+    [rows],
+  );
   const periodLabel = (p: string) => (p.length === 4 ? p : formatMonthYear(Number(p.slice(0, 4)), Number(p.slice(5)), lang));
 
   async function remove() {
@@ -184,7 +188,7 @@ function SavingsPage() {
           <div className="space-y-1.5"><Label>{s("from")}</Label><Input className="h-8" type="month" value={from} onChange={(e) => setFrom(e.target.value)} /></div>
           <div className="space-y-1.5"><Label>{s("to")}</Label><Input className="h-8" type="month" value={to} onChange={(e) => setTo(e.target.value)} /></div>
           <MultiFilter label={s("type")} allLabel={s("all")} options={KINDS.map((k) => ({ value: k, label: s(k) }))} selected={fKind} onChange={setFKind} />
-          <MultiFilter label={s("currency")} allLabel={s("all")} options={CURRENCIES.map((c) => ({ value: c, label: c }))} selected={fCur} onChange={setFCur} />
+          <MultiFilter label={s("currency")} allLabel={s("all")} options={allCurrencies.map((c) => ({ value: c, label: c }))} selected={fCur} onChange={setFCur} />
           <MultiFilter label={s("company")} allLabel={s("all")} options={companies.map((c) => ({ value: c, label: c }))} selected={fCo} onChange={setFCo} />
           <div className="flex items-end">
             <Button variant="ghost" className="w-full" onClick={() => { setFrom(""); setTo(""); setFKind([]); setFCur([]); setFCo([]); }}>{s("reset")}</Button>
@@ -230,7 +234,9 @@ function SavingsPage() {
                         ? "border-l-warning"
                         : r.kind === "STOCKS"
                           ? "border-l-success"
-                          : "border-l-primary"
+                          : r.kind === "CRYPTO"
+                            ? "border-l-accent-foreground"
+                            : "border-l-primary"
                     }`}
                   >
                     <td className="p-3">{formatMonthYear(r.year, r.month, lang)}</td>
