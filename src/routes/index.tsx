@@ -98,7 +98,7 @@ function Landing() {
         <div className="flex items-center gap-1.5">
           <LanguageMenu />
           <Button asChild variant="outline" className="rounded-lg border-foreground/20 font-medium hover:border-foreground hover:bg-foreground hover:text-background">
-            <Link to="/auth">{t("sign.in")}</Link>
+            <Link to="/auth" search={{ mode: "signin" }}>{t("sign.in")}</Link>
           </Button>
         </div>
       </header>
@@ -116,7 +116,7 @@ function Landing() {
         <p className="mx-auto mt-6 max-w-xl text-base text-muted-foreground">{t("landing.sub")}</p>
         <div className="mt-8 flex flex-wrap items-stretch justify-center gap-3">
           <Button asChild size="lg" className="h-12 min-w-56 justify-center rounded-xl px-8 text-base">
-            <Link to="/auth">{t("landing.cta")}</Link>
+            <Link to="/auth" search={{ mode: "signup" }}>{t("landing.cta")}</Link>
           </Button>
           <Button
             asChild
@@ -290,7 +290,7 @@ function Landing() {
           <p className="mx-auto mt-3 max-w-md text-sm opacity-90">{t("landing.cta3.sub")}</p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <Button asChild size="lg" variant="secondary">
-              <Link to="/auth">{t("landing.cta")}</Link>
+              <Link to="/auth" search={{ mode: "signup" }}>{t("landing.cta")}</Link>
             </Button>
             <Button
               asChild
@@ -312,7 +312,7 @@ function Landing() {
           <div className="flex items-center gap-1.5">
             <LanguageMenu />
             <Button asChild variant="ghost" size="sm">
-              <Link to="/auth">{t("sign.in")}</Link>
+              <Link to="/auth" search={{ mode: "signin" }}>{t("sign.in")}</Link>
             </Button>
           </div>
         </div>
