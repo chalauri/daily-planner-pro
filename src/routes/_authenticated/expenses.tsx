@@ -557,8 +557,8 @@ function ExpensesPage() {
         defaultCategoryId={txDefaultCat}
         onSaved={refresh}
       />
-      <CategoryDialog open={catOpen !== null} kind={catOpen ?? "EXPENSE"} onOpenChange={(o) => !o && setCatOpen(null)} categories={categories} ym={ym} monthName={mName} onSaved={refresh} />
-      <CategoryDialog open={editCat !== null} kind={editCat?.kind ?? "EXPENSE"} edit={editCat} onOpenChange={(o) => !o && setEditCat(null)} categories={categories} ym={ym} monthName={mName} onSaved={refresh} />
+      <CategoryDialog open={catOpen !== null} kind={catOpen ?? "EXPENSE"} onOpenChange={(o) => !o && setCatOpen(null)} categories={categories} ym={ym} monthName={mName} currency={currency} onSaved={refresh} />
+      <CategoryDialog open={editCat !== null} kind={editCat?.kind ?? "EXPENSE"} edit={editCat} onOpenChange={(o) => !o && setEditCat(null)} categories={categories} ym={ym} monthName={mName} currency={currency} onSaved={refresh} />
 
       <Dialog open={details !== null} onOpenChange={(o) => !o && setDetails(null)}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">

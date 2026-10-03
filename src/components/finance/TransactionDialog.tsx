@@ -7,7 +7,6 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFT } from "@/lib/finance-i18n";
@@ -52,17 +51,6 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
   const [repeat, setRepeat] = useState(false);
   const [until, setUntil] = useState("");
   const [saving, setSaving] = useState(false);
-  const [taxOn, setTaxOn] = useState(false);
-  const [taxRate, setTaxRate] = useState("20");
-  const [taxAmount, setTaxAmount] = useState("");
-  const [taxEdited, setTaxEdited] = useState(false);
-
-  useEffect(() => {
-    if (!taxOn || taxEdited) return;
-    const base = Number(amount);
-    const rate = Number(taxRate);
-    setTaxAmount(base > 0 ? String(Math.round(base * (1 + (rate > 0 ? rate : 0) / 100) * 100) / 100) : "");
-  }, [taxOn, taxEdited, amount, taxRate]);
 
   useEffect(() => {
     if (!open) return;
@@ -71,7 +59,6 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
       setAmount(String(editing.amount));
       setDate(editing.tx_date);
       setNote(editing.note ?? "");
-      setTaxOn(editing.is_income_tax);
     } else {
       const cat = categories.find((c) => c.id === defaultCategoryId);
       setCategoryId(cat?.id ?? NONE);
@@ -83,9 +70,6 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
     }
     setFile(null);
     setRepeat(false);
-    setTaxEdited(editing?.is_income_tax ?? false);
-    setTaxAmount(editing?.is_income_tax ? String(editing.amount) : "");
-    if (!editing) setTaxOn(false);
   }, [open, editing, ym, defaultCategoryId, categories]);
 
   const kind: TxKind = "EXPENSE";
@@ -124,7 +108,7 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
   }
 
   async function save() {
-    const value = Number(taxOn ? taxAmount : amount);
+    const value = Number(amount);
     if (!value || value <= 0 || !date) return;
     setSaving(true);
     try {
@@ -140,7 +124,7 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
       if (editing) {
         const { error } = await supabase
           .from("transactions")
-          .update({ kind, category_id, amount: value, is_income_tax: taxOn, tx_date: date, note: note.trim() || null, ...(receipt_path ? { receipt_path } : {}) })
+          .update({ kind, category_id, amount: value, tx_date: date, note: note.trim() || null, ...(receipt_path ? { receipt_path } : {}) })
           .eq("id", editing.id);
         if (error) throw error;
         toast.success(ft("f.saved"));
@@ -151,7 +135,7 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
           kind,
           category_id,
           amount: value,
-          is_income_tax: taxOn,
+         
           tx_date: d,
           note: note.trim() || null,
           receipt_path: receipt_path ?? null,
@@ -188,27 +172,6 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
               <Label htmlFor="tx-date">{ft("f.date")}</Label>
               <Input id="tx-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
             </div>
-          </div>
-          <div className="space-y-3 rounded-lg border border-border p-3">
-            <div className="flex items-center gap-2">
-              <Checkbox id="tx-tax" checked={taxOn} onCheckedChange={(v) => setTaxOn(v === true)} />
-              <Label htmlFor="tx-tax" className="cursor-pointer">{ft("f.incomeTax")}</Label>
-            </div>
-            {taxOn && (
-              <div className="space-y-2">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="tx-rate">{ft("f.taxRate")}</Label>
-                    <Input id="tx-rate" type="number" min="0" step="0.01" inputMode="decimal" value={taxRate} onChange={(e) => { setTaxRate(e.target.value); setTaxEdited(false); }} />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="tx-tax-amount">{ft("f.taxAmount", { c: currency })}</Label>
-                    <Input id="tx-tax-amount" type="number" min="0" step="0.01" inputMode="decimal" value={taxAmount} onChange={(e) => { setTaxAmount(e.target.value); setTaxEdited(true); }} />
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground">{ft("f.taxHint", { p: Number(taxRate) || 0 })}</p>
-              </div>
-            )}
           </div>
           <div className="space-y-1.5">
             <Label>{ft("f.category")}</Label>
@@ -251,7 +214,7 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
           )}
         </div>
         <DialogFooter>
-          <Button onClick={save} disabled={saving || !amount || Number(amount) <= 0 || (taxOn && Number(taxAmount) <= 0)}>
+          <Button onClick={save} disabled={saving || !amount || Number(amount) <= 0}>
             {ft("f.save")}
           </Button>
         </DialogFooter>
