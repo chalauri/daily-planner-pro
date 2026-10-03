@@ -81,5 +81,9 @@ export const plF: Record<FKey, string> = {
   "f.unplanned": "Bez kategorii",
   "f.txIn": "Transakcje: {cat}",
   "f.loading": "Ładowanie…",
+  "f.incomeTax": "Podatek dochodowy",
+  "f.taxRate": "Stawka (%)",
+  "f.taxAmount": "Kwota z podatkiem ({c})",
+  "f.taxHint": "Obliczone jako kwota + {p}%. Możesz to zmienić.",
   "f.uploadFail": "Nie udało się przesłać paragonu",
 };

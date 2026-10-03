@@ -82,6 +82,10 @@ const en = {
   "f.unplanned": "Uncategorized",
   "f.txIn": "Transactions: {cat}",
   "f.loading": "Loading…",
+  "f.incomeTax": "Income tax",
+  "f.taxRate": "Tax rate (%)",
+  "f.taxAmount": "Amount with tax ({c})",
+  "f.taxHint": "Calculated as amount + {p}%. You can edit it.",
   "f.uploadFail": "Receipt upload failed",
 };
 
@@ -168,6 +172,10 @@ const ka: Record<FKey, string> = {
   "f.unplanned": "კატეგორიის გარეშე",
   "f.txIn": "ტრანზაქციები: {cat}",
   "f.loading": "იტვირთება…",
+  "f.incomeTax": "საშემოსავლო გადასახადი",
+  "f.taxRate": "განაკვეთი (%)",
+  "f.taxAmount": "თანხა გადასახადით ({c})",
+  "f.taxHint": "გამოითვლება: თანხა + {p}%. შეგიძლიათ შეცვალოთ.",
   "f.uploadFail": "ქვითრის ატვირთვა ვერ მოხერხდა",
 };
 
