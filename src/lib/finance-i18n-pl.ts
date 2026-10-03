@@ -84,6 +84,7 @@ export const plF: Record<FKey, string> = {
   "f.incomeTax": "Podatek dochodowy",
   "f.taxRate": "Stawka (%)",
   "f.taxAmount": "Kwota z podatkiem ({c})",
-  "f.taxHint": "Obliczone jako kwota + {p}%. Możesz to zmienić.",
+  "f.taxHint": "Planowana kwota = {p}% przychodu z tego miesiąca. Możesz to zmienić.",
+  "f.taxBase": "Przychód: {m}",
   "f.uploadFail": "Nie udało się przesłać paragonu",
 };
