@@ -1,0 +1,1 @@
+ALTER TABLE public.transactions ADD COLUMN is_income_tax boolean NOT NULL DEFAULT false;

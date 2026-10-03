@@ -294,6 +294,7 @@ export type Database = {
           category_id: string | null
           created_at: string
           id: string
+          is_income_tax: boolean
           kind: Database["public"]["Enums"]["tx_kind"]
           note: string | null
           receipt_path: string | null
@@ -308,6 +309,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           id?: string
+          is_income_tax?: boolean
           kind: Database["public"]["Enums"]["tx_kind"]
           note?: string | null
           receipt_path?: string | null
@@ -322,6 +324,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           id?: string
+          is_income_tax?: boolean
           kind?: Database["public"]["Enums"]["tx_kind"]
           note?: string | null
           receipt_path?: string | null
