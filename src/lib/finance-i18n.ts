@@ -85,7 +85,8 @@ const en = {
   "f.incomeTax": "Income tax",
   "f.taxRate": "Tax rate (%)",
   "f.taxAmount": "Amount with tax ({c})",
-  "f.taxHint": "Calculated as amount + {p}%. You can edit it.",
+  "f.taxHint": "Planned amount = {p}% of this month's income. You can edit it.",
+  "f.taxBase": "Income for {m}",
   "f.uploadFail": "Receipt upload failed",
 };
 
@@ -175,7 +176,8 @@ const ka: Record<FKey, string> = {
   "f.incomeTax": "საშემოსავლო გადასახადი",
   "f.taxRate": "განაკვეთი (%)",
   "f.taxAmount": "თანხა გადასახადით ({c})",
-  "f.taxHint": "გამოითვლება: თანხა + {p}%. შეგიძლიათ შეცვალოთ.",
+  "f.taxHint": "დაგეგმილი თანხა = ამ თვის შემოსავლის {p}%. შეგიძლიათ შეცვალოთ.",
+  "f.taxBase": "შემოსავალი: {m}",
   "f.uploadFail": "ქვითრის ატვირთვა ვერ მოხერხდა",
 };
 

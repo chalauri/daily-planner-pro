@@ -13,7 +13,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFT } from "@/lib/finance-i18n";
 import { useLang } from "@/lib/i18n";
-import { currentUserId, monthLabel, shiftYM, type TxKind, type YM } from "@/lib/finance";
+import { currentUserId, money, monthLabel, shiftYM, type TxKind, type YM } from "@/lib/finance";
 
 interface Props {
   open: boolean;
@@ -40,21 +40,47 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [taxOn, setTaxOn] = useState(false);
   const [taxRate, setTaxRate] = useState("20");
-  const [taxAmount, setTaxAmount] = useState("");
   const [taxEdited, setTaxEdited] = useState(false);
+  const [monthIncome, setMonthIncome] = useState<number | null>(null);
 
+  // Total income planned/received for the selected month (same logic as the Income card:
+  // income-category amounts, falling back to income transactions).
   useEffect(() => {
-    if (!taxOn || taxEdited) return;
-    const base = Number(planned);
+    if (!open || !taxOn) return;
+    let cancelled = false;
+    (async () => {
+      const ids = categories.filter((c) => c.kind === "INCOME").map((c) => c.id);
+      let total = 0;
+      if (ids.length) {
+        const { data } = await supabase
+          .from("budgets").select("amount").in("category_id", ids).eq("year", planYm.year).eq("month", planYm.month);
+        total = (data ?? []).reduce((a, r) => a + Number(r.amount), 0);
+      }
+      if (total === 0) {
+        const from = `${planYm.year}-${String(planYm.month).padStart(2, "0")}-01`;
+        const to = planYm.month === 12 ? `${planYm.year + 1}-01-01` : `${planYm.year}-${String(planYm.month + 1).padStart(2, "0")}-01`;
+        const { data } = await supabase
+          .from("transactions").select("amount").eq("kind", "INCOME").gte("tx_date", from).lt("tx_date", to);
+        total = (data ?? []).reduce((a, r) => a + Number(r.amount), 0);
+      }
+      if (!cancelled) setMonthIncome(total);
+    })();
+    return () => { cancelled = true; };
+  }, [open, taxOn, planYm, categories]);
+
+  // Tax = rate% of the month's income; user may overwrite the result.
+  useEffect(() => {
+    if (!taxOn || taxEdited || monthIncome === null) return;
     const rate = Number(taxRate);
-    setTaxAmount(base > 0 ? String(Math.round(base * (1 + (rate > 0 ? rate : 0) / 100) * 100) / 100) : "");
-  }, [taxOn, taxEdited, planned, taxRate]);
+    const tax = Math.round(monthIncome * (rate > 0 ? rate : 0)) / 100;
+    setPlanned(tax > 0 ? String(tax) : "");
+  }, [taxOn, taxEdited, monthIncome, taxRate]);
 
   useEffect(() => {
-    if (open) { setTaxOn(false); setTaxEdited(false); setTaxAmount(""); setTaxRate("20"); }
+    if (open) { setTaxOn(false); setTaxEdited(false); setTaxRate("20"); setMonthIncome(null); }
   }, [open]);
 
-  const finalPlanned = taxOn ? taxAmount : planned;
+  const finalPlanned = planned;
 
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -200,12 +226,12 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
             <>
               <div className="space-y-1.5">
                 <Label htmlFor="cat-planned">{ft("f.plannedFor", { m: monthLabel(planYm, lang) })}</Label>
-                <Input id="cat-planned" type="number" min="0" step="0.01" value={planned} onChange={(e) => setPlanned(e.target.value)} />
+                <Input id="cat-planned" type="number" min="0" step="0.01" value={planned} onChange={(e) => { setPlanned(e.target.value); if (taxOn) setTaxEdited(true); }} />
               </div>
               {kind === "EXPENSE" && (
                 <div className="space-y-3 rounded-lg border border-border p-3">
                   <div className="flex items-center gap-2">
-                    <Checkbox id="cat-tax" checked={taxOn} onCheckedChange={(v) => setTaxOn(v === true)} />
+                    <Checkbox id="cat-tax" checked={taxOn} onCheckedChange={(v) => { setTaxOn(v === true); setTaxEdited(false); }} />
                     <Label htmlFor="cat-tax" className="cursor-pointer">{ft("f.incomeTax")}</Label>
                   </div>
                   {taxOn && (
@@ -216,8 +242,10 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
                           <Input id="cat-rate" type="number" min="0" step="0.01" inputMode="decimal" value={taxRate} onChange={(e) => { setTaxRate(e.target.value); setTaxEdited(false); }} />
                         </div>
                         <div className="space-y-1.5">
-                          <Label htmlFor="cat-tax-amount">{ft("f.taxAmount", { c: currency })}</Label>
-                          <Input id="cat-tax-amount" type="number" min="0" step="0.01" inputMode="decimal" value={taxAmount} onChange={(e) => { setTaxAmount(e.target.value); setTaxEdited(true); }} />
+                          <Label>{ft("f.taxBase", { m: monthLabel(planYm, lang) })}</Label>
+                          <div className="flex h-9 items-center rounded-md border border-input bg-muted/40 px-3 text-sm">
+                            {monthIncome === null ? "…" : money(monthIncome, currency || "GEL", lang)}
+                          </div>
                         </div>
                       </div>
                       <p className="text-xs text-muted-foreground">{ft("f.taxHint", { p: Number(taxRate) || 0 })}</p>
