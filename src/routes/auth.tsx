@@ -20,10 +20,10 @@ export const Route = createFileRoute("/auth")({
   },
   head: () => ({
     meta: [
-      { title: "Sign in — Personal planner" },
-      { name: "description", content: "Sign in or create your Personal planner account." },
-      { property: "og:title", content: "Sign in — Personal planner" },
-      { property: "og:description", content: "Sign in or create your Personal planner account." },
+      { title: "Sign in — Plan & Prosper" },
+      { name: "description", content: "Sign in or create your Plan & Prosper account." },
+      { property: "og:title", content: "Sign in — Plan & Prosper" },
+      { property: "og:description", content: "Sign in or create your Plan & Prosper account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

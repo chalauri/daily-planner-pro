@@ -49,9 +49,9 @@ import {
 export const Route = createFileRoute("/_authenticated/expenses")({
   head: () => ({
     meta: [
-      { title: "Expenses — Personal planner" },
+      { title: "Expenses — Plan & Prosper" },
       { name: "description", content: "Track income and expenses, plan monthly budgets and see reports." },
-      { property: "og:title", content: "Expenses — Personal planner" },
+      { property: "og:title", content: "Expenses — Plan & Prosper" },
       { property: "og:description", content: "Track income and expenses, plan monthly budgets and see reports." },
     ],
   }),

@@ -55,9 +55,9 @@ import { YearlyPlans } from "@/components/YearlyPlans";
 export const Route = createFileRoute("/_authenticated/planner")({
   head: () => ({
     meta: [
-      { title: "Your plans — Personal planner" },
+      { title: "Your plans — Plan & Prosper" },
       { name: "description", content: "Today's plans, filters and live statistics." },
-      { property: "og:title", content: "Your plans — Personal planner" },
+      { property: "og:title", content: "Your plans — Plan & Prosper" },
       { property: "og:description", content: "Today's plans, filters and live statistics." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -20,13 +20,13 @@ type Icon = ComponentType<{ className?: string }>;
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Personal planner — daily plans and monthly budgets" },
+      { title: "Plan & Prosper — daily plans and monthly budgets" },
       {
         name: "description",
         content:
           "A calm personal planner: today's plans with live statistics, plus income, monthly category budgets, spending against plan and CSV or PDF export.",
       },
-      { property: "og:title", content: "Personal planner — daily plans and monthly budgets" },
+      { property: "og:title", content: "Plan & Prosper — daily plans and monthly budgets" },
       {
         property: "og:description",
         content:
