@@ -85,7 +85,7 @@ function ExpensesPage() {
   const [details, setDetails] = useState<string | null>(null);
   const [delTx, setDelTx] = useState<Transaction | null>(null);
   const [delCat, setDelCat] = useState<string | null>(null);
-  const [editCat, setEditCat] = useState<null | { id: string; name: string; amount: number; isTax?: boolean; kind: "INCOME" | "EXPENSE" }>(null);
+  const [editCat, setEditCat] = useState<null | { id: string; name: string; amount: number; isTax?: boolean; isSub?: boolean; kind: "INCOME" | "EXPENSE" }>(null);
 
   const categories = cats.data ?? [];
   const txs = month.data?.transactions ?? [];
