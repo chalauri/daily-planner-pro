@@ -149,6 +149,7 @@ export interface CategoryRow {
   spent: number;
   budgetId: string | null;
   isTax: boolean;
+  isSub: boolean;
 }
 
 export function buildCategoryRows(cats: Category[], budgets: Budget[], txs: Transaction[]): CategoryRow[] {
@@ -164,7 +165,7 @@ export function buildCategoryRows(cats: Category[], budgets: Budget[], txs: Tran
       const spent = txs
         .filter((t) => t.kind === "EXPENSE" && t.category_id === c.id)
         .reduce((s, t) => s + Number(t.amount), 0);
-      return { category: c, planned: b ? Number(b.amount) : 0, spent, budgetId: b?.id ?? null, isTax: b?.is_income_tax ?? false };
+      return { category: c, planned: b ? Number(b.amount) : 0, spent, budgetId: b?.id ?? null, isTax: b?.is_income_tax ?? false, isSub: b?.is_subscription ?? false };
     });
 }
 

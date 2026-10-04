@@ -89,6 +89,16 @@ const en = {
   "f.taxBase": "Income for {m}",
   "f.taxBadge": "Tax",
   "f.uploadFail": "Receipt upload failed",
+  "f.subscription": "Subscription",
+  "f.subBadge": "Subscription",
+  "f.tab.filter": "Filter",
+  "f.fromMonth": "From",
+  "f.toMonth": "To",
+  "f.onlyTax": "Tax only",
+  "f.onlySub": "Subscriptions only",
+  "f.allCats": "All categories",
+  "f.month": "Month",
+  "f.noResults": "No planned expenses match these filters.",
 };
 
 type FKey = keyof typeof en;
@@ -181,6 +191,16 @@ const ka: Record<FKey, string> = {
   "f.taxBase": "შემოსავალი: {m}",
   "f.taxBadge": "გადასახადი",
   "f.uploadFail": "ქვითრის ატვირთვა ვერ მოხერხდა",
+  "f.subscription": "გამოწერა",
+  "f.subBadge": "გამოწერა",
+  "f.tab.filter": "ფილტრი",
+  "f.fromMonth": "თვიდან",
+  "f.toMonth": "თვემდე",
+  "f.onlyTax": "მხოლოდ გადასახადი",
+  "f.onlySub": "მხოლოდ გამოწერები",
+  "f.allCats": "ყველა კატეგორია",
+  "f.month": "თვე",
+  "f.noResults": "ამ ფილტრით ჩანაწერები არ მოიძებნა.",
 };
 
 export type { FKey };
