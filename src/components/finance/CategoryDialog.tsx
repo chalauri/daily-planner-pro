@@ -176,6 +176,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
+        <form className="grid gap-4" onSubmit={(e) => { e.preventDefault(); void save(); }}>
         <DialogHeader>
           <DialogTitle>{edit ? ft("f.editCat") : kind === "INCOME" ? ft("f.addIncome") : ft("f.addExpense")}</DialogTitle>
         </DialogHeader>
@@ -257,10 +258,11 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
           )}
         </div>
         <DialogFooter>
-          <Button onClick={save} disabled={saving || !name.trim()}>
+          <Button type="submit" disabled={saving || !name.trim()}>
             {ft("f.save")}
           </Button>
         </DialogFooter>
+        </form>
       </DialogContent>
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
