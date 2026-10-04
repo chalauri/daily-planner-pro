@@ -1,0 +1,1 @@
+ALTER TABLE public.budgets ADD COLUMN is_subscription boolean NOT NULL DEFAULT false;
