@@ -153,7 +153,12 @@ export interface CategoryRow {
 
 export function buildCategoryRows(cats: Category[], budgets: Budget[], txs: Transaction[]): CategoryRow[] {
   return cats
-    .filter((c) => c.kind === "EXPENSE")
+    .filter(
+      (c) =>
+        c.kind === "EXPENSE" &&
+        (budgets.some((b) => b.category_id === c.id) ||
+          txs.some((t) => t.kind === "EXPENSE" && t.category_id === c.id)),
+    )
     .map((c) => {
       const b = budgets.find((x) => x.category_id === c.id);
       const spent = txs
