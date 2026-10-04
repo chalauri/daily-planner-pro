@@ -159,6 +159,7 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <form className="grid gap-4" onSubmit={(e) => { e.preventDefault(); void save(); }}>
         <DialogHeader>
           <DialogTitle>{editing ? ft("f.editTx") : ft("f.addTx")}</DialogTitle>
         </DialogHeader>
@@ -214,10 +215,11 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
           )}
         </div>
         <DialogFooter>
-          <Button onClick={save} disabled={saving || !amount || Number(amount) <= 0}>
+          <Button type="submit" disabled={saving || !amount || Number(amount) <= 0}>
             {ft("f.save")}
           </Button>
         </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
