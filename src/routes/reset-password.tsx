@@ -11,10 +11,10 @@ export const Route = createFileRoute("/reset-password")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Reset password — Personal planner" },
-      { name: "description", content: "Set a new password for your Personal planner account." },
-      { property: "og:title", content: "Reset password — Personal planner" },
-      { property: "og:description", content: "Set a new password for your Personal planner account." },
+      { title: "Reset password — Plan & Prosper" },
+      { name: "description", content: "Set a new password for your Plan & Prosper account." },
+      { property: "og:title", content: "Reset password — Plan & Prosper" },
+      { property: "og:description", content: "Set a new password for your Plan & Prosper account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

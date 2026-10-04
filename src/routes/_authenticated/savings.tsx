@@ -67,9 +67,9 @@ type SKey = keyof typeof T.en;
 export const Route = createFileRoute("/_authenticated/savings")({
   head: () => ({
     meta: [
-      { title: "Savings — Personal planner" },
+      { title: "Savings — Plan & Prosper" },
       { name: "description", content: "Track cash, stock and retirement savings in several currencies with monthly and yearly reports." },
-      { property: "og:title", content: "Savings — Personal planner" },
+      { property: "og:title", content: "Savings — Plan & Prosper" },
       { property: "og:description", content: "Track cash, stock and retirement savings with monthly and yearly reports." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
