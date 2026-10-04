@@ -39,6 +39,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
   const [saving, setSaving] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [taxOn, setTaxOn] = useState(false);
+  const [subOn, setSubOn] = useState(false);
   const [taxRate, setTaxRate] = useState("20");
   const [taxEdited, setTaxEdited] = useState(false);
   const [monthIncome, setMonthIncome] = useState<number | null>(null);
