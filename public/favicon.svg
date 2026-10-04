@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Plan &amp; Prosper">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#196049"/>
+      <stop offset="1" stop-color="#013727"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#tile)"/>
+  <path d="M15 34 L26 45 L44 20"
+        fill="none" stroke="#faf9f3" stroke-width="9"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M53 11 L49.8 26.2 L37.8 14.2 Z" fill="#f4bb74"/>
+</svg>
