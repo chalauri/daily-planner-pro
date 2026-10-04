@@ -25,7 +25,7 @@ interface Props {
   currency?: string;
   onSaved: () => void;
   /** When set, the dialog edits this category's name and its planned amount for `ym`. */
-  edit?: { id: string; name: string; amount: number } | null;
+  edit?: { id: string; name: string; amount: number; isTax?: boolean } | null;
 }
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
