@@ -126,7 +126,10 @@ function ExpensesPage() {
   async function copyPrev() {
     const prev = shiftYM(ym, -1);
     const { data, error } = await supabase.from("budgets").select("category_id, amount, is_income_tax, is_subscription").eq("year", prev.year).eq("month", prev.month);
-...
+    if (error) { toast.error(error.message); return; }
+    if (!data.length) { toast.info(ft("f.nothingToCopy")); return; }
+    const user_id = await currentUserId();
+    const { error: e2 } = await supabase.from("budgets").upsert(
       data.map((b) => ({ user_id, category_id: b.category_id, amount: b.amount, is_income_tax: b.is_income_tax, is_subscription: b.is_subscription, year: ym.year, month: ym.month })),
       { onConflict: "category_id,year,month" },
     );
