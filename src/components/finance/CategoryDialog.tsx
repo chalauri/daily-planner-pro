@@ -91,6 +91,9 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
       setName(edit.name);
       setPlanned(edit.amount ? String(edit.amount) : "");
       setPlanYm(ym);
+      setTaxOn(!!edit.isTax);
+      // Keep the stored amount instead of recalculating it from income.
+      setTaxEdited(!!edit.isTax);
     } else if (open) {
       setName("");
       setPlanned("");
@@ -113,7 +116,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
       const amount = Number(finalPlanned || 0);
       const { error: be } = await supabase
         .from("budgets")
-        .upsert({ user_id, category_id: edit.id, year: planYm.year, month: planYm.month, amount }, { onConflict: "category_id,year,month" });
+        .upsert({ user_id, category_id: edit.id, year: planYm.year, month: planYm.month, amount, is_income_tax: kind === "EXPENSE" ? taxOn : false }, { onConflict: "category_id,year,month" });
       if (be) throw be;
       toast.success(ft("f.saved"));
       onSaved();
@@ -160,7 +163,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
       if (amount > 0) {
         const { error: be } = await supabase
           .from("budgets")
-          .insert({ user_id, category_id: categoryId, year: planYm.year, month: planYm.month, amount });
+          .insert({ user_id, category_id: categoryId, year: planYm.year, month: planYm.month, amount, is_income_tax: taxOn });
         if (be) throw be;
       }
       toast.success(ft("f.saved"));
