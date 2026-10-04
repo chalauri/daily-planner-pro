@@ -47,6 +47,7 @@ export type Database = {
           category_id: string
           created_at: string
           id: string
+          is_income_tax: boolean
           month: number
           updated_at: string
           user_id: string
@@ -57,6 +58,7 @@ export type Database = {
           category_id: string
           created_at?: string
           id?: string
+          is_income_tax?: boolean
           month: number
           updated_at?: string
           user_id: string
@@ -67,6 +69,7 @@ export type Database = {
           category_id?: string
           created_at?: string
           id?: string
+          is_income_tax?: boolean
           month?: number
           updated_at?: string
           user_id?: string

@@ -84,7 +84,7 @@ function ExpensesPage() {
   const [details, setDetails] = useState<string | null>(null);
   const [delTx, setDelTx] = useState<Transaction | null>(null);
   const [delCat, setDelCat] = useState<string | null>(null);
-  const [editCat, setEditCat] = useState<null | { id: string; name: string; amount: number; kind: "INCOME" | "EXPENSE" }>(null);
+  const [editCat, setEditCat] = useState<null | { id: string; name: string; amount: number; isTax?: boolean; kind: "INCOME" | "EXPENSE" }>(null);
 
   const categories = cats.data ?? [];
   const txs = month.data?.transactions ?? [];
@@ -124,12 +124,12 @@ function ExpensesPage() {
 
   async function copyPrev() {
     const prev = shiftYM(ym, -1);
-    const { data, error } = await supabase.from("budgets").select("category_id, amount").eq("year", prev.year).eq("month", prev.month);
+    const { data, error } = await supabase.from("budgets").select("category_id, amount, is_income_tax").eq("year", prev.year).eq("month", prev.month);
     if (error) { toast.error(error.message); return; }
     if (!data.length) { toast.info(ft("f.nothingToCopy")); return; }
     const user_id = await currentUserId();
     const { error: e2 } = await supabase.from("budgets").upsert(
-      data.map((b) => ({ user_id, category_id: b.category_id, amount: b.amount, year: ym.year, month: ym.month })),
+      data.map((b) => ({ user_id, category_id: b.category_id, amount: b.amount, is_income_tax: b.is_income_tax, year: ym.year, month: ym.month })),
       { onConflict: "category_id,year,month" },
     );
     if (e2) { toast.error(e2.message); return; }
@@ -390,7 +390,17 @@ function ExpensesPage() {
                                 : "border-l-success bg-success-soft/30 hover:bg-success-soft/50"
                           }`}
                         >
-                          <td className="px-4 py-3 font-medium">{r.category.name}</td>
+                          <td className="px-4 py-3 font-medium">
+                            {r.category.name}
+                            {r.isTax && (
+                              <span
+                                className="ml-2 inline-flex items-center rounded-full border border-warning/40 bg-warning-soft px-2 py-0.5 align-middle text-[10px] font-semibold uppercase tracking-wide text-warning"
+                                title={ft("f.incomeTax")}
+                              >
+                                {ft("f.taxBadge")}
+                              </span>
+                            )}
+                          </td>
                           <td className="px-4 py-3 text-base font-medium tabular-nums">
                             {r.planned ? fmt(r.planned) : "—"}
                           </td>
@@ -423,7 +433,7 @@ function ExpensesPage() {
                               >
                                 <Plus className="h-4 w-4" />
                               </Button>
-                              <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${r.category.name}`} onClick={() => setEditCat({ id: r.category.id, name: r.category.name, amount: r.planned, kind: "EXPENSE" })}>
+                              <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${r.category.name}`} onClick={() => setEditCat({ id: r.category.id, name: r.category.name, amount: r.planned, isTax: r.isTax, kind: "EXPENSE" })}>
                                 <Pencil className="h-4 w-4" />
                               </Button>
                               <Button variant="ghost" size="icon" aria-label={`Delete ${r.category.name}`} onClick={() => setDelCat(r.category.id)}>
