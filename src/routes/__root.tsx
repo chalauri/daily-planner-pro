@@ -82,15 +82,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Personal planner — a calm daily planner" },
+      { title: "Plan & Prosper — plan your day, grow your money" },
       {
         name: "description",
-        content: "Plan your day, track what got done, and see your progress at a glance.",
+        content:
+          "Plan your day, track what got done, and keep your budgets and savings on course — in English, Georgian and Polish.",
       },
-      { property: "og:title", content: "Personal planner — a calm daily planner" },
+      { property: "og:title", content: "Plan & Prosper — plan your day, grow your money" },
       {
         property: "og:description",
-        content: "Plan your day, track what got done, and see your progress at a glance.",
+        content:
+          "Plan your day, track what got done, and keep your budgets and savings on course — in English, Georgian and Polish.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -103,7 +105,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32.png" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
     ],
   }),
   shellComponent: RootShell,
