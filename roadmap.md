@@ -34,3 +34,8 @@
 - [x] Secondary hero button "I already have one" given a subtle dark border, crisp dark hover fill, and the same size/structure as the primary button
 - [x] Plans and Money section headers stack the descriptive sub-text under the title on the left
 - [x] "ALSO INSIDE" pills: consistent padding, icon in a tinted circle, single row evenly spaced across the card (stacks on narrow screens)
+
+## Branding — icon & page titles
+- [x] Custom browser icon (pine tile, white check rising into a gold growth arrow) as SVG plus 32px and 180px PNGs; default Lovable icon removed
+- [x] Browser tab titles on every page now read "Plan & Prosper"
+- [ ] Landing footer line still says "Personal planner — plans and money, in one place." (pending owner's OK to rebrand)

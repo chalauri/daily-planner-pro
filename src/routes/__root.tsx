@@ -95,6 +95,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Plan your day, track what got done, and keep your budgets and savings on course — in English, Georgian and Polish.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Plan & Prosper" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
