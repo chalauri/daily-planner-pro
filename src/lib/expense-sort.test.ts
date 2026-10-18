@@ -1,4 +1,5 @@
-import { describe, expect, test } from "bun:test";
+import { describe, test } from "node:test";
+import { deepStrictEqual } from "node:assert";
 import { DEFAULT_EXPENSE_SORT, nextExpenseSort, sortExpenses, type ExpenseSortKey } from "./expense-sort";
 
 const rows = [
@@ -10,23 +11,23 @@ const names = (key: ExpenseSortKey, direction: "asc" | "desc" = "asc") => sortEx
 
 describe("expense ordering", () => {
   test("defaults to alphabetical category names", () => {
-    expect(sortExpenses(rows, DEFAULT_EXPENSE_SORT, (r) => r, "en").map((r) => r.name)).toEqual(["Apple", "Bread", "Zebra"]);
-    expect(rows.map((r) => r.name)).toEqual(["Zebra", "Apple", "Bread"]);
+    deepStrictEqual(sortExpenses(rows, DEFAULT_EXPENSE_SORT, (r) => r, "en").map((r) => r.name), ["Apple", "Bread", "Zebra"]);
+    deepStrictEqual(rows.map((r) => r.name), ["Zebra", "Apple", "Bread"]);
   });
-  test.each([
+  for (const [key, expected] of [
     ["name", ["Apple", "Bread", "Zebra"]],
     ["month", ["Bread", "Zebra", "Apple"]],
     ["planned", ["Bread", "Zebra", "Apple"]],
     ["spent", ["Zebra", "Bread", "Apple"]],
     ["remaining", ["Bread", "Apple", "Zebra"]],
     ["progress", ["Zebra", "Apple", "Bread"]],
-  ] as [ExpenseSortKey, string[]][]) ("sorts %s ascending and descending", (key, expected) => {
-    expect(names(key)).toEqual(expected);
-    expect(names(key, "desc")).toEqual([...expected].reverse());
+  ] as [ExpenseSortKey, string[]][]) test(`sorts ${key} ascending and descending`, () => {
+    deepStrictEqual(names(key), expected);
+    deepStrictEqual(names(key, "desc"), [...expected].reverse());
   });
   test("repeat clicks reverse direction and a new column starts ascending", () => {
-    expect(nextExpenseSort(DEFAULT_EXPENSE_SORT, "name")).toEqual({ key: "name", direction: "desc" });
-    expect(nextExpenseSort({ key: "name", direction: "desc" }, "name")).toEqual(DEFAULT_EXPENSE_SORT);
-    expect(nextExpenseSort(DEFAULT_EXPENSE_SORT, "spent")).toEqual({ key: "spent", direction: "asc" });
+    deepStrictEqual(nextExpenseSort(DEFAULT_EXPENSE_SORT, "name"), { key: "name", direction: "desc" });
+    deepStrictEqual(nextExpenseSort({ key: "name", direction: "desc" }, "name"), DEFAULT_EXPENSE_SORT);
+    deepStrictEqual(nextExpenseSort(DEFAULT_EXPENSE_SORT, "spent"), { key: "spent", direction: "asc" });
   });
 });
