@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFT } from "@/lib/finance-i18n";
 import { money, monthLabel, ymRange } from "@/lib/finance";
+import { ExpenseSortHeader } from "@/components/finance/ExpenseSortHeader";
+import { DEFAULT_EXPENSE_SORT, nextExpenseSort, sortExpenses, type ExpenseSort } from "@/lib/expense-sort";
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 const ALL = "__all__";
@@ -21,6 +23,7 @@ export function ExpenseFilter({ currency }: { currency: string }) {
   const [cat, setCat] = useState(ALL);
   const [onlyTax, setOnlyTax] = useState(false);
   const [onlySub, setOnlySub] = useState(false);
+  const [sort, setSort] = useState<ExpenseSort>(DEFAULT_EXPENSE_SORT);
 
   const fromKey = fromY * 100 + fromM;
   const toKey = toY * 100 + toM;
@@ -60,7 +63,7 @@ export function ExpenseFilter({ currency }: { currency: string }) {
   }, [inRange]);
 
   const rows = useMemo(() => {
-    return inRange
+    return sortExpenses(inRange
       .filter((b) => (cat === ALL || b.category_id === cat) && (!onlyTax || b.is_income_tax) && (!onlySub || b.is_subscription))
       .map((b) => {
         const prefix = `${b.year}-${String(b.month).padStart(2, "0")}`;
@@ -68,9 +71,8 @@ export function ExpenseFilter({ currency }: { currency: string }) {
           .filter((t) => t.category_id === b.category_id && t.tx_date.startsWith(prefix))
           .reduce((s, t) => s + Number(t.amount), 0);
         return { ...b, planned: Number(b.amount), spent };
-      })
-      .sort((a, b) => b.year * 100 + b.month - (a.year * 100 + a.month) || a.categories.name.localeCompare(b.categories.name));
-  }, [inRange, cat, onlyTax, onlySub, q.data]);
+      }), sort, (r) => ({ name: r.categories.name, planned: r.planned, spent: r.spent, year: r.year, month: r.month }), lang);
+  }, [inRange, cat, onlyTax, onlySub, q.data, sort, lang]);
 
   const totals = rows.reduce((s, r) => ({ planned: s.planned + r.planned, spent: s.spent + r.spent }), { planned: 0, spent: 0 });
   const fmt = (n: number) => money(n, currency, lang);
@@ -121,11 +123,11 @@ export function ExpenseFilter({ currency }: { currency: string }) {
         <table className="w-full text-sm">
           <thead className="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <th className="px-4 py-3">{ft("f.month")}</th>
-              <th className="px-4 py-3">{ft("f.category")}</th>
-              <th className="px-4 py-3 text-right">{ft("f.planned")}</th>
-              <th className="px-4 py-3 text-right">{ft("f.spent")}</th>
-              <th className="px-4 py-3 text-right">{ft("f.remaining")}</th>
+              <ExpenseSortHeader column="month" sort={sort} onSort={(key) => setSort(nextExpenseSort(sort, key))}>{ft("f.month")}</ExpenseSortHeader>
+              <ExpenseSortHeader column="name" sort={sort} onSort={(key) => setSort(nextExpenseSort(sort, key))}>{ft("f.category")}</ExpenseSortHeader>
+              <ExpenseSortHeader column="planned" sort={sort} onSort={(key) => setSort(nextExpenseSort(sort, key))} right>{ft("f.planned")}</ExpenseSortHeader>
+              <ExpenseSortHeader column="spent" sort={sort} onSort={(key) => setSort(nextExpenseSort(sort, key))} right>{ft("f.spent")}</ExpenseSortHeader>
+              <ExpenseSortHeader column="remaining" sort={sort} onSort={(key) => setSort(nextExpenseSort(sort, key))} right>{ft("f.remaining")}</ExpenseSortHeader>
             </tr>
           </thead>
           <tbody>

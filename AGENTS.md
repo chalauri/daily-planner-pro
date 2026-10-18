@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Use `AppHeader` for every signed-in section so navigation, language, requests, help, account, and sign-out controls remain consistent.
+- Expense tables share the browser-safe expense-sort utility and ExpenseSortHeader so month and range views compare numeric values and expose consistent accessible sorting.
