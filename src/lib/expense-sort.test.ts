@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { DEFAULT_EXPENSE_SORT, nextExpenseSort, sortExpenses, type ExpenseSortKey } from "./expense-sort";
 
 const rows = [
-  { name: "Zebra", planned: 20, spent: 10, year: 2026, month: 11 },
+  { name: "Zebra", planned: 21, spent: 10, year: 2026, month: 11 },
   { name: "Apple", planned: 100, spent: 90, year: 2027, month: 1 },
   { name: "Bread", planned: 9, spent: 12, year: 2026, month: 2 },
 ];
