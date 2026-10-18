@@ -27,6 +27,8 @@ import { BulkExpenseDialog } from "@/components/finance/BulkExpenseDialog";
 import { CategoryDialog } from "@/components/finance/CategoryDialog";
 import { FinanceReports } from "@/components/finance/FinanceReports";
 import { ExpenseFilter } from "@/components/finance/ExpenseFilter";
+import { ExpenseSortHeader } from "@/components/finance/ExpenseSortHeader";
+import { DEFAULT_EXPENSE_SORT, nextExpenseSort, sortExpenses, type ExpenseSort } from "@/lib/expense-sort";
 import {
   CURRENCIES,
   budgetState,
@@ -53,6 +55,8 @@ export const Route = createFileRoute("/_authenticated/expenses")({
       { name: "description", content: "Track income and expenses, plan monthly budgets and see reports." },
       { property: "og:title", content: "Expenses — Plan & Prosper" },
       { property: "og:description", content: "Track income and expenses, plan monthly budgets and see reports." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ExpensesPage,
@@ -90,7 +94,9 @@ function ExpensesPage() {
   const categories = cats.data ?? [];
   const txs = month.data?.transactions ?? [];
   const budgets = month.data?.budgets ?? [];
-  const rows = useMemo(() => buildCategoryRows(categories, budgets, txs), [categories, budgets, txs]);
+  const [expenseSort, setExpenseSort] = useState<ExpenseSort>(DEFAULT_EXPENSE_SORT);
+  const rows = useMemo(() => sortExpenses(buildCategoryRows(categories, budgets, txs), expenseSort,
+    (r) => ({ name: r.category.name, planned: r.planned, spent: r.spent }), lang), [categories, budgets, txs, expenseSort, lang]);
   const catName = (id: string | null) => categories.find((c) => c.id === id)?.name ?? ft("f.unplanned");
 
   const expense = txs.filter((x) => x.kind === "EXPENSE").reduce((s, x) => s + Number(x.amount), 0);
@@ -350,11 +356,11 @@ function ExpensesPage() {
               <table className="w-full text-sm">
                 <thead className="border-b border-border bg-muted/45 text-left text-xs text-muted-foreground uppercase">
                   <tr>
-                    <th className="px-4 py-3">{ft("f.category")}</th>
-                    <th className="px-4 py-3">{ft("f.planned")} ({currency})</th>
-                    <th className="px-4 py-3">{ft("f.spent")}</th>
-                    <th className="px-4 py-3">{ft("f.remaining")}</th>
-                    <th className="px-4 py-3">{ft("f.progress")}</th>
+                    <ExpenseSortHeader column="name" sort={expenseSort} onSort={(key) => setExpenseSort(nextExpenseSort(expenseSort, key))}>{ft("f.category")}</ExpenseSortHeader>
+                    <ExpenseSortHeader column="planned" sort={expenseSort} onSort={(key) => setExpenseSort(nextExpenseSort(expenseSort, key))}>{ft("f.planned")} ({currency})</ExpenseSortHeader>
+                    <ExpenseSortHeader column="spent" sort={expenseSort} onSort={(key) => setExpenseSort(nextExpenseSort(expenseSort, key))}>{ft("f.spent")}</ExpenseSortHeader>
+                    <ExpenseSortHeader column="remaining" sort={expenseSort} onSort={(key) => setExpenseSort(nextExpenseSort(expenseSort, key))}>{ft("f.remaining")}</ExpenseSortHeader>
+                    <ExpenseSortHeader column="progress" sort={expenseSort} onSort={(key) => setExpenseSort(nextExpenseSort(expenseSort, key))}>{ft("f.progress")}</ExpenseSortHeader>
                     <th className="px-4 py-3 text-right">{ft("f.actions")}</th>
                   </tr>
                 </thead>

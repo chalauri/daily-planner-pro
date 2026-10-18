@@ -17,6 +17,7 @@
 - [ ] Reminder email time changed from 23:55 to 21:30 CET (job still to build — blocked on sending domain)
 
 ## Expenses
+- [x] Alphabetical default and sortable data columns in monthly expenses and Filter views — tested all columns and verified with saved expenses while signed in.
 - [x] Expenses tab: categories, budgets per month, transactions (notes, receipts, monthly repeat), currency default + per-month override (GEL/USD/EUR/PLN)
 - [x] In-app budget alerts (80% / over), month summary, charts, CSV + PDF (print) export, Details per category
 
