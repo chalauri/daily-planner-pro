@@ -315,16 +315,16 @@ function ExpensesPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 xl:grid-cols-4">
           {[
             { label: ft("f.income"), value: fmt(income), tone: "text-success", card: "border-l-success bg-success-soft/45" },
             { label: ft("f.expenses"), value: fmt(expense), tone: "text-destructive", card: "border-l-destructive bg-danger-soft/55" },
             { label: ft("f.savings"), value: fmt(income - plannedTotal), tone: income - plannedTotal >= 0 ? "text-primary" : "text-destructive", card: "border-l-primary bg-secondary/65" },
             { label: ft("f.planned"), value: fmt(plannedTotal), tone: "text-warning", card: "border-l-warning bg-warning-soft/45" },
           ].map((k) => (
-          <div key={k.label} className={`min-h-24 rounded-xl border border-border border-l-4 px-4 py-4 shadow-sm ${k.card}`}>
-              <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">{k.label}</p>
-              <p className={`mt-1 font-display text-3xl font-semibold tabular-nums ${k.tone}`}>{k.value}</p>
+          <div key={k.label} className={`min-w-0 min-h-24 rounded-xl border border-border border-l-4 px-4 py-4 shadow-sm ${k.card}`}>
+              <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase [overflow-wrap:anywhere]">{k.label}</p>
+              <p className={`mt-1 font-display text-2xl font-semibold tabular-nums lg:text-3xl [overflow-wrap:anywhere] ${k.tone}`}>{k.value}</p>
             </div>
           ))}
         </div>
