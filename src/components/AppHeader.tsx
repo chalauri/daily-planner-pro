@@ -74,10 +74,10 @@ export function AppHeader({ onRequestsChanged }: { onRequestsChanged?: () => voi
   return (
     <>
       <header className="border-b border-border bg-card/70 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+        <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-3 sm:flex sm:items-center sm:justify-between sm:gap-3 sm:px-6">
           <div className="flex min-w-0 items-center gap-3 sm:gap-5">
             <span className="shrink-0 font-display text-lg font-semibold sm:text-xl">{t("app.name")}</span>
-            <div className="min-w-0 overflow-x-auto">
+            <div className="hidden min-w-0 overflow-x-auto sm:block">
               <AppTabs />
             </div>
           </div>
@@ -130,6 +130,10 @@ export function AppHeader({ onRequestsChanged }: { onRequestsChanged?: () => voi
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          </div>
+
+          <div className="col-span-2 min-w-0 overflow-x-auto pb-0.5 sm:hidden">
+            <AppTabs />
           </div>
         </div>
       </header>
