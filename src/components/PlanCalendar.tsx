@@ -124,7 +124,7 @@ export function PlanCalendar({
                   </PopoverTrigger>
                   <PopoverContent className="w-64 p-2" onClick={(e) => e.stopPropagation()}>
                     <p className="mb-2 px-1 text-xs font-semibold text-muted-foreground">
-                      {t(`day.${d.getDay()}`)}, {d.getDate()}
+                      {t(`day.${d.getDay() as 0 | 1 | 2 | 3 | 4 | 5 | 6}`)}, {d.getDate()}
                     </p>
                     <div className="flex max-h-72 flex-col gap-1 overflow-y-auto">
                       {items.map((p) => (
