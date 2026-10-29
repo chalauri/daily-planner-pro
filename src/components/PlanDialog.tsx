@@ -79,6 +79,23 @@ export function PlanDialog({
       toast.error(t("d.errUntil"));
       return;
     }
+    const cleanTitle = title.trim();
+    const { data: existing, error: dupErr } = await supabase
+      .from("plans")
+      .select("plan_date, title")
+      .eq("user_id", userId)
+      .in("plan_date", dates);
+    if (dupErr) {
+      setSaving(false);
+      toast.error(dupErr.message);
+      return;
+    }
+    const clash = (existing ?? []).filter((p) => p.title.trim().toLowerCase() === cleanTitle.toLowerCase());
+    if (clash.length > 0) {
+      setSaving(false);
+      toast.error(t("d.errDuplicate", { d: clash.map((c) => c.plan_date).sort().join(", ") }));
+      return;
+    }
     const seriesId = repeat === "NONE" ? null : crypto.randomUUID();
     const { error } = await supabase.from("plans").insert(
       dates.map((d) => ({
