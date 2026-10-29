@@ -40,7 +40,7 @@ export function ExpenseFilter({ currency }: { currency: string }) {
           .eq("categories.kind", "EXPENSE")
           .gte("year", fromY)
           .lte("year", toY),
-        supabase.from("transactions").select("category_id, amount, tx_date").eq("kind", "EXPENSE").gte("tx_date", from).lt("tx_date", to),
+        supabase.from("transactions").select("category_id, amount, tx_date, period").eq("kind", "EXPENSE").gte("period", from).lt("period", to),
       ]);
       if (b.error) throw b.error;
       if (t.error) throw t.error;
@@ -68,7 +68,7 @@ export function ExpenseFilter({ currency }: { currency: string }) {
       .map((b) => {
         const prefix = `${b.year}-${String(b.month).padStart(2, "0")}`;
         const spent = (q.data?.txs ?? [])
-          .filter((t) => t.category_id === b.category_id && t.tx_date.startsWith(prefix))
+          .filter((t) => t.category_id === b.category_id && (t.period ?? t.tx_date).startsWith(prefix))
           .reduce((s, t) => s + Number(t.amount), 0);
         return { ...b, planned: Number(b.amount), spent };
       }), sort, (r) => ({ name: r.categories.name, planned: r.planned, spent: r.spent, year: r.year, month: r.month }), lang);

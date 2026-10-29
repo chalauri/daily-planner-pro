@@ -96,7 +96,7 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
     const { from, to } = ymRange(m);
     const [b, t] = await Promise.all([
       supabase.from("budgets").select("amount").eq("category_id", catId).eq("year", m.year).eq("month", m.month).maybeSingle(),
-      supabase.from("transactions").select("amount").eq("category_id", catId).eq("kind", "EXPENSE").gte("tx_date", from).lt("tx_date", to),
+      supabase.from("transactions").select("amount").eq("category_id", catId).eq("kind", "EXPENSE").gte("period", from).lt("period", to),
     ]);
     const planned = Number(b.data?.amount ?? 0);
     if (planned <= 0) return;
