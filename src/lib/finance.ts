@@ -67,7 +67,7 @@ export function useMonthData(ym: YM) {
     queryFn: async () => {
       const { from, to } = ymRange(ym);
       const [tx, bu] = await Promise.all([
-        supabase.from("transactions").select("*").gte("tx_date", from).lt("tx_date", to).order("tx_date", { ascending: false }),
+        supabase.from("transactions").select("*").gte("period", from).lt("period", to).order("tx_date", { ascending: false }),
         supabase.from("budgets").select("*").eq("year", ym.year).eq("month", ym.month),
       ]);
       if (tx.error) throw tx.error;
@@ -86,9 +86,9 @@ export function useYearTrend(ym: YM) {
       const { to } = ymRange(ym);
       const { data, error } = await supabase
         .from("transactions")
-        .select("kind, amount, tx_date")
-        .gte("tx_date", from)
-        .lt("tx_date", to);
+        .select("kind, amount, tx_date, period")
+        .gte("period", from)
+        .lt("period", to);
       if (error) throw error;
       const { data: bud, error: bErr } = await supabase
         .from("budgets")
@@ -101,7 +101,7 @@ export function useYearTrend(ym: YM) {
         rows.push({ key: `${m.year}-${String(m.month).padStart(2, "0")}`, ym: m, income: 0, expense: 0 });
       }
       for (const r of data) {
-        const row = rows.find((x) => x.key === r.tx_date.slice(0, 7));
+        const row = rows.find((x) => x.key === (r.period ?? r.tx_date).slice(0, 7));
         if (!row) continue;
         if (r.kind === "INCOME") row.income += Number(r.amount);
         else row.expense += Number(r.amount);

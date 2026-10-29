@@ -61,7 +61,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
         const from = `${planYm.year}-${String(planYm.month).padStart(2, "0")}-01`;
         const to = planYm.month === 12 ? `${planYm.year + 1}-01-01` : `${planYm.year}-${String(planYm.month + 1).padStart(2, "0")}-01`;
         const { data } = await supabase
-          .from("transactions").select("amount").eq("kind", "INCOME").gte("tx_date", from).lt("tx_date", to);
+          .from("transactions").select("amount").eq("kind", "INCOME").gte("period", from).lt("period", to);
         total = (data ?? []).reduce((a, r) => a + Number(r.amount), 0);
       }
       if (!cancelled) setMonthIncome(total);
@@ -144,8 +144,8 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
         if (de) throw de;
         const { count } = await supabase
           .from("transactions").select("id", { count: "exact", head: true })
-          .eq("category_id", existing.id).gte("tx_date", `${planYm.year}-${String(planYm.month).padStart(2, "0")}-01`)
-          .lt("tx_date", planYm.month === 12 ? `${planYm.year + 1}-01-01` : `${planYm.year}-${String(planYm.month + 1).padStart(2, "0")}-01`);
+          .eq("category_id", existing.id).gte("period", `${planYm.year}-${String(planYm.month).padStart(2, "0")}-01`)
+          .lt("period", planYm.month === 12 ? `${planYm.year + 1}-01-01` : `${planYm.year}-${String(planYm.month + 1).padStart(2, "0")}-01`);
         if ((dup && dup.length > 0) || (kind === "INCOME" && (count ?? 0) > 0)) {
           toast.error(ft("f.alreadyPlanned", { n: existing.name, m: monthLabel(planYm, lang) }));
           return;

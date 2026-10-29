@@ -3,6 +3,7 @@ import { addMonths, endOfMonth, endOfWeek, format, startOfMonth, startOfWeek, ad
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useLang } from "@/lib/i18n";
 import { todayISO, type Plan, type PlanStatus } from "@/lib/plan-types";
 
@@ -62,12 +63,19 @@ export function PlanCalendar({
           const items = byDate.get(key) ?? [];
           const inMonth = d.getMonth() === month.getMonth();
           return (
-            <button
+            <div
               key={key}
-              type="button"
+              role="button"
+              tabIndex={0}
               onClick={() => onDayClick(key)}
+              onKeyDown={(e) => {
+                if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
+                  e.preventDefault();
+                  onDayClick(key);
+                }
+              }}
               className={cn(
-                "flex min-h-24 min-w-0 flex-col gap-1 bg-card p-1.5 text-left transition-colors hover:bg-accent/40",
+                "flex min-h-24 min-w-0 cursor-pointer flex-col gap-1 bg-card p-1.5 text-left transition-colors hover:bg-accent/40",
                 !inMonth && "opacity-40",
               )}
             >
@@ -102,9 +110,39 @@ export function PlanCalendar({
                 </span>
               ))}
               {items.length > 3 && (
-                <span className="text-[11px] text-muted-foreground">{t("cal.more", { n: items.length - 3 })}</span>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => e.stopPropagation()}
+                      onKeyDown={(e) => e.stopPropagation()}
+                      className="cursor-pointer rounded px-1 text-left text-[11px] font-medium text-primary hover:underline"
+                    >
+                      {t("cal.more", { n: items.length - 3 })}
+                    </span>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-64 p-2" onClick={(e) => e.stopPropagation()}>
+                    <p className="mb-2 px-1 text-xs font-semibold text-muted-foreground">
+                      {t(`day.${d.getDay() as 0 | 1 | 2 | 3 | 4 | 5 | 6}`)}, {d.getDate()}
+                    </p>
+                    <div className="flex max-h-72 flex-col gap-1 overflow-y-auto">
+                      {items.map((p) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => onPlanClick(p)}
+                          className={cn("truncate rounded px-2 py-1 text-left text-xs font-medium hover:ring-2 hover:ring-ring", chip[p.status])}
+                          title={p.title}
+                        >
+                          {p.title}
+                        </button>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
               )}
-            </button>
+            </div>
           );
         })}
       </div>

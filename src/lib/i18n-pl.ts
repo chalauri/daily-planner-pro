@@ -203,6 +203,7 @@ export const pl: Record<TKey, string> = {
   "d.add": "Dodaj plan",
   "d.titlePh": "Zadzwonić do księgowego",
   "d.errUntil": "Wybierz datę końcową późniejszą niż początkowa.",
+  "d.errDuplicate": "Plan o tym tytule już istnieje w dniu: {d}",
   "d.errSession": "Sesja wygasła. Zaloguj się ponownie.",
   "d.addedN": "Dodano planów: {n}",
   "d.addedOne": "Plan dodany",

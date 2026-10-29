@@ -88,15 +88,13 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
     return out.length ? out : [date];
   }, [repeat, date, until]);
 
-  async function checkBudget(catId: string, txDate: string) {
+  async function checkBudget(catId: string, m: YM) {
     const cat = categories.find((c) => c.id === catId);
     if (!cat || cat.kind !== "EXPENSE") return;
-    const d = parseISO(txDate);
-    const m: YM = { year: d.getFullYear(), month: d.getMonth() + 1 };
     const { from, to } = ymRange(m);
     const [b, t] = await Promise.all([
       supabase.from("budgets").select("amount").eq("category_id", catId).eq("year", m.year).eq("month", m.month).maybeSingle(),
-      supabase.from("transactions").select("amount").eq("category_id", catId).eq("kind", "EXPENSE").gte("tx_date", from).lt("tx_date", to),
+      supabase.from("transactions").select("amount").eq("category_id", catId).eq("kind", "EXPENSE").gte("period", from).lt("period", to),
     ]);
     const planned = Number(b.data?.amount ?? 0);
     if (planned <= 0) return;
@@ -130,7 +128,9 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
         toast.success(ft("f.saved"));
       } else {
         const series_id = dates.length > 1 ? crypto.randomUUID() : null;
-        const rows = dates.map((d) => ({
+        const base = ymRange(ym).from;
+        const rows = dates.map((d, i) => ({
+          period: format(addMonths(parseISO(base), i), "yyyy-MM-dd"),
           user_id: userId,
           kind,
           category_id,
@@ -146,7 +146,10 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
         if (error) throw error;
         toast.success(rows.length > 1 ? ft("f.addedN", { n: rows.length }) : ft("f.added"));
       }
-      if (category_id && kind === "EXPENSE") await checkBudget(category_id, date);
+      if (category_id && kind === "EXPENSE") {
+        const pm = editing?.period ? parseISO(editing.period) : null;
+        await checkBudget(category_id, pm ? { year: pm.getFullYear(), month: pm.getMonth() + 1 } : ym);
+      }
       onSaved();
       onOpenChange(false);
     } catch (e) {

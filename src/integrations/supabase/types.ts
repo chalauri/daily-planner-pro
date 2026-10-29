@@ -303,6 +303,7 @@ export type Database = {
           is_income_tax: boolean
           kind: Database["public"]["Enums"]["tx_kind"]
           note: string | null
+          period: string | null
           receipt_path: string | null
           recurrence: string
           series_id: string | null
@@ -318,6 +319,7 @@ export type Database = {
           is_income_tax?: boolean
           kind: Database["public"]["Enums"]["tx_kind"]
           note?: string | null
+          period?: string | null
           receipt_path?: string | null
           recurrence?: string
           series_id?: string | null
@@ -333,6 +335,7 @@ export type Database = {
           is_income_tax?: boolean
           kind?: Database["public"]["Enums"]["tx_kind"]
           note?: string | null
+          period?: string | null
           receipt_path?: string | null
           recurrence?: string
           series_id?: string | null
