@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useFT } from "@/lib/finance-i18n";
 import { useLang } from "@/lib/i18n";
 import { currentUserId, money, monthLabel, shiftYM, type TxKind, type YM } from "@/lib/finance";
+import { cleanAmountInput, parseAmount } from "@/lib/amount";
 
 interface Props {
   open: boolean;
@@ -72,7 +73,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
   // Tax = rate% of the month's income; user may overwrite the result.
   useEffect(() => {
     if (!taxOn || taxEdited || monthIncome === null) return;
-    const rate = Number(taxRate);
+    const rate = parseAmount(taxRate);
     const tax = Math.round(monthIncome * (rate > 0 ? rate : 0)) / 100;
     setPlanned(tax > 0 ? String(tax) : "");
   }, [taxOn, taxEdited, monthIncome, taxRate]);
@@ -115,7 +116,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
         const { error } = await supabase.from("categories").update({ name: name.trim() }).eq("id", edit.id);
         if (error) throw error;
       }
-      const amount = Number(finalPlanned || 0);
+      const amount = parseAmount(finalPlanned || "0") || 0;
       const { error: be } = await supabase
         .from("budgets")
         .upsert({ user_id, category_id: edit.id, year: planYm.year, month: planYm.month, amount, is_income_tax: kind === "EXPENSE" ? taxOn : false, is_subscription: kind === "EXPENSE" ? subOn : false }, { onConflict: "category_id,year,month" });
@@ -161,7 +162,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
         if (error) throw error;
         categoryId = data.id;
       }
-      const amount = Number(finalPlanned);
+      const amount = parseAmount(finalPlanned);
       if (amount > 0) {
         const { error: be } = await supabase
           .from("budgets")
@@ -232,7 +233,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
             <>
               <div className="space-y-1.5">
                 <Label htmlFor="cat-planned">{ft("f.plannedFor", { m: monthLabel(planYm, lang) })}</Label>
-                <Input id="cat-planned" type="number" min="0" step="0.01" value={planned} onChange={(e) => { setPlanned(e.target.value); if (taxOn) setTaxEdited(true); }} />
+                <Input id="cat-planned" type="text" inputMode="decimal" autoComplete="off" placeholder="0.00" value={planned} onChange={(e) => { setPlanned(cleanAmountInput(e.target.value)); if (taxOn) setTaxEdited(true); }} />
               </div>
               {kind === "EXPENSE" && (
                 <div className="flex items-center gap-2 rounded-lg border border-border p-3">
@@ -251,7 +252,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">
                           <Label htmlFor="cat-rate">{ft("f.taxRate")}</Label>
-                          <Input id="cat-rate" type="number" min="0" step="0.01" inputMode="decimal" value={taxRate} onChange={(e) => { setTaxRate(e.target.value); setTaxEdited(false); }} />
+                          <Input id="cat-rate" type="text" inputMode="decimal" autoComplete="off" value={taxRate} onChange={(e) => { setTaxRate(cleanAmountInput(e.target.value)); setTaxEdited(false); }} />
                         </div>
                         <div className="space-y-1.5">
                           <Label>{ft("f.taxBase", { m: monthLabel(planYm, lang) })}</Label>
