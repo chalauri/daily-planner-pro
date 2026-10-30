@@ -261,7 +261,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
                           </div>
                         </div>
                       </div>
-                      <p className="text-xs text-muted-foreground">{ft("f.taxHint", { p: Number(taxRate) || 0 })}</p>
+                      <p className="text-xs text-muted-foreground">{ft("f.taxHint", { p: parseAmount(taxRate) || 0 })}</p>
                     </div>
                   )}
                 </div>
