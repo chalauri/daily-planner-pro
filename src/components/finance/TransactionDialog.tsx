@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFT } from "@/lib/finance-i18n";
+import { cleanAmountInput, parseAmount } from "@/lib/amount";
 import {
   budgetState,
   currentUserId,
@@ -106,7 +107,7 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
   }
 
   async function save() {
-    const value = Number(amount);
+    const value = parseAmount(amount);
     if (!value || value <= 0 || !date) return;
     setSaving(true);
     try {
@@ -170,7 +171,7 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="tx-amount">{ft("f.amount")} ({currency})</Label>
-              <Input id="tx-amount" type="number" min="0" step="0.01" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} />
+              <Input id="tx-amount" type="text" inputMode="decimal" autoComplete="off" placeholder="0.00" value={amount} onChange={(e) => setAmount(cleanAmountInput(e.target.value))} />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="tx-date">{ft("f.date")}</Label>
@@ -218,7 +219,7 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
           )}
         </div>
         <DialogFooter>
-          <Button type="submit" disabled={saving || !amount || Number(amount) <= 0}>
+          <Button type="submit" disabled={saving || !(parseAmount(amount) > 0)}>
             {ft("f.save")}
           </Button>
         </DialogFooter>
