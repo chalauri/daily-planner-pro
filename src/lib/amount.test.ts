@@ -1,12 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { describe, test } from "node:test";
+import { strictEqual, ok } from "node:assert";
 import { cleanAmountInput, parseAmount } from "./amount";
 
 describe("parseAmount", () => {
-  it("accepts a dot as decimal separator", () => expect(parseAmount("4.40")).toBe(4.4));
-  it("accepts a comma as decimal separator", () => expect(parseAmount("4,40")).toBe(4.4));
-  it("rejects text", () => expect(parseAmount("abc")).toBeNaN());
+  test("accepts a dot as decimal separator", () => strictEqual(parseAmount("4.40"), 4.4));
+  test("accepts a comma as decimal separator", () => strictEqual(parseAmount("4,40"), 4.4));
+  test("rejects text", () => ok(Number.isNaN(parseAmount("abc"))));
 });
 
 describe("cleanAmountInput", () => {
-  it("keeps only one separator", () => expect(cleanAmountInput("4,4.0")).toBe("4,40"));
+  test("keeps only one separator", () => strictEqual(cleanAmountInput("4,4.0"), "4,40"));
 });
