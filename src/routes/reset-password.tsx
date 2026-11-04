@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import logoAsset from "@/assets/plan_prosper_logo.png.asset.json";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -66,7 +67,7 @@ function ResetPasswordPage() {
     <main className="flex min-h-screen items-center justify-center bg-background px-6 py-12">
       <div className="w-full max-w-sm">
         <div className="flex items-center justify-between">
-          <Link to="/" className="font-display text-xl font-semibold">{t("app.name")}</Link>
+          <Link to="/" className="flex items-center gap-2 font-display text-xl font-semibold"><img src={logoAsset.url} alt="" className="h-8 w-8 shrink-0 rounded-full" />{t("app.name")}</Link>
           <LanguageToggle />
         </div>
         <h1 className="mt-8 text-3xl">{t("reset.title")}</h1>
