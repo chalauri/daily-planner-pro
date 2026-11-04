@@ -116,6 +116,11 @@ function Landing() {
           <span className="font-display text-xl font-semibold">{t("app.name")}</span>
         </Link>
         <div className="flex items-center gap-1.5">
+          <Button asChild variant="ghost" size="icon" aria-label="Facebook" className="text-muted-foreground hover:text-foreground">
+            <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer">
+              <Facebook className="h-4 w-4" />
+            </a>
+          </Button>
           <LanguageMenu />
           <Button asChild variant="outline" className="rounded-lg border-foreground/20 font-medium hover:border-foreground hover:bg-foreground hover:text-background">
             <Link to="/auth" search={{ mode: "signin" }}>{t("sign.in")}</Link>
