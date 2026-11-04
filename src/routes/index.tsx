@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import logoAsset from "@/assets/plan_prosper_logo.png.asset.json";
 import { useEffect, useState, type ComponentType } from "react";
 import {
   BarChart3,
@@ -117,7 +116,7 @@ function Landing() {
     <main className="min-h-screen bg-background">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
         <Link to="/" className="flex items-center gap-2.5">
-          <img src={logoAsset.url} alt="" className="h-9 w-9 shrink-0 rounded-full" />
+          <img src="/logo.png" alt="" className="h-9 w-9 shrink-0 rounded-full" />
           <span className="font-display text-xl font-semibold">{t("app.name")}</span>
         </Link>
         <div className="flex items-center gap-1.5">

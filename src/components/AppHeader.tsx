@@ -1,5 +1,4 @@
 import { useState } from "react";
-import logoAsset from "@/assets/plan_prosper_logo.png.asset.json";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronDown, Globe2, KeyRound, LogOut, UserRound } from "lucide-react";
@@ -77,7 +76,7 @@ export function AppHeader({ onRequestsChanged }: { onRequestsChanged?: () => voi
       <header className="border-b border-border bg-card/70 backdrop-blur-sm">
         <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-3 sm:flex sm:items-center sm:justify-between sm:gap-3 sm:px-6">
           <div className="flex min-w-0 items-center gap-3 sm:gap-5">
-            <span className="flex shrink-0 items-center gap-2"><img src={logoAsset.url} alt="" className="h-8 w-8 shrink-0 rounded-full" /><span className="font-display text-lg font-semibold sm:text-xl">{t("app.name")}</span></span>
+            <span className="flex shrink-0 items-center gap-2"><img src="/logo.png" alt="" className="h-8 w-8 shrink-0 rounded-full" /><span className="font-display text-lg font-semibold sm:text-xl">{t("app.name")}</span></span>
             <div className="hidden min-w-0 overflow-x-auto sm:block">
               <AppTabs />
             </div>
