@@ -29,7 +29,7 @@ const SOCIAL_LINKS: { label: string; href: string; icon: Icon }[] = [
 ];
 
 // TikTok is not in Lucide; this small icon is ready for when the TikTok link is added.
-export function TikTokIcon({ className }: { className?: string }) {
+function TikTokIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
       <path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-2.59-2.59c.27 0 .53.04.77.12V9.77a5.7 5.7 0 1 0 4.91 5.63V9.01a7.35 7.35 0 0 0 4.29 1.37V7.3a4.28 4.28 0 0 1-3.23-1.48z" />
