@@ -23,10 +23,16 @@ const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=61595849897494";
 
 // Social links shown in the footer. Uncomment and fill in a URL to show more.
 const SOCIAL_LINKS: { label: string; href: string; icon: Icon }[] = [
-  { label: "Facebook", href: FACEBOOK_URL, icon: Facebook },
+  { label: "Facebook", href: FACEBOOK_URL, icon: FacebookSolid },
   // { label: "Instagram", href: "https://www.instagram.com/YOUR_HANDLE", icon: Instagram },
   // { label: "TikTok", href: "https://www.tiktok.com/@YOUR_HANDLE", icon: TikTokIcon },
 ];
+
+const FOLLOW_US: Record<string, string> = { en: "Follow us", ka: "გამოგვყევით", pl: "Obserwuj nas" };
+
+function FacebookSolid({ className }: { className?: string }) {
+  return <Facebook className={className} fill="currentColor" strokeWidth={0} />;
+}
 
 // TikTok is not in Lucide; this small icon is ready for when the TikTok link is added.
 function TikTokIcon({ className }: { className?: string }) {
@@ -116,9 +122,9 @@ function Landing() {
           <span className="font-display text-xl font-semibold">{t("app.name")}</span>
         </Link>
         <div className="flex items-center gap-1.5">
-          <Button asChild variant="ghost" size="icon" aria-label="Facebook" className="text-muted-foreground hover:text-foreground">
+          <Button asChild size="icon" aria-label="Facebook" className="h-8 w-8 rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 hover:bg-primary hover:text-primary-foreground hover:opacity-90">
             <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer">
-              <Facebook className="h-4 w-4" />
+              <Facebook className="h-4 w-4" fill="currentColor" strokeWidth={0} />
             </a>
           </Button>
           <LanguageMenu />
@@ -334,16 +340,18 @@ function Landing() {
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-6 py-8 text-xs text-muted-foreground sm:flex-row">
           <span>{t("landing.footer")}</span>
-          <nav aria-label="Social media" className="flex items-center gap-1">
-            {SOCIAL_LINKS.map(({ label, href, icon: SocialIcon }) => (
-              <Button key={label} asChild variant="ghost" size="icon" aria-label={label}>
-                <a href={href} target="_blank" rel="noopener noreferrer">
-                  <SocialIcon className="h-4 w-4" />
-                </a>
-              </Button>
-            ))}
-          </nav>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-3">
+            <nav aria-label="Social media" className="flex items-center gap-2">
+              <span className="font-medium">{FOLLOW_US[lang] ?? FOLLOW_US["en"]}</span>
+              {SOCIAL_LINKS.map(({ label, href, icon: SocialIcon }) => (
+                <Button key={label} asChild size="icon" aria-label={label} className="h-8 w-8 rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 hover:bg-primary hover:text-primary-foreground hover:opacity-90">
+                  <a href={href} target="_blank" rel="noopener noreferrer">
+                    <SocialIcon className="h-4 w-4" />
+                  </a>
+                </Button>
+              ))}
+            </nav>
+            <span className="h-5 w-px bg-border" aria-hidden="true" />
             <LanguageMenu />
             <Button asChild variant="ghost" size="sm">
               <Link to="/auth" search={{ mode: "signin" }}>{t("sign.in")}</Link>
