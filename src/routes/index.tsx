@@ -4,7 +4,7 @@ import {
   BarChart3,
   CalendarCheck,
   Facebook,
-  // Instagram,
+  Instagram,
   FileDown,
   Gauge,
   ListChecks,
@@ -20,11 +20,12 @@ import { formatMonthYear, useLang } from "@/lib/i18n";
 type Icon = ComponentType<{ className?: string }>;
 
 const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=61595849897494";
+const INSTAGRAM_URL = "https://www.instagram.com/planandprosper.app";
 
 // Social links shown in the footer. Uncomment and fill in a URL to show more.
 const SOCIAL_LINKS: { label: string; href: string; icon: Icon }[] = [
   { label: "Facebook", href: FACEBOOK_URL, icon: FacebookSolid },
-  // { label: "Instagram", href: "https://www.instagram.com/YOUR_HANDLE", icon: Instagram },
+  { label: "Instagram", href: INSTAGRAM_URL, icon: Instagram },
   // { label: "TikTok", href: "https://www.tiktok.com/@YOUR_HANDLE", icon: TikTokIcon },
 ];
 
@@ -123,6 +124,11 @@ function Landing() {
           <Button asChild size="icon" aria-label="Facebook" className="h-8 w-8 rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 hover:bg-primary hover:text-primary-foreground hover:opacity-90">
             <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer">
               <Facebook className="h-4 w-4" fill="currentColor" strokeWidth={0} />
+            </a>
+          </Button>
+          <Button asChild size="icon" aria-label="Instagram" className="h-8 w-8 rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 hover:bg-primary hover:text-primary-foreground hover:opacity-90">
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+              <Instagram className="h-4 w-4" />
             </a>
           </Button>
           <LanguageMenu />
