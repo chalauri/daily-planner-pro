@@ -3,6 +3,8 @@ import { useEffect, useState, type ComponentType } from "react";
 import {
   BarChart3,
   CalendarCheck,
+  Facebook,
+  // Instagram,
   FileDown,
   Gauge,
   ListChecks,
@@ -16,6 +18,24 @@ import { LanguageMenu } from "@/components/LanguageMenu";
 import { formatMonthYear, useLang } from "@/lib/i18n";
 
 type Icon = ComponentType<{ className?: string }>;
+
+const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=61595849897494";
+
+// Social links shown in the footer. Uncomment and fill in a URL to show more.
+const SOCIAL_LINKS: { label: string; href: string; icon: Icon }[] = [
+  { label: "Facebook", href: FACEBOOK_URL, icon: Facebook },
+  // { label: "Instagram", href: "https://www.instagram.com/YOUR_HANDLE", icon: Instagram },
+  // { label: "TikTok", href: "https://www.tiktok.com/@YOUR_HANDLE", icon: TikTokIcon },
+];
+
+// TikTok is not in Lucide; this small icon is ready for when the TikTok link is added.
+function TikTokIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-2.59-2.59c.27 0 .53.04.77.12V9.77a5.7 5.7 0 1 0 4.91 5.63V9.01a7.35 7.35 0 0 0 4.29 1.37V7.3a4.28 4.28 0 0 1-3.23-1.48z" />
+    </svg>
+  );
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -96,6 +116,11 @@ function Landing() {
           <span className="font-display text-xl font-semibold">{t("app.name")}</span>
         </Link>
         <div className="flex items-center gap-1.5">
+          <Button asChild variant="ghost" size="icon" aria-label="Facebook" className="text-muted-foreground hover:text-foreground">
+            <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer">
+              <Facebook className="h-4 w-4" />
+            </a>
+          </Button>
           <LanguageMenu />
           <Button asChild variant="outline" className="rounded-lg border-foreground/20 font-medium hover:border-foreground hover:bg-foreground hover:text-background">
             <Link to="/auth" search={{ mode: "signin" }}>{t("sign.in")}</Link>
@@ -309,14 +334,16 @@ function Landing() {
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-6 py-8 text-xs text-muted-foreground sm:flex-row">
           <span>{t("landing.footer")}</span>
+          <nav aria-label="Social media" className="flex items-center gap-1">
+            {SOCIAL_LINKS.map(({ label, href, icon: SocialIcon }) => (
+              <Button key={label} asChild variant="ghost" size="icon" aria-label={label}>
+                <a href={href} target="_blank" rel="noopener noreferrer">
+                  <SocialIcon className="h-4 w-4" />
+                </a>
+              </Button>
+            ))}
+          </nav>
           <div className="flex items-center gap-1.5">
-            <Button asChild variant="ghost" size="icon" aria-label="Facebook">
-              <a href="https://www.facebook.com/profile.php?id=61595849897494" target="_blank" rel="noopener noreferrer">
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
-                  <path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.5h-2.8V24C19.62 23.1 24 18.1 24 12.07" />
-                </svg>
-              </a>
-            </Button>
             <LanguageMenu />
             <Button asChild variant="ghost" size="sm">
               <Link to="/auth" search={{ mode: "signin" }}>{t("sign.in")}</Link>
