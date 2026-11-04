@@ -342,7 +342,7 @@ function Landing() {
           <span>{t("landing.footer")}</span>
           <div className="flex items-center gap-3">
             <nav aria-label="Social media" className="flex items-center gap-2">
-              <span className="font-medium">{FOLLOW_US[lang] ?? FOLLOW_US.en}</span>
+              <span className="font-medium">{FOLLOW_US[lang] ?? FOLLOW_US["en"]}</span>
               {SOCIAL_LINKS.map(({ label, href, icon: SocialIcon }) => (
                 <Button key={label} asChild size="icon" aria-label={label} className="h-8 w-8 rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 hover:bg-primary hover:text-primary-foreground hover:opacity-90">
                   <a href={href} target="_blank" rel="noopener noreferrer">
