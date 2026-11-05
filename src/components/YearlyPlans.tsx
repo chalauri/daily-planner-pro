@@ -2,16 +2,19 @@ import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
+  Check,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   Pencil,
   Plus,
   Trash2,
+  X,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/lib/i18n";
+import type { PlanStatus } from "@/lib/plan-types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -42,6 +45,7 @@ interface YearlyPlan {
   title: string;
   description: string | null;
   result_percent: number | null;
+  status: PlanStatus;
 }
 
 interface YearlySubplan {
@@ -49,12 +53,13 @@ interface YearlySubplan {
   plan_id: string;
   title: string;
   is_done: boolean;
+  status: PlanStatus;
 }
 
 function planPercent(plan: YearlyPlan, subs: YearlySubplan[]): number | null {
   const own = subs.filter((s) => s.plan_id === plan.id);
   if (own.length > 0) {
-    const done = own.filter((s) => s.is_done).length;
+    const done = own.filter((s) => s.status === "DONE").length;
     return Math.round((done / own.length) * 100);
   }
   return plan.result_percent;
@@ -74,6 +79,11 @@ export function YearlyPlans() {
   const [editPercent, setEditPercent] = useState<YearlyPlan | null>(null);
   const [percentValue, setPercentValue] = useState("");
   const [toDelete, setToDelete] = useState<YearlyPlan | null>(null);
+  const [editing, setEditing] = useState<
+    { kind: "plan"; item: YearlyPlan } | { kind: "sub"; item: YearlySubplan } | null
+  >(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDesc, setEditDesc] = useState("");
 
   const { data: plans = [], isLoading } = useQuery({
     queryKey: ["yearly_plans", year],
@@ -186,10 +196,56 @@ export function YearlyPlans() {
     refresh();
   }
 
-  async function toggleSubplan(sub: YearlySubplan) {
+  async function setPlanStatus(plan: YearlyPlan, status: PlanStatus) {
+    const next = plan.status === status ? "OPEN" : status;
+    const hasSubs = subplans.some((s) => s.plan_id === plan.id);
+    const update: { status: PlanStatus; result_percent?: number } = { status: next };
+    if (!hasSubs && next !== "OPEN") update.result_percent = next === "DONE" ? 100 : 0;
+    const { error } = await supabase.from("yearly_plans").update(update).eq("id", plan.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    refresh();
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editing) return;
+    const newTitle = editTitle.trim();
+    if (!newTitle) return;
+    if (editing.kind === "plan") {
+      const dup = plans.some(
+        (p) =>
+          p.id !== editing.item.id &&
+          p.title.trim().toLowerCase() === newTitle.toLowerCase(),
+      );
+      if (dup) {
+        toast.error(t("yr.duplicate", { year: editing.item.year }));
+        return;
+      }
+      const { error } = await supabase
+        .from("yearly_plans")
+        .update({ title: newTitle, description: editDesc.trim() || null })
+        .eq("id", editing.item.id);
+      if (error) return void toast.error(error.message);
+    } else {
+      const { error } = await supabase
+        .from("yearly_subplans")
+        .update({ title: newTitle })
+        .eq("id", editing.item.id);
+      if (error) return void toast.error(error.message);
+    }
+    toast.success(t("yr.updated"));
+    setEditing(null);
+    refresh();
+  }
+
+  async function setSubStatus(sub: YearlySubplan, status: PlanStatus) {
+    const next = sub.status === status ? "OPEN" : status;
     const { error } = await supabase
       .from("yearly_subplans")
-      .update({ is_done: !sub.is_done })
+      .update({ status: next, is_done: next === "DONE" })
       .eq("id", sub.id);
     if (error) {
       toast.error(error.message);
@@ -291,7 +347,7 @@ export function YearlyPlans() {
           const subs = subplans.filter((s) => s.plan_id === plan.id);
           const percent = planPercent(plan, subs);
           const isOpen = expanded.has(plan.id);
-          const doneCount = subs.filter((s) => s.is_done).length;
+          const doneCount = subs.filter((s) => s.status === "DONE").length;
           return (
             <div key={plan.id}>
               <div className="flex items-center gap-3 px-4 py-3">
@@ -308,7 +364,15 @@ export function YearlyPlans() {
                     )}
                   />
                   <span className="min-w-0">
-                    <span className="block truncate font-medium">{plan.title}</span>
+                    <span
+                      className={cn(
+                        "block truncate font-medium",
+                        plan.status === "DONE" && "text-success",
+                        plan.status === "NOT_DONE" && "text-destructive",
+                      )}
+                    >
+                      {plan.title}
+                    </span>
                     {plan.description && (
                       <span className="block truncate text-sm text-muted-foreground">
                         {plan.description}
@@ -337,6 +401,23 @@ export function YearlyPlans() {
                 >
                   {percent === null ? "—" : `${percent}%`}
                 </span>
+                <StatusButtons
+                  status={plan.status}
+                  onSet={(st) => void setPlanStatus(plan, st)}
+                  t={t}
+                />
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    setEditing({ kind: "plan", item: plan });
+                    setEditTitle(plan.title);
+                    setEditDesc(plan.description ?? "");
+                  }}
+                  aria-label={t("yr.edit")}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
                 {subs.length === 0 && (
                   <Button
                     size="sm"
@@ -363,21 +444,31 @@ export function YearlyPlans() {
                 <div className="space-y-2 bg-muted/40 px-4 py-3 pl-11">
                   {subs.map((sub) => (
                     <div key={sub.id} className="flex items-center gap-2">
-                      <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          checked={sub.is_done}
-                          onChange={() => void toggleSubplan(sub)}
-                          className="h-4 w-4 accent-primary"
-                        />
-                        <span
-                          className={cn(
-                            sub.is_done && "text-success line-through",
-                          )}
-                        >
-                          {sub.title}
-                        </span>
-                      </label>
+                      <span
+                        className={cn(
+                          "min-w-0 flex-1 truncate text-sm",
+                          sub.status === "DONE" && "font-medium text-success",
+                          sub.status === "NOT_DONE" && "font-medium text-destructive",
+                        )}
+                      >
+                        {sub.title}
+                      </span>
+                      <StatusButtons
+                        status={sub.status}
+                        onSet={(st) => void setSubStatus(sub, st)}
+                        t={t}
+                      />
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          setEditing({ kind: "sub", item: sub });
+                          setEditTitle(sub.title);
+                        }}
+                        aria-label={t("yr.edit")}
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
                       <Button
                         size="sm"
                         variant="ghost"
@@ -459,6 +550,12 @@ export function YearlyPlans() {
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      e.currentTarget.form?.requestSubmit();
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -494,6 +591,52 @@ export function YearlyPlans() {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
+        <DialogContent>
+          <form onSubmit={saveEdit}>
+            <DialogHeader>
+              <DialogTitle>
+                {editing?.kind === "sub" ? t("yr.editSub") : t("yr.editTitle")}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="mt-4 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="yr-edit-title">{t("d.title")}</Label>
+                <Input
+                  id="yr-edit-title"
+                  required
+                  maxLength={200}
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                />
+              </div>
+              {editing?.kind === "plan" && (
+                <div className="space-y-2">
+                  <Label htmlFor="yr-edit-desc">{t("d.desc")}</Label>
+                  <Textarea
+                    id="yr-edit-desc"
+                    rows={3}
+                    value={editDesc}
+                    onChange={(e) => setEditDesc(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        e.currentTarget.form?.requestSubmit();
+                      }
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+            <DialogFooter className="mt-6">
+              <Button type="submit" disabled={!editTitle.trim()}>
+                {t("yr.save")}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
       <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -514,6 +657,42 @@ export function YearlyPlans() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </div>
+  );
+}
+
+function StatusButtons({
+  status,
+  onSet,
+  t,
+}: {
+  status: PlanStatus;
+  onSet: (s: PlanStatus) => void;
+  t: (k: string) => string;
+}) {
+  return (
+    <div className="flex shrink-0 items-center gap-1">
+      <Button
+        size="sm"
+        variant={status === "DONE" ? "default" : "outline"}
+        className={cn(status === "DONE" && "bg-success text-success-foreground hover:bg-success/90")}
+        onClick={() => onSet("DONE")}
+        aria-pressed={status === "DONE"}
+        title={t("status.DONE")}
+      >
+        <Check className="h-4 w-4" />
+        <span className="hidden sm:inline">{t("status.DONE")}</span>
+      </Button>
+      <Button
+        size="sm"
+        variant={status === "NOT_DONE" ? "destructive" : "outline"}
+        onClick={() => onSet("NOT_DONE")}
+        aria-pressed={status === "NOT_DONE"}
+        title={t("status.NOT_DONE")}
+      >
+        <X className="h-4 w-4" />
+        <span className="hidden sm:inline">{t("status.NOT_DONE")}</span>
+      </Button>
     </div>
   );
 }
