@@ -668,7 +668,7 @@ function StatusButtons({
 }: {
   status: PlanStatus;
   onSet: (s: PlanStatus) => void;
-  t: (k: string) => string;
+  t: ReturnType<typeof useLang>["t"];
 }) {
   return (
     <div className="flex shrink-0 items-center gap-1">
