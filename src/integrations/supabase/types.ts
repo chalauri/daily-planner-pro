@@ -359,6 +359,7 @@ export type Database = {
           description: string | null
           id: string
           result_percent: number | null
+          status: Database["public"]["Enums"]["plan_status"]
           title: string
           updated_at: string
           user_id: string
@@ -369,6 +370,7 @@ export type Database = {
           description?: string | null
           id?: string
           result_percent?: number | null
+          status?: Database["public"]["Enums"]["plan_status"]
           title: string
           updated_at?: string
           user_id: string
@@ -379,6 +381,7 @@ export type Database = {
           description?: string | null
           id?: string
           result_percent?: number | null
+          status?: Database["public"]["Enums"]["plan_status"]
           title?: string
           updated_at?: string
           user_id?: string
@@ -392,6 +395,7 @@ export type Database = {
           id: string
           is_done: boolean
           plan_id: string
+          status: Database["public"]["Enums"]["plan_status"]
           title: string
           updated_at: string
           user_id: string
@@ -401,6 +405,7 @@ export type Database = {
           id?: string
           is_done?: boolean
           plan_id: string
+          status?: Database["public"]["Enums"]["plan_status"]
           title: string
           updated_at?: string
           user_id: string
@@ -410,6 +415,7 @@ export type Database = {
           id?: string
           is_done?: boolean
           plan_id?: string
+          status?: Database["public"]["Enums"]["plan_status"]
           title?: string
           updated_at?: string
           user_id?: string
