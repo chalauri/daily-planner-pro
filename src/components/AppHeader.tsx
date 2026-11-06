@@ -5,6 +5,7 @@ import { Check, ChevronDown, Globe2, KeyRound, LogOut, UserRound } from "lucide-
 import { toast } from "sonner";
 import { AppTabs } from "@/components/AppTabs";
 import { CollabRequests, useMyUserId, useShares } from "@/components/PlanSharing";
+import { OverdueBell } from "@/components/OverdueBell";
 import { HelpDialog } from "@/components/HelpDialog";
 import { FeedbackDialog } from "@/components/FeedbackDialog";
 import { Button } from "@/components/ui/button";
@@ -104,6 +105,8 @@ export function AppHeader({ onRequestsChanged }: { onRequestsChanged?: () => voi
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <OverdueBell />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
