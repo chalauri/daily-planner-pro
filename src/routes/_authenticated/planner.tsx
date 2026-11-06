@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CalendarDays, CalendarRange, Check, ListTodo, Rows3, RotateCcw, Search, Target, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,6 +46,11 @@ import { PlanCalendar } from "@/components/PlanCalendar";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { PlanStatsBar } from "@/components/PlanStats";
 import { computeStats, todayISO, type Plan, type PlanStatus } from "@/lib/plan-types";
+import {
+  consumePendingPlanFilter,
+  subscribePlanFilter,
+  type PlanFilterRequest,
+} from "@/lib/plan-filter";
 import { useLang, weekdayIndex } from "@/lib/i18n";
 import { EditPlanButton, EditPlanDialog, ShareButton, useMyUserId, useShares } from "@/components/PlanSharing";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -133,6 +138,23 @@ function PlannerPage() {
   );
   const stats = useMemo(() => computeStats(plans), [plans]);
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["plans"] });
+
+  // A filter can be requested from anywhere (for example the overdue bell),
+  // whether or not this page is already open.
+  useEffect(() => {
+    function applyFilter(filter: PlanFilterRequest) {
+      setSection("daily");
+      setView("table");
+      if (filter.from !== undefined) setFrom(filter.from);
+      if (filter.to !== undefined) setTo(filter.to);
+      if (filter.status !== undefined) setStatus(filter.status);
+      if (filter.text !== undefined) setText(filter.text);
+    }
+
+    const pendingFilter = consumePendingPlanFilter();
+    if (pendingFilter) applyFilter(pendingFilter);
+    return subscribePlanFilter(applyFilter);
+  }, []);
 
   async function setPlanStatus(plan: Plan, next: PlanStatus) {
     const value = plan.status === next ? "OPEN" : next;

@@ -11,3 +11,4 @@
 
 - Use `AppHeader` for every signed-in section so navigation, language, requests, help, account, and sign-out controls remain consistent.
 - Expense tables share the browser-safe expense-sort utility and ExpenseSortHeader so month and range views compare numeric values and expose consistent accessible sorting.
+- When one section asks another section to change what it shows (for example the header bell asking Plans to filter), go through the small request/subscribe module in `src/lib/plan-filter.ts` instead of props or URL params, so it works whether or not the target page is already mounted.

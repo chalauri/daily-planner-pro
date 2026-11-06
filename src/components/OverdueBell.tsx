@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { Bell } from "lucide-react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useMyUserId } from "@/components/PlanSharing";
+import { buildOverdueFilter, requestPlanFilter } from "@/lib/plan-filter";
 import { useLang } from "@/lib/i18n";
 
 function todayISO() {
@@ -16,6 +18,8 @@ export function OverdueBell() {
   const { t } = useLang();
   const me = useMyUserId();
   const today = todayISO();
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const { data: overdue = [] } = useQuery({
     queryKey: ["plans", "overdue", me, today],
     enabled: !!me,
@@ -34,8 +38,14 @@ export function OverdueBell() {
   });
   const count = overdue.length;
 
+  function openOverduePlans() {
+    requestPlanFilter(buildOverdueFilter(overdue.map((p) => p.plan_date), today));
+    setOpen(false);
+    void navigate({ to: "/planner" });
+  }
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="relative rounded-full" aria-label={`${t("od.title")}${count ? ` (${count})` : ""}`}>
           <Bell className="h-4 w-4" />
@@ -65,8 +75,8 @@ export function OverdueBell() {
         )}
         {count > 0 && (
           <div className="border-t border-border p-2">
-            <Button asChild size="sm" variant="outline" className="w-full">
-              <Link to="/planner">{t("od.open")}</Link>
+            <Button size="sm" variant="outline" className="w-full" onClick={openOverduePlans}>
+              {t("od.open")}
             </Button>
           </div>
         )}
