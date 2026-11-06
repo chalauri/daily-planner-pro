@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronDown, Globe2, KeyRound, LogOut, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { AppTabs } from "@/components/AppTabs";
-import { CollabRequests } from "@/components/PlanSharing";
+import { CollabRequests, useMyUserId, useShares } from "@/components/PlanSharing";
 import { HelpDialog } from "@/components/HelpDialog";
 import { FeedbackDialog } from "@/components/FeedbackDialog";
 import { Button } from "@/components/ui/button";
@@ -43,6 +43,9 @@ export function AppHeader({ onRequestsChanged }: { onRequestsChanged?: () => voi
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [saving, setSaving] = useState(false);
+  const me = useMyUserId();
+  const { data: shares = [] } = useShares();
+  const pendingCount = shares.filter((s) => s.invitee_id === me && s.status === "PENDING").length;
   const activeLanguage = LANGUAGES.find((item) => item.code === lang) ?? { code: "en", short: "EN", name: "English" };
 
   async function signOut() {
@@ -104,8 +107,13 @@ export function AppHeader({ onRequestsChanged }: { onRequestsChanged?: () => voi
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="rounded-full" aria-label={t("account.menu")}>
+                <Button variant="outline" size="icon" className="relative rounded-full" aria-label={pendingCount > 0 ? `${t("account.menu")} (${pendingCount} ${t("sh.requests")})` : t("account.menu")}>
                   <UserRound className="h-4 w-4" />
+                  {pendingCount > 0 && (
+                    <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold leading-none text-destructive-foreground ring-2 ring-background">
+                      {pendingCount}
+                    </span>
+                  )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
