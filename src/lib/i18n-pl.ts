@@ -200,6 +200,7 @@ export const pl: Record<TKey, string> = {
   "d.title": "Tytuł",
   "d.desc": "Opis (opcjonalnie)",
   "d.shareWith": "Udostępnij (e-mail, opcjonalnie)",
+  "d.shareFix": "Plan nie został dodany. Popraw e-mail lub go usuń.",
   "d.date": "Data",
   "d.repeat": "Powtarzaj",
   "d.repeat.none": "Nie powtarza się",
