@@ -318,7 +318,7 @@ function ExpensesPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
+        <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 lg:grid-cols-3 min-[1700px]:grid-cols-5">
           {[
             { label: ft("f.income"), value: fmt(income), tone: "text-success", card: "border-l-success bg-success-soft/45" },
             { label: ft("f.planned"), value: fmt(plannedTotal), tone: "text-warning", card: "border-l-warning bg-warning-soft/45" },
