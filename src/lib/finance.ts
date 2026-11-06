@@ -169,6 +169,10 @@ export function buildCategoryRows(cats: Category[], budgets: Budget[], txs: Tran
     });
 }
 
+export function leftBudget(planned: number, spent: number) {
+  return planned - spent;
+}
+
 export function budgetState(planned: number, spent: number): "over" | "near" | "ok" | "none" {
   if (planned <= 0) return spent > 0 ? "over" : "none";
   if (spent > planned) return "over";

@@ -35,6 +35,7 @@ import {
   buildCategoryRows,
   currentUserId,
   downloadFile,
+  leftBudget,
   money,
   monthLabel,
   shiftYM,
@@ -101,6 +102,7 @@ function ExpensesPage() {
 
   const expense = txs.filter((x) => x.kind === "EXPENSE").reduce((s, x) => s + Number(x.amount), 0);
   const plannedTotal = rows.reduce((s, r) => s + r.planned, 0);
+  const left = leftBudget(plannedTotal, expense);
   const uncategorized = txs.filter((x) => x.kind === "EXPENSE" && !x.category_id).reduce((s, x) => s + Number(x.amount), 0);
   const over = rows.filter((r) => r.planned > 0 && r.spent > r.planned);
   const incomeRows = categories
@@ -204,7 +206,9 @@ function ExpensesPage() {
     const out: (string | number)[][] = [
       [ft("f.title"), mName, currency],
       [ft("f.income"), income.toFixed(2)],
+      [ft("f.planned"), plannedTotal.toFixed(2)],
       [ft("f.expenses"), expense.toFixed(2)],
+      [ft("f.leftBudget"), left.toFixed(2)],
       [ft("f.savings"), (income - plannedTotal).toFixed(2)],
       [],
       [ft("f.summary")],
@@ -231,7 +235,7 @@ function ExpensesPage() {
       th,td{border:1px solid #ccc;padding:6px 8px;text-align:left;font-size:12px}th{background:#f3f3f3}.over td{background:#fde2e2;color:#9b1c1c}
       .kpi{display:flex;gap:24px;margin:12px 0}.kpi div{border:1px solid #ccc;padding:8px 12px;border-radius:6px}</style></head><body>
       <h1>${esc(ft("f.title"))} — ${esc(mName)}</h1>
-      <div class="kpi"><div>${esc(ft("f.income"))}: <b>${esc(fmt(income))}</b></div><div>${esc(ft("f.expenses"))}: <b>${esc(fmt(expense))}</b></div><div>${esc(ft("f.savings"))}: <b>${esc(fmt(income - plannedTotal))}</b></div></div>
+      <div class="kpi"><div>${esc(ft("f.income"))}: <b>${esc(fmt(income))}</b></div><div>${esc(ft("f.planned"))}: <b>${esc(fmt(plannedTotal))}</b></div><div>${esc(ft("f.expenses"))}: <b>${esc(fmt(expense))}</b></div><div>${esc(ft("f.leftBudget"))}: <b>${esc(fmt(left))}</b></div><div>${esc(ft("f.savings"))}: <b>${esc(fmt(income - plannedTotal))}</b></div></div>
       <h2>${esc(ft("f.summary"))}</h2>${table(summaryTable(), (r) => r[4] === ft("f.over"))}
       <h2>${esc(ft("f.tab.tx"))}</h2>${table([
         [ft("f.date"), ft("f.type"), ft("f.category"), ft("f.amount"), ft("f.note")],
@@ -315,12 +319,13 @@ function ExpensesPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 lg:grid-cols-3">
           {[
             { label: ft("f.income"), value: fmt(income), tone: "text-success", card: "border-l-success bg-success-soft/45" },
-            { label: ft("f.expenses"), value: fmt(expense), tone: "text-destructive", card: "border-l-destructive bg-danger-soft/55" },
-            { label: ft("f.savings"), value: fmt(income - plannedTotal), tone: income - plannedTotal >= 0 ? "text-primary" : "text-destructive", card: "border-l-primary bg-secondary/65" },
             { label: ft("f.planned"), value: fmt(plannedTotal), tone: "text-warning", card: "border-l-warning bg-warning-soft/45" },
+            { label: ft("f.expenses"), value: fmt(expense), tone: "text-destructive", card: "border-l-destructive bg-danger-soft/55" },
+            { label: ft("f.leftBudget"), value: fmt(left), tone: left >= 0 ? "text-foreground" : "text-destructive", card: "border-l-accent bg-accent/20" },
+            { label: ft("f.savings"), value: fmt(income - plannedTotal), tone: income - plannedTotal >= 0 ? "text-primary" : "text-destructive", card: "border-l-primary bg-secondary/65" },
           ].map((k) => (
           <div key={k.label} className={`min-w-0 min-h-24 rounded-xl border border-border border-l-4 px-4 py-4 shadow-sm ${k.card}`}>
               <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase [overflow-wrap:anywhere]">{k.label}</p>

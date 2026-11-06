@@ -20,6 +20,7 @@
 - [x] Alphabetical default and sortable data columns in monthly expenses and Filter views — tested all columns and verified with saved expenses while signed in.
 - [x] Expenses tab: categories, budgets per month, transactions (notes, receipts, monthly repeat), currency default + per-month override (GEL/USD/EUR/PLN)
 - [x] In-app budget alerts (80% / over), month summary, charts, CSV + PDF (print) export, Details per category
+- [x] Expenses summary cards ordered Income, Planned, Expenses, Left budget, Savings; Left budget = planned − expenses (unit-tested, verified signed in from phone to desktop, and in CSV/PDF export)
 
 ## Landing screen (before login)
 - [x] Copy now covers both Plans and Money: hero, two preview cards (today plans / monthly budgets), six feature cards, "also inside" chips, how-it-works, closing sign-up panel, footer
