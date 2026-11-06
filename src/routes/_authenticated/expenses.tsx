@@ -35,6 +35,7 @@ import {
   buildCategoryRows,
   currentUserId,
   downloadFile,
+  leftBudget,
   money,
   monthLabel,
   shiftYM,
