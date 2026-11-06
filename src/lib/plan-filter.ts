@@ -32,8 +32,9 @@ export function subscribePlanFilter(listener: (request: PlanFilterRequest) => vo
 }
 
 export function previousDayISO(iso: string): string {
-  const [year, month, day] = iso.split("-").map(Number);
-  const date = new Date(Date.UTC(year, (month || 1) - 1, day || 1));
+  const date = new Date(
+    Date.UTC(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10))),
+  );
   date.setUTCDate(date.getUTCDate() - 1);
   return date.toISOString().slice(0, 10);
 }

@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { deepStrictEqual, strictEqual } from "node:assert";
+import { describe, test } from "node:test";
 import {
   buildOverdueFilter,
   consumePendingPlanFilter,
@@ -7,34 +8,30 @@ import {
   subscribePlanFilter,
 } from "./plan-filter";
 
-afterEach(() => {
-  // A leftover pending request would leak into the next test.
-  consumePendingPlanFilter();
-});
-
 describe("plan filter requests", () => {
-  it("hands a requested filter to the mounted Plans page", () => {
+  test("hands a requested filter to the mounted Plans page", () => {
     const seen: string[] = [];
     const stop = subscribePlanFilter((request) => seen.push(request.status ?? "none"));
 
     requestPlanFilter({ status: "OPEN" });
 
-    expect(seen).toEqual(["OPEN"]);
+    deepStrictEqual(seen, ["OPEN"]);
     stop();
+    consumePendingPlanFilter();
   });
 
-  it("keeps a requested filter until the Plans page picks it up once", () => {
+  test("keeps a requested filter until the Plans page picks it up once", () => {
     requestPlanFilter({ from: "2026-10-01", to: "2026-11-05", status: "OPEN" });
 
-    expect(consumePendingPlanFilter()).toEqual({
+    deepStrictEqual(consumePendingPlanFilter(), {
       from: "2026-10-01",
       to: "2026-11-05",
       status: "OPEN",
     });
-    expect(consumePendingPlanFilter()).toBeNull();
+    strictEqual(consumePendingPlanFilter(), null);
   });
 
-  it("stops delivering after the Plans page unmounts", () => {
+  test("stops delivering after the Plans page unmounts", () => {
     let hits = 0;
     const stop = subscribePlanFilter(() => {
       hits += 1;
@@ -43,15 +40,16 @@ describe("plan filter requests", () => {
 
     requestPlanFilter({ status: "DONE" });
 
-    expect(hits).toBe(0);
+    strictEqual(hits, 0);
+    consumePendingPlanFilter();
   });
 });
 
 describe("overdue filter", () => {
-  it("shows only open plans from earlier days", () => {
+  test("shows only open plans from earlier days", () => {
     const filter = buildOverdueFilter(["2026-11-03", "2026-10-29", "2026-11-05"], "2026-11-06");
 
-    expect(filter).toEqual({
+    deepStrictEqual(filter, {
       from: "2026-10-29",
       to: "2026-11-05",
       status: "OPEN",
@@ -59,15 +57,15 @@ describe("overdue filter", () => {
     });
   });
 
-  it("ignores plans dated today or later", () => {
+  test("ignores plans dated today or later", () => {
     const filter = buildOverdueFilter(["2026-11-06", "2026-11-09"], "2026-11-06");
 
-    expect(filter.from).toBe("2026-11-05");
-    expect(filter.to).toBe("2026-11-05");
+    strictEqual(filter.from, "2026-11-05");
+    strictEqual(filter.to, "2026-11-05");
   });
 
-  it("steps back a whole day across a month and year edge", () => {
-    expect(previousDayISO("2026-11-01")).toBe("2026-10-31");
-    expect(previousDayISO("2026-01-01")).toBe("2025-12-31");
+  test("steps back a whole day across a month and year edge", () => {
+    strictEqual(previousDayISO("2026-11-01"), "2026-10-31");
+    strictEqual(previousDayISO("2026-01-01"), "2025-12-31");
   });
 });
