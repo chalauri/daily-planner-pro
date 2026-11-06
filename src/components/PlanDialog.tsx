@@ -62,6 +62,7 @@ export function PlanDialog({
   const [repeat, setRepeat] = useState<Repeat>("NONE");
   const [until, setUntil] = useState("");
   const [saving, setSaving] = useState(false);
+  const [shareEmail, setShareEmail] = useState("");
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -97,23 +98,44 @@ export function PlanDialog({
       return;
     }
     const seriesId = repeat === "NONE" ? null : crypto.randomUUID();
-    const { error } = await supabase.from("plans").insert(
-      dates.map((d) => ({
-        user_id: userId,
-        title: title.trim(),
-        description: description.trim() || null,
-        plan_date: d,
-        status: "OPEN" as const,
-        recurrence: repeat,
-        series_id: seriesId,
-      })),
-    );
-    setSaving(false);
+    const { data: created, error } = await supabase
+      .from("plans")
+      .insert(
+        dates.map((d) => ({
+          user_id: userId,
+          title: title.trim(),
+          description: description.trim() || null,
+          plan_date: d,
+          status: "OPEN" as const,
+          recurrence: repeat,
+          series_id: seriesId,
+        })),
+      )
+      .select("id");
     if (error) {
+      setSaving(false);
       toast.error(error.message);
       return;
     }
     toast.success(dates.length > 1 ? t("d.addedN", { n: dates.length }) : t("d.addedOne"));
+    const email = shareEmail.trim();
+    if (email && created?.length) {
+      const map: Record<string, string> = {
+        no_account: t("sh.noAccount"),
+        self: t("sh.self"),
+        not_owner: t("sh.notOwner"),
+      };
+      let failed: string | null = null;
+      for (const p of created) {
+        const { data, error: invErr } = await supabase.rpc("invite_to_plan", { _plan_id: p.id, _email: email });
+        if (invErr) { failed = invErr.message; break; }
+        if (data !== "ok") { failed = map[data as string] ?? String(data); break; }
+      }
+      if (failed) toast.error(failed);
+      else toast.success(t("sh.sent"));
+    }
+    setSaving(false);
+    setShareEmail("");
     setRepeat("NONE");
     setTitle("");
     setDescription("");
@@ -202,6 +224,16 @@ export function PlanDialog({
                   />
                 </div>
               )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="plan-share">{t("d.shareWith")}</Label>
+              <Input
+                id="plan-share"
+                type="email"
+                value={shareEmail}
+                onChange={(e) => setShareEmail(e.target.value)}
+                placeholder="name@example.com"
+              />
             </div>
             {repeat !== "NONE" && (
               <p className="text-xs text-muted-foreground">

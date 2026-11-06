@@ -199,6 +199,7 @@ export const pl: Record<TKey, string> = {
   "d.newDesc": "Pozostaje otwarty, dopóki go później nie oznaczysz.",
   "d.title": "Tytuł",
   "d.desc": "Opis (opcjonalnie)",
+  "d.shareWith": "Udostępnij (e-mail, opcjonalnie)",
   "d.date": "Data",
   "d.repeat": "Powtarzaj",
   "d.repeat.none": "Nie powtarza się",
