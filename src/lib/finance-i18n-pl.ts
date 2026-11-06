@@ -13,6 +13,7 @@ export const plF: Record<FKey, string> = {
   "f.expenses": "Wydatki",
   "f.savings": "Oszczędności",
   "f.planned": "Planowane",
+  "f.leftBudget": "Pozostały budżet",
   "f.spent": "Wydane",
   "f.remaining": "Pozostało",
   "f.progress": "Wykorzystano",
