@@ -117,7 +117,6 @@ export function PlanDialog({
       toast.error(error.message);
       return;
     }
-    toast.success(dates.length > 1 ? t("d.addedN", { n: dates.length }) : t("d.addedOne"));
     const email = shareEmail.trim();
     if (email && created?.length) {
       const map: Record<string, string> = {
@@ -131,9 +130,16 @@ export function PlanDialog({
         if (invErr) { failed = invErr.message; break; }
         if (data !== "ok") { failed = map[data as string] ?? String(data); break; }
       }
-      if (failed) toast.error(failed);
-      else toast.success(t("sh.sent"));
+      if (failed) {
+        await supabase.from("plans").delete().in("id", created.map((p) => p.id));
+        setSaving(false);
+        toast.error(`${failed}. ${t("d.shareFix")}`, { duration: 8000 });
+        document.getElementById("plan-share")?.focus();
+        return;
+      }
     }
+    toast.success(dates.length > 1 ? t("d.addedN", { n: dates.length }) : t("d.addedOne"));
+    if (email) toast.success(t("sh.sent"));
     setSaving(false);
     setShareEmail("");
     setRepeat("NONE");
