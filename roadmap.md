@@ -1,5 +1,8 @@
 # Roadmap
 
+## Plans statistics
+- [ ] Add year-selectable Statistics beside Table and Calendar, with 12 monthly plan-count and DONE-percentage columns; test calculations and verify the view.
+
 - [x] Auth with mandatory email confirmation
 - [x] Plans table + RLS (title, description, date, status OPEN/DONE/NOT_DONE)
 - [x] Planner page: today default, filters (date range, status, text), stats on filtered data, add plan, mark done/not done
