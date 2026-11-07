@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { CalendarDays, CalendarRange, Check, ListTodo, Rows3, RotateCcw, Search, Target, Trash2, X } from "lucide-react";
+import { BarChart3, CalendarDays, CalendarRange, Check, ListTodo, Rows3, RotateCcw, Search, Target, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -56,6 +56,7 @@ import { EditPlanButton, EditPlanDialog, ShareButton, useMyUserId, useShares } f
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppHeader } from "@/components/AppHeader";
 import { YearlyPlans } from "@/components/YearlyPlans";
+import { PlanStatistics } from "@/components/PlanStatistics";
 
 export const Route = createFileRoute("/_authenticated/planner")({
   head: () => ({
@@ -81,7 +82,8 @@ function PlannerPage() {
   const [status, setStatus] = useState<StatusFilter>("ALL");
   const [text, setText] = useState("");
   const [addDate, setAddDate] = useState<string | null>(null);
-  const [view, setView] = useState<"table" | "calendar">("table");
+  const [view, setView] = useState<"table" | "calendar" | "statistics">("table");
+  const [statisticsYear, setStatisticsYear] = useState(() => new Date().getFullYear());
   const [section, setSection] = useState<"daily" | "yearly">("daily");
   const [month, setMonth] = useState(() => startOfMonth(new Date()));
 
@@ -90,7 +92,7 @@ function PlannerPage() {
     setFrom(format(startOfMonth(m), "yyyy-MM-dd"));
     setTo(format(endOfMonth(m), "yyyy-MM-dd"));
   }
-  function switchView(v: "table" | "calendar") {
+  function switchView(v: "table" | "calendar" | "statistics") {
     setView(v);
     if (v === "calendar") showMonth(from ? startOfMonth(new Date(from + "T00:00:00")) : month);
   }
@@ -236,11 +238,11 @@ function PlannerPage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl">{t("pl.title")}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
+            {view !== "statistics" && <p className="mt-1 text-sm text-muted-foreground">
               {from === to
                 ? friendlyDate(from)
                 : t("pl.showingRange", { from: from || "…", to: to || "…" })}
-            </p>
+            </p>}
           </div>
           <PlanDialog
             defaultDate={from || todayISO()}
@@ -250,6 +252,7 @@ function PlannerPage() {
           />
         </div>
 
+        {view !== "statistics" && <>
         <section className="surface-card grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-5">
           <div className="space-y-1.5">
             <Label htmlFor="from">{t("pl.from")}</Label>
@@ -295,6 +298,7 @@ function PlannerPage() {
         </section>
 
         <PlanStatsBar stats={stats} />
+        </>}
 
         <div className="inline-flex rounded-md border border-border bg-card p-1" role="tablist">
           <Button size="sm" role="tab" aria-selected={view === "table"} variant={view === "table" ? "default" : "ghost"} onClick={() => switchView("table")}>
@@ -305,9 +309,13 @@ function PlannerPage() {
             <CalendarDays className="h-4 w-4" />
             {t("view.calendar")}
           </Button>
+          <Button size="sm" role="tab" aria-selected={view === "statistics"} variant={view === "statistics" ? "default" : "ghost"} onClick={() => switchView("statistics")}>
+            <BarChart3 className="h-4 w-4" />
+            {t("view.statistics")}
+          </Button>
         </div>
 
-        {view === "calendar" ? (
+        {view === "statistics" ? <PlanStatistics year={statisticsYear} onYearChange={setStatisticsYear} /> : view === "calendar" ? (
           <section className="surface-card overflow-hidden">
             <PlanCalendar
               month={month}
