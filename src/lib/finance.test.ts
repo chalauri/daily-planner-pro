@@ -1,6 +1,6 @@
 import { describe, test } from "node:test";
 import { strictEqual } from "node:assert";
-import { leftBudget } from "./finance";
+import { leftBudget, budgetState } from "./finance";
 
 describe("left budget", () => {
   test("is planned minus spent", () => {
