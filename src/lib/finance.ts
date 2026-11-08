@@ -176,7 +176,7 @@ export function leftBudget(planned: number, spent: number) {
 export function budgetState(planned: number, spent: number): "over" | "near" | "ok" | "none" {
   if (planned <= 0) return spent > 0 ? "over" : "none";
   if (spent > planned) return "over";
-  if (spent >= planned * 0.8) return "near";
+  if (spent >= planned * 0.9) return "near";
   return "ok";
 }
 
