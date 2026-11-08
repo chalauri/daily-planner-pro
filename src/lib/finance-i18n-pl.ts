@@ -51,7 +51,7 @@ export const plF: Record<FKey, string> = {
   "f.addedN": "Dodano transakcji: {n}",
   "f.deleted": "Usunięto",
   "f.deleteTx": "Usunąć tę transakcję?",
-  "f.deleteCat": "Usunąć tę kategorię? Jej budżety zostaną usunięte, a transakcje staną się nieprzypisane.",
+  "f.deleteCat": "Usunąć ten wpis i jego transakcje z miesiąca {m}? Pozostałe miesiące pozostaną bez zmian.",
   "f.repeat": "Powtarzaj co miesiąc",
   "f.until": "Do",
   "f.createsN": "Utworzy {n} transakcji (maks. 60)",

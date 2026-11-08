@@ -29,6 +29,7 @@ import { FinanceReports } from "@/components/finance/FinanceReports";
 import { ExpenseFilter } from "@/components/finance/ExpenseFilter";
 import { ExpenseSortHeader } from "@/components/finance/ExpenseSortHeader";
 import { DEFAULT_EXPENSE_SORT, nextExpenseSort, sortExpenses, type ExpenseSort } from "@/lib/expense-sort";
+import { deleteMonthCategory } from "@/lib/delete-month-category";
 import {
   CURRENCIES,
   budgetState,
@@ -180,14 +181,15 @@ function ExpensesPage() {
 
   async function confirmDeleteCat() {
     if (!delCat) return;
-    const { error: txErr } = await supabase.from("transactions").delete().eq("category_id", delCat);
-    if (txErr) { toast.error(txErr.message); return; }
-    await supabase.from("budgets").delete().eq("category_id", delCat);
-    const { error } = await supabase.from("categories").delete().eq("id", delCat);
-    if (error) toast.error(error.message);
-    else toast.success(ft("f.deleted"));
-    setDelCat(null);
-    refresh();
+    try {
+      await deleteMonthCategory(supabase, delCat, ym);
+      toast.success(ft("f.deleted"));
+      setDelCat(null);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : String(error));
+    } finally {
+      refresh();
+    }
   }
 
   function summaryTable(): (string | number)[][] {
@@ -635,7 +637,7 @@ function ExpensesPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{catName(delCat)}</AlertDialogTitle>
-            <AlertDialogDescription>{ft("f.deleteCat")}</AlertDialogDescription>
+            <AlertDialogDescription>{ft("f.deleteCat", { m: mName })}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
