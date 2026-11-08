@@ -25,8 +25,8 @@ function fixture(failTable?: string) {
       const query = {
         delete() { return query; },
         eq(key: string, value: string | number) { filters.push(row => row[key] === value); return query; },
-        gte(key: string, value: string) { filters.push(row => row[key] >= value); return query; },
-        lt(key: string, value: string) { filters.push(row => row[key] < value); return query; },
+        gte(key: string, value: string) { filters.push(row => typeof row[key] === "string" && row[key] >= value); return query; },
+        lt(key: string, value: string) { filters.push(row => typeof row[key] === "string" && row[key] < value); return query; },
         then(resolve: (result: { error: Error | null }) => unknown) {
           if (table === failTable) return Promise.resolve(resolve({ error: new Error("Deletion failed") }));
           tables[table] = tables[table].filter(row => !filters.every(filter => filter(row)));
