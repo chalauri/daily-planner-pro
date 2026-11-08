@@ -112,14 +112,34 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
       const user_id = await currentUserId();
       const clash = categories.find((c) => c.id !== edit.id && c.kind === kind && c.name.trim().toLowerCase() === name.trim().toLowerCase());
       if (clash) throw new Error(ft("f.alreadyPlanned", { n: name.trim(), m: monthLabel(planYm, lang) }));
+      let catId = edit.id;
       if (name.trim() !== edit.name) {
-        const { error } = await supabase.from("categories").update({ name: name.trim() }).eq("id", edit.id);
-        if (error) throw error;
+        // Months are independent: renaming here must not rename copies in other months.
+        const from = `${planYm.year}-${String(planYm.month).padStart(2, "0")}-01`;
+        const to = planYm.month === 12 ? `${planYm.year + 1}-01-01` : `${planYm.year}-${String(planYm.month + 1).padStart(2, "0")}-01`;
+        const [ob, ot] = await Promise.all([
+          supabase.from("budgets").select("id", { count: "exact", head: true }).eq("category_id", edit.id).or(`year.neq.${planYm.year},month.neq.${planYm.month}`),
+          supabase.from("transactions").select("id", { count: "exact", head: true }).eq("category_id", edit.id).or(`period.lt.${from},period.gte.${to}`),
+        ]);
+        if (ob.error) throw ob.error;
+        if (ot.error) throw ot.error;
+        if ((ob.count ?? 0) + (ot.count ?? 0) > 0) {
+          const { data: nc, error: ne } = await supabase.from("categories").insert({ user_id, name: name.trim(), kind }).select().single();
+          if (ne) throw ne;
+          catId = nc.id;
+          const { error: mb } = await supabase.from("budgets").update({ category_id: catId }).eq("category_id", edit.id).eq("year", planYm.year).eq("month", planYm.month);
+          if (mb) throw mb;
+          const { error: mt } = await supabase.from("transactions").update({ category_id: catId }).eq("category_id", edit.id).gte("period", from).lt("period", to);
+          if (mt) throw mt;
+        } else {
+          const { error } = await supabase.from("categories").update({ name: name.trim() }).eq("id", edit.id);
+          if (error) throw error;
+        }
       }
       const amount = parseAmount(finalPlanned || "0") || 0;
       const { error: be } = await supabase
         .from("budgets")
-        .upsert({ user_id, category_id: edit.id, year: planYm.year, month: planYm.month, amount, is_income_tax: kind === "EXPENSE" ? taxOn : false, is_subscription: kind === "EXPENSE" ? subOn : false }, { onConflict: "category_id,year,month" });
+        .upsert({ user_id, category_id: catId, year: planYm.year, month: planYm.month, amount, is_income_tax: kind === "EXPENSE" ? taxOn : false, is_subscription: kind === "EXPENSE" ? subOn : false }, { onConflict: "category_id,year,month" });
       if (be) throw be;
       toast.success(ft("f.saved"));
       onSaved();
