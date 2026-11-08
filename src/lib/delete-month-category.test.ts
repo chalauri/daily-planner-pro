@@ -3,7 +3,8 @@ import { deepStrictEqual, strictEqual, rejects } from "node:assert";
 import { deleteMonthCategory } from "./delete-month-category";
 
 function fixture(failTable?: string) {
-  const tables: Record<string, Record<string, string | number>[]> = {
+  type Table = "categories" | "budgets" | "transactions";
+  const tables: Record<Table, Record<string, string | number>[]> = {
     categories: [{ id: "food" }],
     budgets: [
       { category_id: "food", year: 2026, month: 11 },
@@ -19,7 +20,7 @@ function fixture(failTable?: string) {
     ],
   };
   const client = {
-    from(table: string) {
+    from(table: Table) {
       const filters: ((row: Record<string, string | number>) => boolean)[] = [];
       const query = {
         delete() { return query; },
@@ -41,8 +42,8 @@ function fixture(failTable?: string) {
 test("removing copied December expenses preserves November, January and other categories", async () => {
   const { client, tables } = fixture();
   await deleteMonthCategory(client, "food", { year: 2026, month: 12 });
-  deepStrictEqual(tables.budgets.map(row => [row.category_id, row.month]), [["food", 11], ["food", 1], ["rent", 12]]);
-  deepStrictEqual(tables.transactions.map(row => [row.category_id, row.period]), [["food", "2026-11-01"], ["food", "2027-01-01"], ["rent", "2026-12-01"]]);
+  deepStrictEqual(tables.budgets.map(row => [row["category_id"], row["month"]]), [["food", 11], ["food", 1], ["rent", 12]]);
+  deepStrictEqual(tables.transactions.map(row => [row["category_id"], row["period"]]), [["food", "2026-11-01"], ["food", "2027-01-01"], ["rent", "2026-12-01"]]);
   deepStrictEqual(tables.categories, [{ id: "food" }]);
 });
 
