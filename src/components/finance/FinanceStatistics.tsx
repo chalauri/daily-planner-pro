@@ -146,7 +146,7 @@ export function FinanceStatistics({ categories, initialYear }: { categories: Cat
           <ChartCard title={selMonth.label}>
             {selMonth.cats.length === 0 ? <p className="flex h-full items-center justify-center text-sm text-muted-foreground">{ft("f.noData")}</p> : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={selMonth.cats}>
+                <BarChart data={selMonth.cats} margin={{ left: 60, right: 20, top: 5, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                   <XAxis dataKey="name" interval={0} angle={-35} textAnchor="end" height={70} {...axis} />
                   <YAxis {...axis} /><Tooltip /><Legend verticalAlign="top" height={24} />
