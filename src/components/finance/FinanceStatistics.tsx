@@ -84,6 +84,7 @@ export function FinanceStatistics({ categories, initialYear }: { categories: Cat
   }, [q.data, kind, year, lang, ft]);
 
   const axis = { tick: { fontSize: 11 }, stroke: "var(--muted-foreground)" };
+  const selMonth = data[month - 1] ?? data[0] ?? { label: "", cats: [] };
 
   return (
     <div className="space-y-4">
@@ -142,10 +143,10 @@ export function FinanceStatistics({ categories, initialYear }: { categories: Cat
               </select>
             </div>
           </div>
-          <ChartCard title={data[month - 1].label}>
-            {data[month - 1].cats.length === 0 ? <p className="flex h-full items-center justify-center text-sm text-muted-foreground">{ft("f.noData")}</p> : (
+          <ChartCard title={selMonth.label}>
+            {selMonth.cats.length === 0 ? <p className="flex h-full items-center justify-center text-sm text-muted-foreground">{ft("f.noData")}</p> : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data[month - 1].cats}>
+                <BarChart data={selMonth.cats}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                   <XAxis dataKey="name" interval={0} angle={-35} textAnchor="end" height={60} {...axis} />
                   <YAxis {...axis} /><Tooltip /><Legend />
