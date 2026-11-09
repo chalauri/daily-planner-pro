@@ -25,7 +25,7 @@ import { useFT } from "@/lib/finance-i18n";
 import { TransactionDialog } from "@/components/finance/TransactionDialog";
 import { BulkExpenseDialog } from "@/components/finance/BulkExpenseDialog";
 import { CategoryDialog } from "@/components/finance/CategoryDialog";
-import { FinanceReports } from "@/components/finance/FinanceReports";
+import { FinanceStatistics } from "@/components/finance/FinanceStatistics";
 import { ExpenseFilter } from "@/components/finance/ExpenseFilter";
 import { ExpenseSortHeader } from "@/components/finance/ExpenseSortHeader";
 import { DEFAULT_EXPENSE_SORT, nextExpenseSort, sortExpenses, type ExpenseSort } from "@/lib/expense-sort";
@@ -348,6 +348,7 @@ function ExpensesPage() {
             <TabsTrigger value="budget">{ft("f.tab.budget")}</TabsTrigger>
             <TabsTrigger value="tx">{ft("f.tab.tx")}</TabsTrigger>
             <TabsTrigger value="reports">{ft("f.tab.reports")}</TabsTrigger>
+            <TabsTrigger value="stats">{ft("f.tab.stats")}</TabsTrigger>
             <TabsTrigger value="filter">{ft("f.tab.filter")}</TabsTrigger>
           </TabsList>
 
@@ -571,7 +572,10 @@ function ExpensesPage() {
                 </tbody>
               </table>
             </div>
-            <FinanceReports trend={trend.data ?? []} rows={rows} />
+          </TabsContent>
+
+          <TabsContent value="stats">
+            <FinanceStatistics categories={categories} initialYear={ym.year} />
           </TabsContent>
 
           <TabsContent value="filter">

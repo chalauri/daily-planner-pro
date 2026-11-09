@@ -99,4 +99,11 @@ export const plF: Record<FKey, string> = {
   "f.allCats": "Wszystkie kategorie",
   "f.month": "Miesiąc",
   "f.noResults": "Brak planowanych wydatków dla tych filtrów.",
+  "f.tab.stats": "Statystyki",
+  "f.year": "Rok",
+  "f.pvaMonthly": "Plan a rzeczywistość według miesięcy",
+  "f.incomeByMonth": "Dochód w miesiącach",
+  "f.expensesByMonth": "Wydatki w miesiącach",
+  "f.noData": "Brak danych",
+  "f.statsError": "Nie udało się wczytać statystyk",
 };
