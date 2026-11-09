@@ -45,7 +45,6 @@ import {
   useCurrency,
   useInvalidateFinance,
   useMonthData,
-  useYearTrend,
   type Transaction,
   type YM,
 } from "@/lib/finance";
@@ -77,7 +76,6 @@ function ExpensesPage() {
   const [ym, setYM] = useState<YM>(nowYM);
   const cats = useCategories();
   const month = useMonthData(ym);
-  const trend = useYearTrend(ym);
   const cur = useCurrency(ym);
   const currency = cur.data?.effective ?? "GEL";
   const fmt = (n: number) => money(n, currency, lang);
