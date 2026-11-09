@@ -143,15 +143,16 @@ export function FinanceStatistics({ categories, initialYear }: { categories: Cat
               </select>
             </div>
           </div>
-          <ChartCard title={selMonth.label}>
+          <ChartCard title={selMonth.label} height={Math.max(288, selMonth.cats.length * 34 + 60)}>
             {selMonth.cats.length === 0 ? <p className="flex h-full items-center justify-center text-sm text-muted-foreground">{ft("f.noData")}</p> : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={selMonth.cats} margin={{ left: 60, right: 20, top: 5, bottom: 0 }}>
+                <BarChart data={selMonth.cats} layout="vertical" margin={{ left: 10, right: 20, top: 5, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis dataKey="name" interval={0} angle={-35} textAnchor="end" height={70} {...axis} />
-                  <YAxis {...axis} /><Tooltip /><Legend verticalAlign="top" height={24} />
-                  <Bar dataKey="planned" name={ft("f.planned")} fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="actual" name={ft("f.spent")} fill="var(--chart-2)" radius={[4, 4, 0, 0]} />
+                  <XAxis type="number" {...axis} />
+                  <YAxis type="category" dataKey="name" width={190} interval={0} {...axis} />
+                  <Tooltip /><Legend verticalAlign="top" height={24} />
+                  <Bar dataKey="planned" name={ft("f.planned")} fill="var(--chart-1)" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="actual" name={ft("f.spent")} fill="var(--chart-2)" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}
