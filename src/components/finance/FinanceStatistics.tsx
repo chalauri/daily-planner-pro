@@ -148,8 +148,8 @@ export function FinanceStatistics({ categories, initialYear }: { categories: Cat
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={selMonth.cats}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                  <XAxis dataKey="name" interval={0} angle={-35} textAnchor="end" height={60} {...axis} />
-                  <YAxis {...axis} /><Tooltip /><Legend />
+                  <XAxis dataKey="name" interval={0} angle={-35} textAnchor="end" height={70} {...axis} />
+                  <YAxis {...axis} /><Tooltip /><Legend verticalAlign="top" height={24} />
                   <Bar dataKey="planned" name={ft("f.planned")} fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="actual" name={ft("f.spent")} fill="var(--chart-2)" radius={[4, 4, 0, 0]} />
                 </BarChart>
