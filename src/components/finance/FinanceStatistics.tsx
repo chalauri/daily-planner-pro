@@ -34,11 +34,11 @@ function useYearFinance(year: number) {
 
 const fmtNum = (v: number) => Math.round(v * 100) / 100;
 
-function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
+function ChartCard({ title, children, height = 288 }: { title: string; children: React.ReactNode; height?: number }) {
   return (
     <div className="surface-card p-4">
       <h3 className="mb-3 font-display text-lg font-semibold">{title}</h3>
-      <div className="h-72">{children}</div>
+      <div style={{ height }}>{children}</div>
     </div>
   );
 }
