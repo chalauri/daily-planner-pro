@@ -100,6 +100,13 @@ const en = {
   "f.allCats": "All categories",
   "f.month": "Month",
   "f.noResults": "No planned expenses match these filters.",
+  "f.tab.stats": "Statistics",
+  "f.year": "Year",
+  "f.pvaMonthly": "Planned vs actual by month",
+  "f.incomeByMonth": "Income per month",
+  "f.expensesByMonth": "Expenses per month",
+  "f.noData": "No data",
+  "f.statsError": "Could not load statistics",
 };
 
 type FKey = keyof typeof en;
@@ -203,6 +210,13 @@ const ka: Record<FKey, string> = {
   "f.allCats": "ყველა კატეგორია",
   "f.month": "თვე",
   "f.noResults": "ამ ფილტრით ჩანაწერები არ მოიძებნა.",
+  "f.tab.stats": "სტატისტიკა",
+  "f.year": "წელი",
+  "f.pvaMonthly": "დაგეგმილი და ფაქტობრივი თვეების მიხედვით",
+  "f.incomeByMonth": "შემოსავალი თვეების მიხედვით",
+  "f.expensesByMonth": "ხარჯები თვეების მიხედვით",
+  "f.noData": "მონაცემები არ არის",
+  "f.statsError": "სტატისტიკის ჩატვირთვა ვერ მოხერხდა",
 };
 
 export type { FKey };
