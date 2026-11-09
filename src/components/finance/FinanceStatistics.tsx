@@ -46,6 +46,7 @@ function ChartCard({ title, children }: { title: string; children: React.ReactNo
 export function FinanceStatistics({ categories, initialYear }: { categories: Category[]; initialYear: number }) {
   const { ft, lang } = useFT();
   const [year, setYear] = useState(initialYear);
+  const [month, setMonth] = useState(() => new Date().getMonth() + 1);
   const q = useYearFinance(year);
   const kind = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories]);
 
@@ -127,24 +128,33 @@ export function FinanceStatistics({ categories, initialYear }: { categories: Cat
               </ResponsiveContainer>
             </ChartCard>
           </div>
-          <h3 className="pt-2 font-display text-xl font-semibold">{ft("f.byCategory")}</h3>
-          <div className="grid gap-4 lg:grid-cols-2">
-            {data.map((m) => (
-              <ChartCard key={m.label} title={m.label}>
-                {m.cats.length === 0 ? <p className="flex h-full items-center justify-center text-sm text-muted-foreground">{ft("f.noData")}</p> : (
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={m.cats}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                      <XAxis dataKey="name" interval={0} angle={-35} textAnchor="end" height={60} {...axis} />
-                      <YAxis {...axis} /><Tooltip /><Legend />
-                      <Bar dataKey="planned" name={ft("f.planned")} fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="actual" name={ft("f.spent")} fill="var(--chart-2)" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                )}
-              </ChartCard>
-            ))}
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <h3 className="font-display text-xl font-semibold">{ft("f.byCategory")}</h3>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="fin-stats-month" className="shrink-0 text-sm font-normal">{ft("f.month")}</Label>
+              <select
+                id="fin-stats-month"
+                value={month}
+                onChange={(e) => setMonth(Number(e.target.value))}
+                className="flex h-9 rounded-md border border-input bg-background px-3 text-sm"
+              >
+                {data.map((m, i) => <option key={m.label} value={i + 1}>{m.label}</option>)}
+              </select>
+            </div>
           </div>
+          <ChartCard title={data[month - 1].label}>
+            {data[month - 1].cats.length === 0 ? <p className="flex h-full items-center justify-center text-sm text-muted-foreground">{ft("f.noData")}</p> : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data[month - 1].cats}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                  <XAxis dataKey="name" interval={0} angle={-35} textAnchor="end" height={60} {...axis} />
+                  <YAxis {...axis} /><Tooltip /><Legend />
+                  <Bar dataKey="planned" name={ft("f.planned")} fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="actual" name={ft("f.spent")} fill="var(--chart-2)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </ChartCard>
         </>
       )}
     </div>
