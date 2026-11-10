@@ -89,6 +89,36 @@ export function PlanStatistics({ year, onYearChange }: { year: number; onYearCha
               </section>
             );
           })}
+          <section aria-label={t("planStats.plannedVsDone")} className="min-w-0 border-t border-border pt-5">
+            <h2 className="mb-4 text-xl">{t("planStats.plannedVsDone")}</h2>
+            <div className="overflow-x-auto">
+              <ChartContainer
+                className="h-80 min-w-[620px] w-full aspect-auto"
+                config={{
+                  planned: { label: t("planStats.planned"), color: "var(--chart-1)" },
+                  done: { label: t("planStats.done"), color: "var(--chart-2)" },
+                }}
+              >
+                <BarChart accessibilityLayer data={months} margin={{ top: 28, right: 12, bottom: 42, left: 0 }}>
+                  <CartesianGrid vertical={false} stroke="var(--border)" />
+                  <XAxis dataKey="label" interval={0} angle={-35} textAnchor="end" height={46} tickLine={false} axisLine={false} />
+                  <YAxis width={48} allowDecimals={false} tickLine={false} axisLine={false} />
+                  <ChartTooltip content={<ChartTooltipContent formatter={(value) => <span className="font-medium tabular-nums">{String(value)}</span>} labelFormatter={(_, payload) => payload[0]?.payload?.label} />} />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  <Bar dataKey="planned" fill="var(--color-planned)" radius={[4, 4, 0, 0]} maxBarSize={28} isAnimationActive={false}>
+                    <LabelList dataKey="planned" position="top" className="fill-foreground" fontSize={11} formatter={(value: number) => String(value)} />
+                  </Bar>
+                  <Bar dataKey="done" fill="var(--color-done)" radius={[4, 4, 0, 0]} maxBarSize={28} isAnimationActive={false}>
+                    <LabelList dataKey="done" position="top" className="fill-foreground" fontSize={11} formatter={(value: number) => String(value)} />
+                  </Bar>
+                </BarChart>
+              </ChartContainer>
+            </div>
+            <table className="sr-only">
+              <caption>{t("planStats.plannedVsDone")} — {year}</caption>
+              <tbody>{months.map((month) => <tr key={month.month}><th scope="row">{month.label}</th><td>{t("planStats.planned")}: {month.planned}</td><td>{t("planStats.done")}: {month.done}</td></tr>)}</tbody>
+            </table>
+          </section>
         </div>
       )}
     </section>
