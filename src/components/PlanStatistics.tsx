@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyUserId, useShares } from "@/components/PlanSharing";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,6 +40,7 @@ export function PlanStatistics({ year, onYearChange }: { year: number; onYearCha
     const hidden = new Set((sharesQuery.data ?? []).filter((share) => share.invitee_id === me && share.status !== "ACCEPTED").map((share) => share.plan_id));
     return monthlyPlanStatistics((query.data ?? []).filter((plan) => !hidden.has(plan.id)), year).map((month) => ({
       ...month,
+      planned: month.total,
       label: formatMonthYear(year, month.month, lang).replace(` ${year}`, ""),
     }));
   }, [query.data, sharesQuery.data, me, year, lang]);
