@@ -30,4 +30,16 @@ describe("monthly plan statistics", () => {
     strictEqual(result[10]?.completionRate, 33);
     strictEqual(result[11]?.completionRate, 100);
   });
+  test("done count is only DONE plans in that month", () => {
+    const result = monthlyPlanStatistics([
+      { plan_date: "2026-11-01", status: "DONE" },
+      { plan_date: "2026-11-02", status: "DONE" },
+      { plan_date: "2026-11-03", status: "OPEN" },
+      { plan_date: "2026-12-01", status: "NOT_DONE" },
+    ], 2026);
+    strictEqual(result[10]?.total, 3);
+    strictEqual(result[10]?.done, 2);
+    strictEqual(result[11]?.total, 1);
+    strictEqual(result[11]?.done, 0);
+  });
 });
