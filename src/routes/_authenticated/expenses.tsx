@@ -29,6 +29,7 @@ import { FinanceStatistics } from "@/components/finance/FinanceStatistics";
 import { ExpenseFilter } from "@/components/finance/ExpenseFilter";
 import { ExpenseSortHeader } from "@/components/finance/ExpenseSortHeader";
 import { DEFAULT_EXPENSE_SORT, nextExpenseSort, sortExpenses, type ExpenseSort } from "@/lib/expense-sort";
+import { DEFAULT_TX_SORT, nextTxSort, sortTransactions, transactionSortValues, type TxSort } from "@/lib/transaction-sort";
 import { deleteMonthCategory } from "@/lib/delete-month-category";
 import {
   CURRENCIES,
@@ -666,7 +667,12 @@ function TxTable({
   onDelete: (t: Transaction) => void;
   onReceipt: (path: string) => void;
 }) {
-  const { ft } = useFT();
+  const { ft, lang } = useFT();
+  const [sort, setSort] = useState<TxSort>(DEFAULT_TX_SORT);
+  const sorted = useMemo(
+    () => sortTransactions(txs, sort, (x) => transactionSortValues(x, catName), lang),
+    [txs, sort, catName, lang],
+  );
   if (txs.length === 0) {
     return (
       <div className="surface-card flex min-h-56 flex-col items-center justify-center px-6 py-10 text-center">
@@ -682,15 +688,15 @@ function TxTable({
       <table className="w-full text-sm">
         <thead className="border-b border-border bg-muted/45 text-left text-xs text-muted-foreground uppercase">
           <tr>
-            <th className="px-4 py-3">{ft("f.date")}</th>
-            <th className="px-4 py-3">{ft("f.category")}</th>
-            <th className="px-4 py-3">{ft("f.amount")}</th>
-            <th className="px-4 py-3">{ft("f.note")}</th>
+            <ExpenseSortHeader column="date" sort={sort} onSort={(key) => setSort(nextTxSort(sort, key))}>{ft("f.date")}</ExpenseSortHeader>
+            <ExpenseSortHeader column="category" sort={sort} onSort={(key) => setSort(nextTxSort(sort, key))}>{ft("f.category")}</ExpenseSortHeader>
+            <ExpenseSortHeader column="amount" sort={sort} onSort={(key) => setSort(nextTxSort(sort, key))}>{ft("f.amount")}</ExpenseSortHeader>
+            <ExpenseSortHeader column="note" sort={sort} onSort={(key) => setSort(nextTxSort(sort, key))}>{ft("f.note")}</ExpenseSortHeader>
             <th className="px-4 py-3 text-right">{ft("f.actions")}</th>
           </tr>
         </thead>
         <tbody>
-          {txs.map((x) => (
+          {sorted.map((x) => (
               <tr key={x.id} className="border-b border-l-4 border-border border-l-destructive bg-danger-soft/25 last:border-b-0 hover:bg-danger-soft/45">
                 <td className="px-4 py-3 whitespace-nowrap">{x.tx_date}</td>
                 <td className="px-4 py-3">

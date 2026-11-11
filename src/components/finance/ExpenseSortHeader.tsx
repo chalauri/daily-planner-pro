@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { ExpenseSort, ExpenseSortKey } from "@/lib/expense-sort";
+import type { SortDirection, SortState } from "@/lib/expense-sort";
 
-export function ExpenseSortHeader({ children, column, sort, onSort, right = false }: {
+export function ExpenseSortHeader<K extends string>({ children, column, sort, onSort, right = false }: {
   children: ReactNode;
-  column: ExpenseSortKey;
-  sort: ExpenseSort;
-  onSort: (key: ExpenseSortKey) => void;
+  column: K;
+  sort: SortState<K>;
+  onSort: (key: K) => void;
   right?: boolean;
 }) {
   const active = sort.key === column;
@@ -20,3 +20,5 @@ export function ExpenseSortHeader({ children, column, sort, onSort, right = fals
     </th>
   );
 }
+
+export type { SortDirection };

@@ -1,11 +1,19 @@
+export type SortDirection = "asc" | "desc";
+export type SortState<K extends string> = { key: K; direction: SortDirection };
+
 export type ExpenseSortKey = "name" | "month" | "planned" | "spent" | "remaining" | "progress";
-export type ExpenseSort = { key: ExpenseSortKey; direction: "asc" | "desc" };
+export type ExpenseSort = SortState<ExpenseSortKey>;
 export type SortableExpense = { name: string; planned: number; spent: number; year?: number; month?: number };
 
 export const DEFAULT_EXPENSE_SORT: ExpenseSort = { key: "name", direction: "asc" };
 
-export function nextExpenseSort(current: ExpenseSort, key: ExpenseSortKey): ExpenseSort {
+/** Same column is clicked again -> reverse; a new column -> ascending. */
+export function nextSort<K extends string>(current: SortState<K>, key: K): SortState<K> {
   return { key, direction: current.key === key && current.direction === "asc" ? "desc" : "asc" };
+}
+
+export function nextExpenseSort(current: ExpenseSort, key: ExpenseSortKey): ExpenseSort {
+  return nextSort(current, key);
 }
 
 export function expenseProgress(row: SortableExpense): number {
