@@ -8,11 +8,11 @@ import {
   type TxSortKey,
 } from "./transaction-sort";
 
-const rows = [
-  { id: "rent", tx_date: "2026-11-05", kind: "EXPENSE", amount: 1200, note: "monthly", category_id: "rent" },
-  { id: "salary", tx_date: "2026-11-01", kind: "INCOME", amount: 3000, note: "october pay", category_id: "salary" },
-  { id: "shop", tx_date: "2026-11-12", kind: "EXPENSE", amount: 45.5, note: null, category_id: null },
-];
+const rent = { id: "rent", tx_date: "2026-11-05", kind: "EXPENSE", amount: 1200, note: "monthly", category_id: "rent" };
+const salary = { id: "salary", tx_date: "2026-11-01", kind: "INCOME", amount: 3000, note: "october pay", category_id: "salary" };
+const shop = { id: "shop", tx_date: "2026-11-12", kind: "EXPENSE", amount: 45.5, note: null, category_id: null };
+const rows = [rent, salary, shop];
+
 const catName = (id: string | null) => (id === "rent" ? "Rent" : id === "salary" ? "Salary" : "Unplanned");
 const ids = (key: TxSortKey, direction: "asc" | "desc" = "asc") =>
   sortTransactions(rows, { key, direction }, (r) => transactionSortValues(r, catName), "en").map((r) => r.id);
@@ -35,13 +35,10 @@ describe("transaction ordering", () => {
     deepStrictEqual(ids(key, "desc"), [...expected].reverse());
   });
   test("income counts as positive and expense as negative when sorting amount", () => {
-    deepStrictEqual(
-      sortTransactions(rows, { key: "amount", direction: "asc" }, (r) => transactionSortValues(r, catName), "en")
-        .map((r) => r.id),
-      ["rent", "shop", "salary"],
-    );
-    deepStrictEqual(transactionSortValues(rows[0], catName), { date: "2026-11-05", category: "Rent", amount: -1200, note: "monthly" });
-    deepStrictEqual(transactionSortValues(rows[1], catName), { date: "2026-11-01", category: "Salary", amount: 3000, note: "october pay" });
+    deepStrictEqual(ids("amount"), ["rent", "shop", "salary"]);
+    deepStrictEqual(transactionSortValues(rent, catName), { date: "2026-11-05", category: "Rent", amount: -1200, note: "monthly" });
+    deepStrictEqual(transactionSortValues(salary, catName), { date: "2026-11-01", category: "Salary", amount: 3000, note: "october pay" });
+    deepStrictEqual(transactionSortValues(shop, catName), { date: "2026-11-12", category: "Unplanned", amount: -45.5, note: "" });
   });
   test("repeat clicks reverse direction and a new column starts ascending", () => {
     deepStrictEqual(nextTxSort(DEFAULT_TX_SORT, "date"), { key: "date", direction: "asc" });
