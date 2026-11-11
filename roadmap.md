@@ -45,3 +45,6 @@
 - [x] Custom browser icon (pine tile, white check rising into a gold growth arrow) as SVG plus 32px and 180px PNGs; default Lovable icon removed
 - [x] Browser tab titles on every page now read "Plan & Prosper"
 - [ ] Landing footer line still says "Personal planner — plans and money, in one place." (pending owner's OK to rebrand)
+
+## Demo data
+- [x] Demo data script for Nov 2026 – Dec 2027 (plans + expenses) supplied; revert script supplied to remove exactly those rows.
