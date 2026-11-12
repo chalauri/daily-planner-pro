@@ -42,6 +42,7 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-warning-soft: var(--warning-soft);
   --color-danger-soft: var(--danger-soft);
+  --color-danger-strong: var(--danger-strong);
   --color-caution: var(--caution);
   --color-caution-soft: var(--caution-soft);
   --color-locked: var(--locked);
@@ -91,6 +92,7 @@
   --warning-foreground: oklch(0.22 0.03 60);
   --warning-soft: oklch(0.94 0.055 80);
   --danger-soft: oklch(0.94 0.04 22);
+  --danger-strong: oklch(0.8 0.1 22);
   --caution: oklch(0.62 0.17 45);
   --caution-soft: oklch(0.92 0.07 50);
   --locked: oklch(0.42 0.1 150);
@@ -137,6 +139,7 @@
   --warning-foreground: oklch(0.2 0.03 60);
   --warning-soft: oklch(0.33 0.06 70);
   --danger-soft: oklch(0.32 0.06 22);
+  --danger-strong: oklch(0.42 0.12 22);
   --caution: oklch(0.75 0.15 50);
   --caution-soft: oklch(0.34 0.07 50);
   --locked: oklch(0.72 0.13 150);
