@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { AlertTriangle, ChevronLeft, ChevronRight, Copy, Download, Eye, FileText, Paperclip, Pencil, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, ChevronLeft, ChevronRight, Copy, Download, Eye, FileText, Lock, LockOpen, Paperclip, Pencil, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -189,6 +189,12 @@ function ExpensesPage() {
     } finally {
       refresh();
     }
+  }
+
+  async function toggleLock(budgetId: string, lock: boolean) {
+    const { error } = await supabase.from("budgets").update({ is_locked: lock }).eq("id", budgetId);
+    if (error) toast.error(error.message);
+    refresh();
   }
 
   function summaryTable(): (string | number)[][] {
@@ -393,20 +399,27 @@ function ExpensesPage() {
                     rows.map((r) => {
                       const st = budgetState(r.planned, r.spent);
                       const pct = r.planned > 0 ? Math.min(100, Math.round((r.spent / r.planned) * 100)) : r.spent > 0 ? 100 : 0;
-                      const bar = st === "over" ? "bg-destructive" : st === "near" ? "bg-warning" : "bg-success";
+                      const locked = r.isLocked && r.budgetId !== null;
+                      const lockedOk = locked && r.spent <= r.planned;
+                      const bar = st === "over" ? "bg-destructive" : st === "near" ? "bg-caution" : st === "warn" ? "bg-warning" : lockedOk ? "bg-locked" : "bg-success";
                       return (
                         <tr
                           key={r.category.id}
                           className={`border-b border-l-4 border-border last:border-b-0 ${
                             st === "over"
                               ? "border-l-destructive bg-danger-soft/60 hover:bg-danger-soft"
-                              : st === "near"
-                                ? "border-l-warning bg-warning-soft/45 hover:bg-warning-soft/65"
-                                : "border-l-success bg-success-soft/30 hover:bg-success-soft/50"
+                              : lockedOk
+                                ? "border-l-locked bg-locked-soft/70 hover:bg-locked-soft"
+                                : st === "near"
+                                  ? "border-l-caution bg-caution-soft/60 hover:bg-caution-soft"
+                                  : st === "warn"
+                                    ? "border-l-warning bg-warning-soft/60 hover:bg-warning-soft"
+                                    : "border-l-transparent hover:bg-muted/40"
                           }`}
                         >
                           <td className="px-4 py-3 font-medium">
                             {r.category.name}
+                            {locked && <Lock className="ml-2 inline h-3.5 w-3.5 align-middle text-locked" aria-label={ft("f.locked")} />}
                             {r.isTax && (
                               <span
                                 className="ml-2 inline-flex items-center rounded-full border border-warning/40 bg-warning-soft px-2 py-0.5 align-middle text-[10px] font-semibold uppercase tracking-wide text-warning"
@@ -431,8 +444,8 @@ function ExpensesPage() {
                               <div className="h-2.5 w-28 overflow-hidden rounded-full bg-muted shadow-inner">
                                 <div className={`h-full rounded-full ${bar}`} style={{ width: `${pct}%` }} />
                               </div>
-                              <span className={`text-xs ${st === "over" ? "text-destructive" : st === "near" ? "text-warning" : "text-muted-foreground"}`}>
-                                {st === "over" ? ft("f.over") : st === "near" ? ft("f.near") : `${pct}%`}
+                              <span className={`text-xs ${st === "over" ? "text-destructive" : st === "near" ? "text-caution" : st === "warn" ? "text-warning" : "text-muted-foreground"}`}>
+                                {st === "over" ? ft("f.over") : st === "near" ? ft("f.almost") : st === "warn" ? ft("f.near") : `${pct}%`}
                               </span>
                             </div>
                           </td>
@@ -441,9 +454,21 @@ function ExpensesPage() {
                               <Button variant="ghost" size="icon" aria-label={`${ft("f.details")} ${r.category.name}`} title={ft("f.details")} onClick={() => setDetails(r.category.id)}>
                                 <Eye className="h-4 w-4" />
                               </Button>
+                              {r.budgetId && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label={`${locked ? ft("f.unlock") : ft("f.lock")} ${r.category.name}`}
+                                  title={locked ? ft("f.unlock") : ft("f.lock")}
+                                  onClick={() => toggleLock(r.budgetId!, !locked)}
+                                >
+                                  {locked ? <Lock className="h-4 w-4 text-locked" /> : <LockOpen className="h-4 w-4" />}
+                                </Button>
+                              )}
                               <Button
                                 variant="ghost"
                                 size="icon"
+                                disabled={locked}
                                 aria-label={`${ft("f.addTx")} ${r.category.name}`}
                                 onClick={() => {
                                   setEditing(null);

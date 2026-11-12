@@ -150,6 +150,7 @@ export interface CategoryRow {
   budgetId: string | null;
   isTax: boolean;
   isSub: boolean;
+  isLocked: boolean;
 }
 
 export function buildCategoryRows(cats: Category[], budgets: Budget[], txs: Transaction[]): CategoryRow[] {
@@ -165,7 +166,7 @@ export function buildCategoryRows(cats: Category[], budgets: Budget[], txs: Tran
       const spent = txs
         .filter((t) => t.kind === "EXPENSE" && t.category_id === c.id)
         .reduce((s, t) => s + Number(t.amount), 0);
-      return { category: c, planned: b ? Number(b.amount) : 0, spent, budgetId: b?.id ?? null, isTax: b?.is_income_tax ?? false, isSub: b?.is_subscription ?? false };
+      return { category: c, planned: b ? Number(b.amount) : 0, spent, budgetId: b?.id ?? null, isTax: b?.is_income_tax ?? false, isSub: b?.is_subscription ?? false, isLocked: b?.is_locked ?? false };
     });
 }
 
@@ -173,10 +174,11 @@ export function leftBudget(planned: number, spent: number) {
   return planned - spent;
 }
 
-export function budgetState(planned: number, spent: number): "over" | "near" | "ok" | "none" {
+export function budgetState(planned: number, spent: number): "over" | "near" | "warn" | "ok" | "none" {
   if (planned <= 0) return spent > 0 ? "over" : "none";
   if (spent > planned) return "over";
   if (spent >= planned * 0.9) return "near";
+  if (spent >= planned * 0.8) return "warn";
   return "ok";
 }
 

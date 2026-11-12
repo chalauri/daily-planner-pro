@@ -16,10 +16,15 @@ describe("near limit", () => {
   test("starts at 90% of the plan", () => {
     strictEqual(budgetState(1000, 900), "near");
   });
-  test("is still fine just below 90%", () => {
-    strictEqual(budgetState(1000, 899), "ok");
+  test("80% to just below 90% is the yellow step", () => {
+    strictEqual(budgetState(1000, 800), "warn");
+    strictEqual(budgetState(1000, 899), "warn");
+  });
+  test("is fine below 80%", () => {
+    strictEqual(budgetState(1000, 799), "ok");
   });
   test("is over budget once spending passes the plan", () => {
     strictEqual(budgetState(1000, 1001), "over");
+    strictEqual(budgetState(1000, 1000), "near");
   });
 });
