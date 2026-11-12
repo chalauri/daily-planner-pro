@@ -446,8 +446,8 @@ function ExpensesPage() {
                               <div className="h-2.5 w-28 overflow-hidden rounded-full bg-muted shadow-inner">
                                 <div className={`h-full rounded-full ${bar}`} style={{ width: `${pct}%` }} />
                               </div>
-                              <span className={`text-xs ${st === "over" ? "text-destructive" : st === "near" ? "text-caution" : st === "warn" ? "text-warning" : "text-muted-foreground"}`}>
-                                {st === "over" ? ft("f.over") : st === "near" ? ft("f.almost") : st === "warn" ? ft("f.near") : `${pct}%`}
+                              <span className={`text-xs ${locked ? "text-muted-foreground" : st === "over" ? "text-destructive" : st === "near" ? "text-caution" : st === "warn" ? "text-warning" : "text-muted-foreground"}`}>
+                                {locked ? `${pct}%` : st === "over" ? ft("f.over") : st === "near" ? ft("f.almost") : st === "warn" ? ft("f.near") : `${pct}%`}
                               </span>
                             </div>
                           </td>
