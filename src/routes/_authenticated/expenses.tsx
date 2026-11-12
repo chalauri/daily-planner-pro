@@ -406,7 +406,9 @@ function ExpensesPage() {
                         <tr
                           key={r.category.id}
                           className={`border-b border-l-4 border-border last:border-b-0 ${
-                            st === "over"
+                            st === "over" && locked
+                              ? "border-l-destructive bg-danger-strong hover:bg-danger-strong/90"
+                              : st === "over"
                               ? "border-l-destructive bg-danger-soft/60 hover:bg-danger-soft"
                               : lockedOk
                                 ? "border-l-locked bg-locked-soft/70 hover:bg-locked-soft"
@@ -454,17 +456,6 @@ function ExpensesPage() {
                               <Button variant="ghost" size="icon" aria-label={`${ft("f.details")} ${r.category.name}`} title={ft("f.details")} onClick={() => setDetails(r.category.id)}>
                                 <Eye className="h-4 w-4" />
                               </Button>
-                              {r.budgetId && (
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  aria-label={`${locked ? ft("f.unlock") : ft("f.lock")} ${r.category.name}`}
-                                  title={locked ? ft("f.unlock") : ft("f.lock")}
-                                  onClick={() => toggleLock(r.budgetId!, !locked)}
-                                >
-                                  {locked ? <Lock className="h-4 w-4 text-locked" /> : <LockOpen className="h-4 w-4" />}
-                                </Button>
-                              )}
                               <Button
                                 variant="ghost"
                                 size="icon"
@@ -481,6 +472,17 @@ function ExpensesPage() {
                               <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${r.category.name}`} onClick={() => setEditCat({ id: r.category.id, name: r.category.name, amount: r.planned, isTax: r.isTax, isSub: r.isSub, kind: "EXPENSE" })}>
                                 <Pencil className="h-4 w-4" />
                               </Button>
+                              {r.budgetId && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label={`${locked ? ft("f.unlock") : ft("f.lock")} ${r.category.name}`}
+                                  title={locked ? ft("f.unlock") : ft("f.lock")}
+                                  onClick={() => toggleLock(r.budgetId!, !locked)}
+                                >
+                                  {locked ? <Lock className="h-4 w-4 text-locked" /> : <LockOpen className="h-4 w-4" />}
+                                </Button>
+                              )}
                               <Button variant="ghost" size="icon" aria-label={`Delete ${r.category.name}`} onClick={() => setDelCat(r.category.id)}>
                                 <Trash2 className="h-4 w-4" />
                               </Button>
