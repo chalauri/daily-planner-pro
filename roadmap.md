@@ -20,6 +20,7 @@
 - [ ] Reminder email time changed from 23:55 to 21:30 CET (job still to build — blocked on sending domain)
 
 ## Expenses
+- [x] Optional comment when adding a planned expense or income: typed in the Add/Edit expense dialog, shown under the category in the month table, carried when a month is copied; bulk add also takes one comment for the whole batch. 4 tests passed, verified signed in (created, displayed, reopened, deleted a test entry).
 - [x] Monthly expense removal preserves other months and shared categories; 13 tests passed and signed-in December removal preserved November's temporary expense (cleaned up).
 - [x] Alphabetical default and sortable data columns in monthly expenses and Filter views — tested all columns and verified with saved expenses while signed in.
 - [x] Transactions table sortable by every column (date, category, amount, note) — 7 sort tests passed and verified signed in with sample rows.
