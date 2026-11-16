@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import {
@@ -26,7 +27,7 @@ interface Props {
   currency?: string;
   onSaved: () => void;
   /** When set, the dialog edits this category's name and its planned amount for `ym`. */
-  edit?: { id: string; name: string; amount: number; isTax?: boolean; isSub?: boolean } | null;
+  edit?: { id: string; name: string; amount: number; isTax?: boolean; isSub?: boolean; note?: string | null } | null;
 }
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -36,6 +37,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
   const { lang } = useLang();
   const [name, setName] = useState("");
   const [planned, setPlanned] = useState("");
+  const [note, setNote] = useState("");
   const [planYm, setPlanYm] = useState<YM>(() => shiftYM({ year: new Date().getFullYear(), month: new Date().getMonth() + 1 }, 1));
   const [saving, setSaving] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -92,6 +94,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
     if (open && edit) {
       setName(edit.name);
       setPlanned(edit.amount ? String(edit.amount) : "");
+      setNote(edit.note ?? "");
       setPlanYm(ym);
       setTaxOn(!!edit.isTax);
       setSubOn(!!edit.isSub);
@@ -100,6 +103,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
     } else if (open) {
       setName("");
       setPlanned("");
+      setNote("");
       // Default to planning the next month (e.g. in September plan October)
       setPlanYm(shiftYM({ year: new Date().getFullYear(), month: new Date().getMonth() + 1 }, 1));
     }
@@ -139,7 +143,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
       const amount = parseAmount(finalPlanned || "0") || 0;
       const { error: be } = await supabase
         .from("budgets")
-        .upsert({ user_id, category_id: catId, year: planYm.year, month: planYm.month, amount, is_income_tax: kind === "EXPENSE" ? taxOn : false, is_subscription: kind === "EXPENSE" ? subOn : false }, { onConflict: "category_id,year,month" });
+        .upsert({ user_id, category_id: catId, year: planYm.year, month: planYm.month, amount, note: note.trim() || null, is_income_tax: kind === "EXPENSE" ? taxOn : false, is_subscription: kind === "EXPENSE" ? subOn : false }, { onConflict: "category_id,year,month" });
       if (be) throw be;
       toast.success(ft("f.saved"));
       onSaved();
@@ -186,7 +190,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
       if (amount > 0) {
         const { error: be } = await supabase
           .from("budgets")
-          .insert({ user_id, category_id: categoryId, year: planYm.year, month: planYm.month, amount, is_income_tax: kind === "EXPENSE" ? taxOn : false, is_subscription: kind === "EXPENSE" ? subOn : false });
+          .insert({ user_id, category_id: categoryId, year: planYm.year, month: planYm.month, amount, note: note.trim() || null, is_income_tax: kind === "EXPENSE" ? taxOn : false, is_subscription: kind === "EXPENSE" ? subOn : false });
         if (be) throw be;
       }
       toast.success(ft("f.saved"));
@@ -254,6 +258,10 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
               <div className="space-y-1.5">
                 <Label htmlFor="cat-planned">{ft("f.plannedFor", { m: monthLabel(planYm, lang) })}</Label>
                 <Input id="cat-planned" type="text" inputMode="decimal" autoComplete="off" placeholder="0.00" value={planned} onChange={(e) => { setPlanned(cleanAmountInput(e.target.value)); if (taxOn) setTaxEdited(true); }} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="cat-note">{ft("f.comment")}</Label>
+                <Textarea id="cat-note" rows={2} value={note} onChange={(e) => setNote(e.target.value)} />
               </div>
               {kind === "EXPENSE" && (
                 <div className="flex items-center gap-2 rounded-lg border border-border p-3">
