@@ -111,6 +111,7 @@ function ExpensesPage() {
       c,
       total: txs.filter((x) => x.category_id === c.id).reduce((s, x) => s + Number(x.amount), 0),
       expected: Number(budgets.find((b) => b.category_id === c.id)?.amount ?? 0),
+      note: budgets.find((b) => b.category_id === c.id)?.note ?? null,
     }));
   const categorizedIncomeIds = new Set(incomeRows.map((r) => r.c.id));
   const income =
@@ -511,13 +512,16 @@ function ExpensesPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {incomeRows.map(({ c, total, expected }) => (
+                    {incomeRows.map(({ c, total, expected, note }) => (
                       <tr key={c.id} className="border-b border-l-4 border-border border-l-success bg-success-soft/30 last:border-b-0 hover:bg-success-soft/50">
-                        <td className="px-4 py-3 font-medium">{c.name}</td>
+                        <td className="px-4 py-3 font-medium">
+                          {c.name}
+                          {note && <p className="mt-1 text-xs font-normal text-muted-foreground [overflow-wrap:anywhere]">{note}</p>}
+                        </td>
                         <td className="px-4 py-3 text-base font-semibold text-success tabular-nums">{fmt(expected > 0 ? expected : total)}</td>
                         <td className="px-4 py-3">
                           <div className="flex justify-end gap-1">
-                            <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${c.name}`} onClick={() => setEditCat({ id: c.id, name: c.name, amount: expected > 0 ? expected : total, kind: "INCOME" })}>
+                            <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${c.name}`} onClick={() => setEditCat({ id: c.id, name: c.name, amount: expected > 0 ? expected : total, note, kind: "INCOME" })}>
                               <Pencil className="h-4 w-4" />
                             </Button>
                             <Button variant="ghost" size="icon" aria-label={`Delete ${c.name}`} onClick={() => setDelCat(c.id)}>
