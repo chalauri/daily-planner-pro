@@ -51,6 +51,7 @@ export type Database = {
           is_locked: boolean
           is_subscription: boolean
           month: number
+          note: string | null
           updated_at: string
           user_id: string
           year: number
@@ -64,6 +65,7 @@ export type Database = {
           is_locked?: boolean
           is_subscription?: boolean
           month: number
+          note?: string | null
           updated_at?: string
           user_id: string
           year: number
@@ -77,6 +79,7 @@ export type Database = {
           is_locked?: boolean
           is_subscription?: boolean
           month?: number
+          note?: string | null
           updated_at?: string
           user_id?: string
           year?: number
