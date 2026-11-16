@@ -1,6 +1,6 @@
 import { describe, test } from "node:test";
 import { strictEqual } from "node:assert";
-import { leftBudget, budgetState } from "./finance";
+import { leftBudget, budgetState, buildCategoryRows, bulkTxNote, type Budget, type Category, type Transaction } from "./finance";
 
 describe("left budget", () => {
   test("is planned minus spent", () => {
@@ -26,5 +26,64 @@ describe("near limit", () => {
   test("is over budget once spending passes the plan", () => {
     strictEqual(budgetState(1000, 1001), "over");
     strictEqual(budgetState(1000, 1000), "near");
+  });
+});
+
+const cat: Category = {
+  id: "c1",
+  user_id: "u1",
+  name: "Rent",
+  kind: "EXPENSE",
+  created_at: "2026-01-01T00:00:00Z",
+  updated_at: "2026-01-01T00:00:00Z",
+};
+
+const budget: Budget = {
+  id: "b1",
+  user_id: "u1",
+  category_id: "c1",
+  year: 2026,
+  month: 11,
+  amount: 1200,
+  created_at: "2026-01-01T00:00:00Z",
+  updated_at: "2026-01-01T00:00:00Z",
+  is_income_tax: false,
+  is_subscription: false,
+  is_locked: false,
+  note: "flat 12, includes parking",
+};
+
+const tx: Transaction = {
+  id: "t1",
+  user_id: "u1",
+  kind: "EXPENSE",
+  category_id: "c1",
+  amount: 1200,
+  tx_date: "2026-11-05",
+  note: null,
+  receipt_path: null,
+  series_id: null,
+  recurrence: "NONE",
+  created_at: "2026-01-01T00:00:00Z",
+  updated_at: "2026-01-01T00:00:00Z",
+  is_income_tax: false,
+  period: "2026-11-01",
+};
+
+describe("planned comment", () => {
+  test("shows the comment written for that month's plan", () => {
+    strictEqual(buildCategoryRows([cat], [budget], [tx])[0]?.note, "flat 12, includes parking");
+  });
+  test("is absent when the month has no plan of its own", () => {
+    strictEqual(buildCategoryRows([cat], [], [tx])[0]?.note, null);
+  });
+});
+
+describe("bulk upload comment", () => {
+  test("keeps the marker alone when nothing is typed", () => {
+    strictEqual(bulkTxNote("   "), "BULK UPLOAD");
+  });
+  test("adds the typed comment to the marker", () => {
+    strictEqual(bulkTxNote("  shop run  "), "BULK UPLOAD · shop run");
   });
 });

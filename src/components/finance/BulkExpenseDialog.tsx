@@ -3,16 +3,19 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { useFT } from "@/lib/finance-i18n";
-import { currentUserId, money, type Category } from "@/lib/finance";
+import { bulkTxNote, currentUserId, money, type Category } from "@/lib/finance";
 
 const T = {
   en: {
     title: "Bulk add expenses",
     desc: "One category per line, then the amounts separated by spaces. Saved with today's date and note \"BULK UPLOAD\".",
     lines: "{n} categories, {m} amounts",
+    comment: "Comment (optional)",
     save: "Save",
     saved: "{n} expenses saved",
     notFound: "Not saved — category not planned for {mo}:",
@@ -22,6 +25,7 @@ const T = {
     title: "ხარჯების მასობრივი დამატება",
     desc: "თითო ხაზზე ერთი კატეგორია, შემდეგ თანხები ჰარით გამოყოფილი. შეინახება დღევანდელი თარიღით და შენიშვნით \"BULK UPLOAD\".",
     lines: "{n} კატეგორია, {m} თანხა",
+    comment: "კომენტარი (არასავალდებულო)",
     save: "შენახვა",
     saved: "შენახულია {n} ხარჯი",
     notFound: "არ შეინახა — კატეგორია არ არის დაგეგმილი ({mo}):",
@@ -31,6 +35,7 @@ const T = {
     title: "Dodaj wydatki zbiorczo",
     desc: "Jedna kategoria w wierszu, potem kwoty oddzielone spacjami. Zapisane z dzisiejszą datą i notatką \"BULK UPLOAD\".",
     lines: "Kategorie: {n}, kwoty: {m}",
+    comment: "Komentarz (opcjonalnie)",
     save: "Zapisz",
     saved: "Zapisano wydatków: {n}",
     notFound: "Nie zapisano — kategoria nie jest zaplanowana na {mo}:",
@@ -76,6 +81,7 @@ export function BulkExpenseDialog({ open, onOpenChange, categories, currency, on
   const s = T[(lang as keyof typeof T) in T ? (lang as keyof typeof T) : "en"];
   const fill = (str: string, p: Record<string, string | number>) => str.replace(/\{(\w+)\}/g, (_, k) => String(p[k] ?? ""));
   const [text, setText] = useState("");
+  const [comment, setComment] = useState("");
   const [saving, setSaving] = useState(false);
   const [skipped, setSkipped] = useState<string[]>([]);
   const [empty, setEmpty] = useState<string[]>([]);
@@ -114,7 +120,7 @@ export function BulkExpenseDialog({ open, onOpenChange, categories, currency, on
           continue;
         }
         for (const a of l.amounts)
-          rows.push({ user_id: userId, kind: "EXPENSE", category_id: cat.id, amount: a, tx_date: today, note: "BULK UPLOAD", recurrence: "NONE" });
+          rows.push({ user_id: userId, kind: "EXPENSE", category_id: cat.id, amount: a, tx_date: today, note: bulkTxNote(comment), recurrence: "NONE" });
       }
       if (rows.length) {
         const { error } = await supabase.from("transactions").insert(rows);
@@ -127,6 +133,7 @@ export function BulkExpenseDialog({ open, onOpenChange, categories, currency, on
       setEmpty(noAmt);
       if (!miss.length && !noAmt.length) {
         setText("");
+        setComment("");
         onOpenChange(false);
       } else {
         // keep only the lines that were not saved so the user can fix them
@@ -146,6 +153,7 @@ export function BulkExpenseDialog({ open, onOpenChange, categories, currency, on
         if (!o) {
           setSkipped([]);
           setEmpty([]);
+          setComment("");
         }
         onOpenChange(o);
       }}
@@ -163,6 +171,10 @@ export function BulkExpenseDialog({ open, onOpenChange, categories, currency, on
           aria-label={s.title}
         />
         <p className="text-xs text-muted-foreground">{fill(s.lines, { n: lines.length, m: count })}</p>
+        <div className="space-y-1.5">
+          <Label htmlFor="bulk-comment">{s.comment}</Label>
+          <Input id="bulk-comment" value={comment} onChange={(e) => setComment(e.target.value)} autoComplete="off" />
+        </div>
         {skipped.length > 0 && (
           <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
             <p className="font-medium">{fill(s.notFound, { mo: moLabel })}</p>

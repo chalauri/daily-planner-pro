@@ -12,5 +12,6 @@
 - Use `AppHeader` for every signed-in section so navigation, language, requests, help, account, and sign-out controls remain consistent.
 - Finance tables (monthly budget, Filter range, and Transactions) share the browser-safe sort utilities and the accessible ExpenseSortHeader, so every data column sorts consistently and numeric columns compare as numbers.
 - Monthly category removal uses the shared deleteMonthCategory helper, scopes budgets by year/month and transactions by period, and preserves shared categories so other months remain intact.
+- Optional comments on a planned expense or income live on that month's `budgets` row (`budgets.note`), never on the category, so each month keeps its own comment and copying a month copies it independently.
 - PlanStatistics queries the entire selected year with pagination independently of table filters, and uses the browser-safe monthly plan statistics utility so charts and calculation tests share one source of truth.
 - When one section asks another section to change what it shows (for example the header bell asking Plans to filter), go through the small request/subscribe module in `src/lib/plan-filter.ts` instead of props or URL params, so it works whether or not the target page is already mounted.

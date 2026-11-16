@@ -90,7 +90,7 @@ function ExpensesPage() {
   const [details, setDetails] = useState<string | null>(null);
   const [delTx, setDelTx] = useState<Transaction | null>(null);
   const [delCat, setDelCat] = useState<string | null>(null);
-  const [editCat, setEditCat] = useState<null | { id: string; name: string; amount: number; isTax?: boolean; isSub?: boolean; kind: "INCOME" | "EXPENSE" }>(null);
+  const [editCat, setEditCat] = useState<null | { id: string; name: string; amount: number; isTax?: boolean; isSub?: boolean; note?: string | null; kind: "INCOME" | "EXPENSE" }>(null);
 
   const categories = cats.data ?? [];
   const txs = month.data?.transactions ?? [];
@@ -111,6 +111,7 @@ function ExpensesPage() {
       c,
       total: txs.filter((x) => x.category_id === c.id).reduce((s, x) => s + Number(x.amount), 0),
       expected: Number(budgets.find((b) => b.category_id === c.id)?.amount ?? 0),
+      note: budgets.find((b) => b.category_id === c.id)?.note ?? null,
     }));
   const categorizedIncomeIds = new Set(incomeRows.map((r) => r.c.id));
   const income =
@@ -133,12 +134,12 @@ function ExpensesPage() {
 
   async function copyPrev() {
     const prev = shiftYM(ym, -1);
-    const { data, error } = await supabase.from("budgets").select("category_id, amount, is_income_tax, is_subscription").eq("year", prev.year).eq("month", prev.month);
+    const { data, error } = await supabase.from("budgets").select("category_id, amount, is_income_tax, is_subscription, note").eq("year", prev.year).eq("month", prev.month);
     if (error) { toast.error(error.message); return; }
     if (!data.length) { toast.info(ft("f.nothingToCopy")); return; }
     const user_id = await currentUserId();
     const { error: e2 } = await supabase.from("budgets").upsert(
-      data.map((b) => ({ user_id, category_id: b.category_id, amount: b.amount, is_income_tax: b.is_income_tax, is_subscription: b.is_subscription, year: ym.year, month: ym.month })),
+      data.map((b) => ({ user_id, category_id: b.category_id, amount: b.amount, note: b.note, is_income_tax: b.is_income_tax, is_subscription: b.is_subscription, year: ym.year, month: ym.month })),
       { onConflict: "category_id,year,month" },
     );
     if (e2) { toast.error(e2.message); return; }
@@ -435,6 +436,9 @@ function ExpensesPage() {
                                 {ft("f.subBadge")}
                               </span>
                             )}
+                            {r.note && (
+                              <p className="mt-1 text-xs font-normal text-muted-foreground [overflow-wrap:anywhere]">{r.note}</p>
+                            )}
                           </td>
                           <td className="px-4 py-3 text-base font-medium tabular-nums">
                             {r.planned ? fmt(r.planned) : "—"}
@@ -469,7 +473,7 @@ function ExpensesPage() {
                               >
                                 <Plus className="h-4 w-4" />
                               </Button>
-                              <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${r.category.name}`} onClick={() => setEditCat({ id: r.category.id, name: r.category.name, amount: r.planned, isTax: r.isTax, isSub: r.isSub, kind: "EXPENSE" })}>
+                              <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${r.category.name}`} onClick={() => setEditCat({ id: r.category.id, name: r.category.name, amount: r.planned, isTax: r.isTax, isSub: r.isSub, note: r.note, kind: "EXPENSE" })}>
                                 <Pencil className="h-4 w-4" />
                               </Button>
                               {r.budgetId && (
@@ -508,13 +512,16 @@ function ExpensesPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {incomeRows.map(({ c, total, expected }) => (
+                    {incomeRows.map(({ c, total, expected, note }) => (
                       <tr key={c.id} className="border-b border-l-4 border-border border-l-success bg-success-soft/30 last:border-b-0 hover:bg-success-soft/50">
-                        <td className="px-4 py-3 font-medium">{c.name}</td>
+                        <td className="px-4 py-3 font-medium">
+                          {c.name}
+                          {note && <p className="mt-1 text-xs font-normal text-muted-foreground [overflow-wrap:anywhere]">{note}</p>}
+                        </td>
                         <td className="px-4 py-3 text-base font-semibold text-success tabular-nums">{fmt(expected > 0 ? expected : total)}</td>
                         <td className="px-4 py-3">
                           <div className="flex justify-end gap-1">
-                            <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${c.name}`} onClick={() => setEditCat({ id: c.id, name: c.name, amount: expected > 0 ? expected : total, kind: "INCOME" })}>
+                            <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${c.name}`} onClick={() => setEditCat({ id: c.id, name: c.name, amount: expected > 0 ? expected : total, note, kind: "INCOME" })}>
                               <Pencil className="h-4 w-4" />
                             </Button>
                             <Button variant="ghost" size="icon" aria-label={`Delete ${c.name}`} onClick={() => setDelCat(c.id)}>
