@@ -72,10 +72,10 @@ const tx: Transaction = {
 
 describe("planned comment", () => {
   test("shows the comment written for that month's plan", () => {
-    strictEqual(buildCategoryRows([cat], [budget], [tx])[0].note, "flat 12, includes parking");
+    strictEqual(buildCategoryRows([cat], [budget], [tx])[0]?.note, "flat 12, includes parking");
   });
   test("is absent when the month has no plan of its own", () => {
-    strictEqual(buildCategoryRows([cat], [], [tx])[0].note, null);
+    strictEqual(buildCategoryRows([cat], [], [tx])[0]?.note, null);
   });
 });
 
