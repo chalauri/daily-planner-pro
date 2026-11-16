@@ -151,6 +151,8 @@ export interface CategoryRow {
   isTax: boolean;
   isSub: boolean;
   isLocked: boolean;
+  /** Optional comment the owner wrote for this month's plan. */
+  note: string | null;
 }
 
 export function buildCategoryRows(cats: Category[], budgets: Budget[], txs: Transaction[]): CategoryRow[] {
@@ -166,8 +168,14 @@ export function buildCategoryRows(cats: Category[], budgets: Budget[], txs: Tran
       const spent = txs
         .filter((t) => t.kind === "EXPENSE" && t.category_id === c.id)
         .reduce((s, t) => s + Number(t.amount), 0);
-      return { category: c, planned: b ? Number(b.amount) : 0, spent, budgetId: b?.id ?? null, isTax: b?.is_income_tax ?? false, isSub: b?.is_subscription ?? false, isLocked: b?.is_locked ?? false };
+      return { category: c, planned: b ? Number(b.amount) : 0, spent, budgetId: b?.id ?? null, isTax: b?.is_income_tax ?? false, isSub: b?.is_subscription ?? false, isLocked: b?.is_locked ?? false, note: b?.note ?? null };
     });
+}
+
+/** Bulk-uploaded rows carry a marker so they can be spotted; an optional comment is appended to it. */
+export function bulkTxNote(comment: string) {
+  const c = comment.trim();
+  return c ? `BULK UPLOAD · ${c}` : "BULK UPLOAD";
 }
 
 export function leftBudget(planned: number, spent: number) {

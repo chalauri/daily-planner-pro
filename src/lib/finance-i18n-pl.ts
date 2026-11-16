@@ -22,6 +22,7 @@ export const plF: Record<FKey, string> = {
   "f.amount": "Kwota",
   "f.date": "Data",
   "f.note": "Notatka",
+  "f.comment": "Komentarz",
   "f.receipt": "Paragon",
   "f.viewReceipt": "Zobacz paragon",
   "f.type": "Typ",
