@@ -52,6 +52,7 @@
 - [x] Demo data script for Nov 2026 – Dec 2027 (plans + expenses) supplied; revert script supplied to remove exactly those rows.
 
 ## Mobile app
+- [x] Deliver full functional requirements PDF (10 pages) and separate developer handoff PDF (7 pages) for the external Expo app; source-reviewed, every page visually inspected, and key rules/text extraction checked. Website and database unchanged.
 - [ ] Provide the full mobile experience requested after the Expo connection test. BLOCKED: owner chose to continue with Expo; native Expo app development must happen outside this Lovable project, which supports the website only.
 - [ ] Build the mobile app against the owner's own database (their address + their public key; never the secret key). Owner has started Expo locally; full native implementation requires an external development workflow.
 - [ ] Confirm which database address and public key the live website actually uses, so the mobile app is built with the exact same pair.
