@@ -106,7 +106,8 @@ function ExpensesPage() {
   const uncategorized = txs.filter((x) => x.kind === "EXPENSE" && !x.category_id).reduce((s, x) => s + Number(x.amount), 0);
   const over = rows.filter((r) => r.planned > 0 && r.spent > r.planned);
   const incomeRows = categories
-    .filter((c) => c.kind === "INCOME")
+    .filter((c) => c.kind === "INCOME"
+      && (budgets.some((b) => b.category_id === c.id) || txs.some((x) => x.category_id === c.id)))
     .map((c) => ({
       c,
       total: txs.filter((x) => x.category_id === c.id).reduce((s, x) => s + Number(x.amount), 0),
