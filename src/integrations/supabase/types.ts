@@ -50,6 +50,7 @@ export type Database = {
           is_income_tax: boolean
           is_locked: boolean
           is_subscription: boolean
+          is_utilities: boolean
           month: number
           note: string | null
           updated_at: string
@@ -64,6 +65,7 @@ export type Database = {
           is_income_tax?: boolean
           is_locked?: boolean
           is_subscription?: boolean
+          is_utilities?: boolean
           month: number
           note?: string | null
           updated_at?: string
@@ -78,6 +80,7 @@ export type Database = {
           is_income_tax?: boolean
           is_locked?: boolean
           is_subscription?: boolean
+          is_utilities?: boolean
           month?: number
           note?: string | null
           updated_at?: string

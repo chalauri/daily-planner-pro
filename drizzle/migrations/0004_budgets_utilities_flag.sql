@@ -1,0 +1,1 @@
+ALTER TABLE public.budgets ADD COLUMN IF NOT EXISTS is_utilities boolean NOT NULL DEFAULT false;

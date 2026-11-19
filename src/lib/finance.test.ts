@@ -48,6 +48,7 @@ const budget: Budget = {
   created_at: "2026-01-01T00:00:00Z",
   updated_at: "2026-01-01T00:00:00Z",
   is_income_tax: false,
+  is_utilities: false,
   is_subscription: false,
   is_locked: false,
   note: "flat 12, includes parking",

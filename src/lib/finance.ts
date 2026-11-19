@@ -150,6 +150,7 @@ export interface CategoryRow {
   budgetId: string | null;
   isTax: boolean;
   isSub: boolean;
+  isUtil: boolean;
   isLocked: boolean;
   /** Optional comment the owner wrote for this month's plan. */
   note: string | null;
@@ -168,7 +169,7 @@ export function buildCategoryRows(cats: Category[], budgets: Budget[], txs: Tran
       const spent = txs
         .filter((t) => t.kind === "EXPENSE" && t.category_id === c.id)
         .reduce((s, t) => s + Number(t.amount), 0);
-      return { category: c, planned: b ? Number(b.amount) : 0, spent, budgetId: b?.id ?? null, isTax: b?.is_income_tax ?? false, isSub: b?.is_subscription ?? false, isLocked: b?.is_locked ?? false, note: b?.note ?? null };
+      return { category: c, planned: b ? Number(b.amount) : 0, spent, budgetId: b?.id ?? null, isTax: b?.is_income_tax ?? false, isSub: b?.is_subscription ?? false, isUtil: b?.is_utilities ?? false, isLocked: b?.is_locked ?? false, note: b?.note ?? null };
     });
 }
 

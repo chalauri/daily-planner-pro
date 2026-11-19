@@ -27,7 +27,7 @@ interface Props {
   currency?: string;
   onSaved: () => void;
   /** When set, the dialog edits this category's name and its planned amount for `ym`. */
-  edit?: { id: string; name: string; amount: number; isTax?: boolean; isSub?: boolean; note?: string | null } | null;
+  edit?: { id: string; name: string; amount: number; isTax?: boolean; isSub?: boolean; isUtil?: boolean; note?: string | null } | null;
 }
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -43,6 +43,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [taxOn, setTaxOn] = useState(false);
   const [subOn, setSubOn] = useState(false);
+  const [utilOn, setUtilOn] = useState(false);
   const [taxRate, setTaxRate] = useState("20");
   const [taxEdited, setTaxEdited] = useState(false);
   const [monthIncome, setMonthIncome] = useState<number | null>(null);
@@ -81,7 +82,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
   }, [taxOn, taxEdited, monthIncome, taxRate]);
 
   useEffect(() => {
-    if (open) { setTaxOn(false); setSubOn(false); setTaxEdited(false); setTaxRate("20"); setMonthIncome(null); }
+    if (open) { setTaxOn(false); setSubOn(false); setUtilOn(false); setTaxEdited(false); setTaxRate("20"); setMonthIncome(null); }
   }, [open]);
 
   const finalPlanned = planned;
@@ -98,6 +99,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
       setPlanYm(ym);
       setTaxOn(!!edit.isTax);
       setSubOn(!!edit.isSub);
+      setUtilOn(!!edit.isUtil);
       // Keep the stored amount instead of recalculating it from income.
       setTaxEdited(!!edit.isTax);
     } else if (open) {
@@ -143,7 +145,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
       const amount = parseAmount(finalPlanned || "0") || 0;
       const { error: be } = await supabase
         .from("budgets")
-        .upsert({ user_id, category_id: catId, year: planYm.year, month: planYm.month, amount, note: note.trim() || null, is_income_tax: kind === "EXPENSE" ? taxOn : false, is_subscription: kind === "EXPENSE" ? subOn : false }, { onConflict: "category_id,year,month" });
+        .upsert({ user_id, category_id: catId, year: planYm.year, month: planYm.month, amount, note: note.trim() || null, is_income_tax: kind === "EXPENSE" ? taxOn : false, is_subscription: kind === "EXPENSE" ? subOn : false, is_utilities: kind === "EXPENSE" ? utilOn : false }, { onConflict: "category_id,year,month" });
       if (be) throw be;
       toast.success(ft("f.saved"));
       onSaved();
@@ -190,7 +192,7 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
       if (amount > 0) {
         const { error: be } = await supabase
           .from("budgets")
-          .insert({ user_id, category_id: categoryId, year: planYm.year, month: planYm.month, amount, note: note.trim() || null, is_income_tax: kind === "EXPENSE" ? taxOn : false, is_subscription: kind === "EXPENSE" ? subOn : false });
+          .insert({ user_id, category_id: categoryId, year: planYm.year, month: planYm.month, amount, note: note.trim() || null, is_income_tax: kind === "EXPENSE" ? taxOn : false, is_subscription: kind === "EXPENSE" ? subOn : false, is_utilities: kind === "EXPENSE" ? utilOn : false });
         if (be) throw be;
       }
       toast.success(ft("f.saved"));
@@ -267,6 +269,12 @@ export function CategoryDialog({ open, onOpenChange, kind, categories, ym, onSav
                 <div className="flex items-center gap-2 rounded-lg border border-border p-3">
                   <Checkbox id="cat-sub" checked={subOn} onCheckedChange={(v) => setSubOn(v === true)} />
                   <Label htmlFor="cat-sub" className="cursor-pointer">{ft("f.subscription")}</Label>
+                </div>
+              )}
+              {kind === "EXPENSE" && (
+                <div className="flex items-center gap-2 rounded-lg border border-border p-3">
+                  <Checkbox id="cat-util" checked={utilOn} onCheckedChange={(v) => setUtilOn(v === true)} />
+                  <Label htmlFor="cat-util" className="cursor-pointer">{ft("f.utilities")}</Label>
                 </div>
               )}
               {kind === "EXPENSE" && (

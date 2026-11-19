@@ -23,6 +23,7 @@ export function ExpenseFilter({ currency }: { currency: string }) {
   const [cat, setCat] = useState(ALL);
   const [onlyTax, setOnlyTax] = useState(false);
   const [onlySub, setOnlySub] = useState(false);
+  const [onlyUtil, setOnlyUtil] = useState(false);
   const [sort, setSort] = useState<ExpenseSort>(DEFAULT_EXPENSE_SORT);
 
   const fromKey = fromY * 100 + fromM;
@@ -36,7 +37,7 @@ export function ExpenseFilter({ currency }: { currency: string }) {
       const [b, t] = await Promise.all([
         supabase
           .from("budgets")
-          .select("id, year, month, amount, is_income_tax, is_subscription, category_id, categories!inner(name, kind)")
+          .select("id, year, month, amount, is_income_tax, is_subscription, is_utilities, category_id, categories!inner(name, kind)")
           .eq("categories.kind", "EXPENSE")
           .gte("year", fromY)
           .lte("year", toY),
@@ -64,7 +65,7 @@ export function ExpenseFilter({ currency }: { currency: string }) {
 
   const rows = useMemo(() => {
     return sortExpenses(inRange
-      .filter((b) => (cat === ALL || b.category_id === cat) && (!onlyTax || b.is_income_tax) && (!onlySub || b.is_subscription))
+      .filter((b) => (cat === ALL || b.category_id === cat) && (!onlyTax || b.is_income_tax) && (!onlySub || b.is_subscription) && (!onlyUtil || b.is_utilities))
       .map((b) => {
         const prefix = `${b.year}-${String(b.month).padStart(2, "0")}`;
         const spent = (q.data?.txs ?? [])
@@ -72,7 +73,7 @@ export function ExpenseFilter({ currency }: { currency: string }) {
           .reduce((s, t) => s + Number(t.amount), 0);
         return { ...b, planned: Number(b.amount), spent };
       }), sort, (r) => ({ name: r.categories.name, planned: r.planned, spent: r.spent, year: r.year, month: r.month }), lang);
-  }, [inRange, cat, onlyTax, onlySub, q.data, sort, lang]);
+  }, [inRange, cat, onlyTax, onlySub, onlyUtil, q.data, sort, lang]);
 
   const totals = rows.reduce((s, r) => ({ planned: s.planned + r.planned, spent: s.spent + r.spent }), { planned: 0, spent: 0 });
   const fmt = (n: number) => money(n, currency, lang);
@@ -117,6 +118,10 @@ export function ExpenseFilter({ currency }: { currency: string }) {
           <Checkbox id="flt-sub" checked={onlySub} onCheckedChange={(v) => setOnlySub(v === true)} />
           <Label htmlFor="flt-sub" className="cursor-pointer">{ft("f.onlySub")}</Label>
         </div>
+        <div className="flex items-center gap-2 pb-2">
+          <Checkbox id="flt-util" checked={onlyUtil} onCheckedChange={(v) => setOnlyUtil(v === true)} />
+          <Label htmlFor="flt-util" className="cursor-pointer">{ft("f.onlyUtil")}</Label>
+        </div>
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-border bg-card">
@@ -143,6 +148,7 @@ export function ExpenseFilter({ currency }: { currency: string }) {
                     {r.categories.name}
                     {r.is_income_tax && <span className="ml-2 rounded-full border border-warning/40 bg-warning-soft px-2 py-0.5 text-[10px] font-semibold uppercase text-warning">{ft("f.taxBadge")}</span>}
                     {r.is_subscription && <span className="ml-2 rounded-full border border-primary/40 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">{ft("f.subBadge")}</span>}
+                    {r.is_utilities && <span className="ml-2 rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-accent-foreground">{ft("f.utilBadge")}</span>}
                   </td>
                   <td className="px-4 py-3 text-right tabular-nums">{fmt(r.planned)}</td>
                   <td className="px-4 py-3 text-right tabular-nums">{fmt(r.spent)}</td>

@@ -90,7 +90,7 @@ function ExpensesPage() {
   const [details, setDetails] = useState<string | null>(null);
   const [delTx, setDelTx] = useState<Transaction | null>(null);
   const [delCat, setDelCat] = useState<string | null>(null);
-  const [editCat, setEditCat] = useState<null | { id: string; name: string; amount: number; isTax?: boolean; isSub?: boolean; note?: string | null; kind: "INCOME" | "EXPENSE" }>(null);
+  const [editCat, setEditCat] = useState<null | { id: string; name: string; amount: number; isTax?: boolean; isSub?: boolean; isUtil?: boolean; note?: string | null; kind: "INCOME" | "EXPENSE" }>(null);
 
   const categories = cats.data ?? [];
   const txs = month.data?.transactions ?? [];
@@ -134,12 +134,12 @@ function ExpensesPage() {
 
   async function copyPrev() {
     const prev = shiftYM(ym, -1);
-    const { data, error } = await supabase.from("budgets").select("category_id, amount, is_income_tax, is_subscription, note").eq("year", prev.year).eq("month", prev.month);
+    const { data, error } = await supabase.from("budgets").select("category_id, amount, is_income_tax, is_subscription, is_utilities, note").eq("year", prev.year).eq("month", prev.month);
     if (error) { toast.error(error.message); return; }
     if (!data.length) { toast.info(ft("f.nothingToCopy")); return; }
     const user_id = await currentUserId();
     const { error: e2 } = await supabase.from("budgets").upsert(
-      data.map((b) => ({ user_id, category_id: b.category_id, amount: b.amount, note: b.note, is_income_tax: b.is_income_tax, is_subscription: b.is_subscription, year: ym.year, month: ym.month })),
+      data.map((b) => ({ user_id, category_id: b.category_id, amount: b.amount, note: b.note, is_income_tax: b.is_income_tax, is_subscription: b.is_subscription, is_utilities: b.is_utilities, year: ym.year, month: ym.month })),
       { onConflict: "category_id,year,month" },
     );
     if (e2) { toast.error(e2.message); return; }
@@ -436,6 +436,11 @@ function ExpensesPage() {
                                 {ft("f.subBadge")}
                               </span>
                             )}
+                            {r.isUtil && (
+                              <span className="ml-2 inline-flex items-center rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 align-middle text-[10px] font-semibold uppercase tracking-wide text-accent-foreground">
+                                {ft("f.utilBadge")}
+                              </span>
+                            )}
                             {r.note && (
                               <p className="mt-1 text-xs font-normal text-muted-foreground [overflow-wrap:anywhere]">{r.note}</p>
                             )}
@@ -473,7 +478,7 @@ function ExpensesPage() {
                               >
                                 <Plus className="h-4 w-4" />
                               </Button>
-                              <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${r.category.name}`} onClick={() => setEditCat({ id: r.category.id, name: r.category.name, amount: r.planned, isTax: r.isTax, isSub: r.isSub, note: r.note, kind: "EXPENSE" })}>
+                              <Button variant="ghost" size="icon" aria-label={`${ft("f.editCat")} ${r.category.name}`} onClick={() => setEditCat({ id: r.category.id, name: r.category.name, amount: r.planned, isTax: r.isTax, isSub: r.isSub, isUtil: r.isUtil, note: r.note, kind: "EXPENSE" })}>
                                 <Pencil className="h-4 w-4" />
                               </Button>
                               {r.budgetId && (
