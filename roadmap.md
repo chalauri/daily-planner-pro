@@ -50,3 +50,8 @@
 
 ## Demo data
 - [x] Demo data script for Nov 2026 – Dec 2027 (plans + expenses) supplied; revert script supplied to remove exactly those rows.
+
+## Mobile app
+- [ ] Build the mobile app against the owner's own database (their address + their public key; never the secret key). Needs the owner's choice of stack (Expo / Flutter / native) before scaffolding.
+- [ ] Confirm which database address and public key the live website actually uses, so the mobile app is built with the exact same pair.
+- [ ] Before shipping: make confirmation and password-reset links open the app (deep links) instead of only the website.
