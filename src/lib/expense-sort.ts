@@ -16,8 +16,9 @@ export function nextExpenseSort(current: ExpenseSort, key: ExpenseSortKey): Expe
   return nextSort(current, key);
 }
 
+/** Share of the plan spent; above 100 when spending passed the plan, so over-budget rows sort apart. */
 export function expenseProgress(row: SortableExpense): number {
-  return row.planned > 0 ? Math.min(100, Math.round(row.spent / row.planned * 100)) : row.spent > 0 ? 100 : 0;
+  return row.planned > 0 ? Math.round((row.spent / row.planned) * 100) : row.spent > 0 ? 100 : 0;
 }
 
 export function sortExpenses<T>(rows: readonly T[], sort: ExpenseSort, values: (row: T) => SortableExpense, locale: string): T[] {

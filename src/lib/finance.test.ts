@@ -1,6 +1,15 @@
 import { describe, test } from "node:test";
 import { strictEqual } from "node:assert";
-import { leftBudget, budgetState, buildCategoryRows, bulkTxNote, type Budget, type Category, type Transaction } from "./finance";
+import {
+  budgetPercent,
+  leftBudget,
+  budgetState,
+  buildCategoryRows,
+  bulkTxNote,
+  type Budget,
+  type Category,
+  type Transaction,
+} from "./finance";
 
 describe("left budget", () => {
   test("is planned minus spent", () => {
@@ -70,6 +79,23 @@ const tx: Transaction = {
   is_income_tax: false,
   period: "2026-11-01",
 };
+
+describe("percent of plan spent", () => {
+  test("keeps the real figure once spending passes the plan", () => {
+    strictEqual(budgetPercent(1000, 1250), 125);
+    strictEqual(budgetPercent(1200, 1300), 108);
+  });
+  test("is exactly 100 when spending equals the plan", () => {
+    strictEqual(budgetPercent(1200, 1200), 100);
+  });
+  test("rounds to the nearest whole percent", () => {
+    strictEqual(budgetPercent(300, 100), 33);
+  });
+  test("is 100 with spending but no plan, 0 with neither", () => {
+    strictEqual(budgetPercent(0, 50), 100);
+    strictEqual(budgetPercent(0, 0), 0);
+  });
+});
 
 describe("planned comment", () => {
   test("shows the comment written for that month's plan", () => {

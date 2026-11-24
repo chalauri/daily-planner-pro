@@ -33,6 +33,7 @@ import { DEFAULT_TX_SORT, nextTxSort, sortTransactions, transactionSortValues, t
 import { deleteMonthCategory } from "@/lib/delete-month-category";
 import {
   CURRENCIES,
+  budgetPercent,
   budgetState,
   buildCategoryRows,
   currentUserId,
@@ -400,7 +401,8 @@ function ExpensesPage() {
                   ) : (
                     rows.map((r) => {
                       const st = budgetState(r.planned, r.spent);
-                      const pct = r.planned > 0 ? Math.min(100, Math.round((r.spent / r.planned) * 100)) : r.spent > 0 ? 100 : 0;
+                      const pct = budgetPercent(r.planned, r.spent);
+                      const barWidth = Math.min(100, pct);
                       const locked = r.isLocked && r.budgetId !== null;
                       const lockedOk = locked && r.spent <= r.planned;
                       const bar = st === "over" ? "bg-destructive" : st === "near" ? "bg-caution" : st === "warn" ? "bg-warning" : lockedOk ? "bg-locked" : "bg-success";
@@ -454,7 +456,7 @@ function ExpensesPage() {
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
                               <div className="h-2.5 w-28 overflow-hidden rounded-full bg-muted shadow-inner">
-                                <div className={`h-full rounded-full ${bar}`} style={{ width: `${pct}%` }} />
+                                <div className={`h-full rounded-full ${bar}`} style={{ width: `${barWidth}%` }} />
                               </div>
                               <span className={`text-xs ${locked ? "text-muted-foreground" : st === "over" ? "text-destructive" : st === "near" ? "text-caution" : st === "warn" ? "text-warning" : "text-muted-foreground"}`}>
                                 {locked ? `${pct}%` : st === "over" ? ft("f.over") : st === "near" ? ft("f.almost") : st === "warn" ? ft("f.near") : `${pct}%`}

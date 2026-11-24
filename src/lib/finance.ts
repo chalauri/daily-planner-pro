@@ -191,6 +191,16 @@ export function budgetState(planned: number, spent: number): "over" | "near" | "
   return "ok";
 }
 
+/**
+ * Share of the plan already spent, as a whole percentage.
+ * Goes above 100 when spending passes the plan, so a closed (locked) row can
+ * still tell the truth about how far over it went.
+ */
+export function budgetPercent(planned: number, spent: number) {
+  if (planned > 0) return Math.round((spent / planned) * 100);
+  return spent > 0 ? 100 : 0;
+}
+
 export function downloadFile(name: string, content: string, type: string) {
   const blob = new Blob([content], { type });
   const url = URL.createObjectURL(blob);
