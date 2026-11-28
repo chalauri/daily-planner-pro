@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFT } from "@/lib/finance-i18n";
 import { cleanAmountInput, parseAmount } from "@/lib/amount";
+import { defaultTransactionDate } from "@/lib/transaction-date";
 import {
   budgetState,
   currentUserId,
@@ -36,17 +37,11 @@ interface Props {
   onSaved: () => void;
 }
 
-function defaultDate(ym: YM) {
-  const now = new Date();
-  if (now.getFullYear() === ym.year && now.getMonth() + 1 === ym.month) return format(now, "yyyy-MM-dd");
-  return ymRange(ym).from;
-}
-
 export function TransactionDialog({ open, onOpenChange, ym, categories, currency, editing, defaultCategoryId, onSaved }: Props) {
   const { ft, lang } = useFT();
   const [categoryId, setCategoryId] = useState<string>(NONE);
   const [amount, setAmount] = useState("");
-  const [date, setDate] = useState(defaultDate(ym));
+  const [date, setDate] = useState(defaultTransactionDate);
   const [note, setNote] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [repeat, setRepeat] = useState(false);
@@ -64,7 +59,7 @@ export function TransactionDialog({ open, onOpenChange, ym, categories, currency
       const cat = categories.find((c) => c.id === defaultCategoryId);
       setCategoryId(cat?.id ?? NONE);
       setAmount("");
-      const d = defaultDate(ym);
+      const d = defaultTransactionDate();
       setDate(d);
       setNote("");
       setUntil(format(addMonths(parseISO(d), 11), "yyyy-MM-dd"));

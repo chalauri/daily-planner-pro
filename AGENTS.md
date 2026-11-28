@@ -16,3 +16,4 @@
 - PlanStatistics queries the entire selected year with pagination independently of table filters, and uses the browser-safe monthly plan statistics utility so charts and calculation tests share one source of truth.
 - When one section asks another section to change what it shows (for example the header bell asking Plans to filter), go through the small request/subscribe module in `src/lib/plan-filter.ts` instead of props or URL params, so it works whether or not the target page is already mounted.
 - Keep this repository website-only and develop the Expo mobile app in a separate external project sharing the owner's backend, so web and native clients remain independently maintained.
+- Use the browser-safe transaction-date helper for new payment defaults so local-date behavior can be tested independently of the selected budget period.
